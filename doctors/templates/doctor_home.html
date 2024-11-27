@@ -243,7 +243,7 @@
                   const userName = data.user_name;
                   const isDoctor = data.is_doctor;
 
-                  const otherProjectUrl = `http://127.0.0.1:8001/?meeting_id=${meetingId}&api_key=${apiKey}&is_doctor=${isDoctor}&user_name=${encodeURIComponent(userName)}`;
+                  const otherProjectUrl = `http://128.140.45.169:8223/?meeting_id=${meetingId}&api_key=${apiKey}&is_doctor=${isDoctor}&user_name=${encodeURIComponent(userName)}`;
                   window.location.href = otherProjectUrl;
                } else {
                   console.error("Error starting meeting:", data.error);

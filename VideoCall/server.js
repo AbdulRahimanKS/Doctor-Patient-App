@@ -9,17 +9,17 @@ app.get('/', (req, res) => {
     const isDoctor = req.query.is_doctor
 
     if (!meetingId || !apiKey || !userName || typeof isDoctor === 'undefined') {
-    return res.status(400).send('Missing required query parameters');
-}
+        return res.status(400).send('Missing required query parameters');
+    }
 
-let redirectUrl;
-if (isDoctor === 'true') {
-    redirectUrl = "http://127.0.0.1:8000/doctors/doctor_home/";
-} else {
-    redirectUrl = "http://127.0.0.1:8000/patients/home/";
-}
+    let redirectUrl;
+    if (isDoctor === 'true') {
+        redirectUrl = "http://128.140.45.169:8222/doctors/doctor_home/";
+    } else {
+        redirectUrl = "http://128.140.45.169:8222/patients/home/";
+    }
 
-const html = `
+    const html = `
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -70,7 +70,7 @@ const html = `
         </html>
     `;
 
-res.send(html);
+    res.send(html);
 });
 
 app.listen(port, () => {
