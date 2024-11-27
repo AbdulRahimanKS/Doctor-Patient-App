@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+
+   <body class="bg-light">
+      <div class="doctor-profile d-flex flex-column vh-100">
+         <div class="d-flex align-items-center justify-content-between mb-auto p-3 bg-white shadow-sm osahan-header">
+            <a href="{% url 'home' %}" class="text-dark bg-white shadow rounded-circle icon">
+                  <span class="mdi mdi-arrow-left mdi-18px"></span></a>
+            <h6 class="mb-0 ms-3 me-auto fw-bold">Doctor Profile</h6>
+            <div class="d-flex align-items-center gap-2">
+               <a href="#" class="text-dark bg-white shadow rounded-circle icon">
+                  <span class="mdi mdi-cards-heart-outline mdi-18px text-primary"></span>
+               </a>
+               <a data-bs-toggle="offcanvas" data-bs-target="#offcanvasshare" aria-controls="offcanvasshare" href="#" class="text-dark bg-white shadow rounded-circle icon">
+                  <span class="mdi mdi-share-variant-outline mdi-18px"></span></a>
+               <a class="toggle d-flex align-items-center justify-content-center fs-5 bg-white shadow rounded-circle icon" href="#"><i class="bi bi-list"></i></a>
+            </div>
+         </div>
+         <!-- body -->
+         <div class="vh-100 my-auto overflow-auto">
+            <!-- banner -->
+            <div class="px-4 bg-primary">
+               <div class="d-flex align-items-center gap-4">
+               {% if doctor.profile_picture %}
+                  <img src="{{ doctor.profile_picture.url }}" alt="" class="img-fluid appointment-doctor-img">
+               {% elif doctor.gender == 'Male' %}
+                  <img src="{% static 'img/home/male-doctor.png' %}" alt="" class="img-fluid appointment-doctor-img" style="padding:10px">
+               {% elif doctor.gender == 'Female' %}
+                  <img src="{% static 'img/home/female-doctor.png' %}" alt="" class="img-fluid appointment-doctor-img" style="padding:10px">
+               {% else %}
+                  <img src="{% static 'img/home/doctor.png' %}" alt="" class="img-fluid appointment-doctor-img" style="padding:10px">
+               {% endif %}
+                  <div>
+                     <h6 class="text-white">Consultation Fee</h6>
+                     <h1 class="text-warning mb-0 fw-bold">₹ {{ doctor.consultation_fee }}
+                        <span class="text-white-50 fw-normal fs-6">Inc. VAT</span>
+                     </h1>
+                  </div>
+               </div>
+            </div>
+            <div class="p-3 bg-white">
+               <div class="mb-3">
+                  <h6 class="mb-1">Dr. {{ doctor.full_name }}</h6>
+                  <p class="small">{{ doctor.qualification }} - <span class="text-muted">{{ doctor.specialization.category.name }} - {{ doctor.specialization.name }}</span></p>
+               </div>
+               <div class="d-flex align-items-center justify-content-between">
+                  <div class="d-flex align-items-center gap-3 col">
+                     <span class="mdi mdi-account-supervisor-outline mdi-24px text-info"></span>
+                     <div>
+                        <p class="mb-0 small text-muted">Patient</p>
+                        <p class="text-primary m-0 fw-bold">2.05K</p>
+                     </div>
+                  </div>
+                  <div class="d-flex align-items-center gap-3 col">
+                     <span class="mdi mdi-star-outline mdi-24px text-info"></span>
+                     <div>
+                        <p class="mb-0 small text-muted">Review</p>
+                        <p class="text-primary m-0 fw-bold">5.3K</p>
+                     </div>
+                  </div>
+                  <div class="d-flex align-items-center gap-3 col">
+                     <span class="mdi mdi-medal-outline mdi-24px text-info"></span>
+                     <div>
+                        <p class="mb-0 small text-muted">Experience</p>
+                        <p class="text-primary m-0 fw-bold">
+                            {% if doctor.experience_years <= 1 %}{{ doctor.experience_years }} year{% else %}{{ doctor.experience_years }} years{% endif %}
+                        </p>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <!-- tabs -->
+            <div class="bg-white shadow-sm border-top">
+               <ul class="nav doctor-profile-tabs gap-1 p-0" id="pills-tab" role="tablist">
+                  <li class="nav-item col" role="presentation">
+                     <button class="nav-link w-100" id="pills-info-tab" data-bs-toggle="pill"
+                        data-bs-target="#pills-info" type="button" role="tab" aria-controls="pills-info"
+                        aria-selected="true">Info</button>
+                  </li>
+                  <li class="nav-item col" role="presentation">
+                     <button class="nav-link w-100" id="pills-experience-tab" data-bs-toggle="pill"
+                        data-bs-target="#pills-experience" type="button" role="tab" aria-controls="pills-experience"
+                        aria-selected="false">Experience</button>
+                  </li>
+                  <li class="nav-item col" role="presentation">
+                     <button class="nav-link w-100 active" id="pills-review-tab" data-bs-toggle="pill"
+                        data-bs-target="#pills-review" type="button" role="tab" aria-controls="pills-review"
+                        aria-selected="false">Review</button>
+                  </li>
+               </ul>
+            </div>
+            <div class="mb-3">
+               <div class="tab-content" id="pills-tabContent">
+                  <!-- about -->
+                  <div class="tab-pane fade p-3" id="pills-info" role="tabpanel"
+                     aria-labelledby="pills-info-tab" tabindex="0">
+                     <h6 class="pb-2 mb-0">About Doctor</h6>
+                     <p class="text-muted">{{ doctor.about }}
+                     </p>
+                  </div>
+                  <!-- experience -->
+                  <div class="tab-pane fade p-3" id="pills-experience" role="tabpanel"
+                     aria-labelledby="pills-experience-tab" tabindex="0">
+                     {% if doctor.experiences.all %}
+                     {% for experience in doctor.experiences.all %}
+                     <div class="bg-white rounded-4 p-3 mb-3 shadow-sm">
+                        <h6 class="mb-3">{{ experience.hospital }}</h6>
+                        <p class="text-muted mb-2">Designation<br>
+                           <span class="text-dark">{{ experience.designation }}</span>
+                        </p>
+                        <p class="text-muted mb-2">Department<br>
+                           <span class="text-dark">{{ experience.department }}</span>
+                        </p>
+                        <p class="text-muted mb-0">Employment Period<br>
+                           <span class="text-dark">
+                            {% if experience.employed_from %}
+                                {{ experience.employed_from|date:"b j, Y" }} 
+                            {% endif %}
+                            - 
+                            {% if experience.employed_to %}
+                                {{ experience.employed_to|date:"b j, Y" }}
+                            {% else %}
+                                Present
+                            {% endif %}
+                            </span>
+                        </p>
+                     </div>
+                     {% endfor %}
+                     {% else %}
+                        <p class="text-muted">No experience details found</p>
+                     {% endif %}
+                  </div>
+                  
+                  <!-- review -->
+                  <div class="tab-pane fade show active" id="pills-review" role="tabpanel" aria-labelledby="pills-review-tab"
+                     tabindex="0">
+                     <h6 class="pb-3 px-3 pt-3 mb-0">Review (2350)</h6>
+                     <div class="bg-white shadow-sm d-flex align-items-center gap-2 py-2 px-3 border-bottom">
+                        <img src="{% static 'img/home/default-patient.png' %}" alt="" class="img-fluid rounded-pill review-profile">
+                        <div>
+                           <p class="mb-0 fw-bold">Sadia</p>
+                           <p class="text-muted small m-0">Oct 31, 2023</p>
+                        </div>
+                        <div class="ms-auto text-center">
+                           <div class="d-flex align-items-center gap-1 small text-warning">
+                              <span class="mdi mdi-star"></span>
+                              <span class="mdi mdi-star"></span>
+                              <span class="mdi mdi-star"></span>
+                              <span class="mdi mdi-star"></span>
+                              <span class="mdi mdi-star"></span>
+                              <span class="badge rounded-pill text-bg-warning ms-1">4.9</span>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="text-center mt-3">
+                        <a href="#" class="text-decoration-underline text-primary fw-bold">Tab here to see all reviews</a>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!-- footer -->
+         <div class="footer d-grid mt-auto p-3">
+            <div class="d-flex gap-2">
+               <a href="#" class="btn btn-outline-info bg-light btn-lg col"><i class="bi bi-camera-video-fill me-2"></i> Call</a>
+               <a href="{% url 'request_appointment' doctor_id=doctor.id %}" class="btn btn-info btn-lg col">Book</a>
+            </div>
+         </div>
+      </div>
+      <!-- share offcanvas -->
+      <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasshare" aria-labelledby="offcanvasshareLabel" style="height:40vh;">
+         <div class="offcanvas-header d-flex justify-content-center">
+            <h5 class="offcanvas-title" id="offcanvasshareLabel">Share to</h5>
+            <!-- <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button> -->
+         </div>
+         <div class="offcanvas-body">
+            <div class="row row-cols-3 g-4">
+               <div class="col">
+                  <a href="#" class="link-dark">
+                     <div class="text-center">
+                        <img src="{% static 'img/social-icon/facebook.jpeg' %}" alt="" class="img-fluid rounded-circle icon-lg d-block mx-auto">
+                        <p class="pt-2 m-0">Facebook</p>
+                     </div>
+                  </a>
+               </div>
+               <div class="col">
+                  <a href="#" class="link-dark">
+                     <div class="text-center">
+                        <img src="{% static 'img/social-icon/instagram.jpeg' %}" alt="" class="img-fluid rounded-circle icon-lg d-block mx-auto">
+                        <p class="pt-2 m-0">Instagram</p>
+                     </div>
+                  </a>
+               </div>
+               <div class="col">
+                  <a href="#" class="link-dark">
+                     <div class="text-center">
+                        <img src="{% static 'img/social-icon/twitter.png' %}" alt="" class="img-fluid rounded-circle icon-lg d-block mx-auto">
+                        <p class="pt-2 m-0">Twitter</p>
+                     </div>
+                  </a>
+               </div>
+               <div class="col">
+                  <a href="#" class="link-dark">
+                     <div class="text-center">
+                        <img src="{% static 'img/social-icon/whatsapp.jpg' %}" alt="" class="img-fluid rounded-circle icon-lg d-block mx-auto">
+                        <p class="pt-2 m-0">Whatsapp</p>
+                     </div>
+                  </a>
+               </div>
+               <div class="col">
+                  <a href="#" class="link-dark">
+                     <div class="text-center">
+                        <img src="{% static 'img/social-icon/linkin.png' %}" alt="" class="img-fluid rounded-circle icon-lg d-block mx-auto">
+                        <p class="pt-2 m-0">Linkedin</p>
+                     </div>
+                  </a>
+               </div>
+               <div class="col">
+                  <a href="#" class="link-dark">
+                     <div class="text-center">
+                        <img src="{% static 'img/social-icon/pinterest.png' %}" alt="" class="img-fluid rounded-circle icon-lg d-block mx-auto">
+                        <p class="pt-2 m-0">Pinterest</p>
+                     </div>
+                  </a>
+               </div>
+            </div>
+         </div>
+      </div>
+      
+{% endblock %}
+

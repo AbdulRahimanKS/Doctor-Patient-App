@@ -1,0 +1,105 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="icon" href="{% static 'img/logo.svg' %}" type="image/png">
+      <title>Dactorapp</title>
+      <!-- Bootstrap css -->
+      <link rel="stylesheet" href="{% static 'vender/bootstrap/css/bootstrap.min.css' %}">
+      <!-- Bootstrap icon -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+      <!-- Sidebar css -->
+      <link rel="stylesheet" href="{% static 'vender/sidebar/demo.css' %}">
+      <!-- Slick slider css -->
+      <link rel="stylesheet" href="{% static 'vender/slick/slick/slick.css' %}" />
+      <link rel="stylesheet" href="{% static 'vender/slick/slick/slick-theme.css' %}" />
+      <!-- Matrial Icons -->
+      <link rel="stylesheet" href="{% static 'vender/materialdesign/css/materialdesignicons.min.css' %}">
+      <!-- Custom css -->
+      <link rel="stylesheet" href="{% static 'css/style.css' %}">
+   </head>
+
+<body>
+
+{% block content %}
+
+{% endblock %}
+ 
+<!-- sidebar nav -->
+<nav id="main-nav">
+    <ul class="second-nav">
+       <li class="osahan-user-profile bg-primary">
+          <div class="d-flex align-items-center gap-2">
+            {% if request.user.patients.profile_image %}
+             <img src="{{ request.user.patients.profile_image.url }}" alt="" class="rounded-pill img-fluid">
+            {% else %}
+             <img src="{% static 'img/home/default-patient.png' %}" alt="" class="rounded-pill img-fluid">
+            {% endif %}
+             <div class="ps-1">
+                <h6 class="fw-bold text-white mb-0">Hey, {{ request.user.name }}!</h6>
+                <p class="text-white-50 m-0 small">{{ request.user.countryCode }} {{ request.user.mobile }}</p>
+             </div>
+          </div>
+       </li>
+       <li><a href="{% url 'home' %}"><span class="mdi mdi-home-variant-outline me-3"></span>Homepage</a></li>
+       <li>
+          <a href="#"><span class="mdi mdi-magnify me-3"></span>Doctors</a>
+          <ul>
+             <li><a href="{% url 'doctors_list' %}"><span class="mdi mdi-magnify me-3"></span>Doctors List</a></li>
+          </ul>
+       </li>
+       <li>
+          <a href="#"><span class="mdi mdi-account-outline me-3"></span>My Profile</a>
+          <ul>
+             <li><a href="{% url 'profile_page' %}"><span class="mdi mdi-account-outline me-3"></span>My Account</a></li>
+             <li><a href="{% url 'appointments_page' %}"><span class="mdi mdi-calendar-range me-3"></span>My Appointments</a></li>
+          </ul>
+       </li>
+       <li>
+         <form method="POST" action="{% url 'sign_out' %}" class="logout-form">
+            {% csrf_token %}
+            <button type="submit"><span class="mdi mdi-logout me-3"></span>Sign out</button>
+         </form>     
+       </li>
+    </ul>
+    <ul class="bottom-nav">
+       <li class="home">
+          <a href="{% url 'home' %}">
+             <p class="h5 m-0"><span class="mdi mdi-home-variant-outline"></span></p>
+             Home
+          </a>
+       </li>
+       <li class="find">
+          <a href="{% url 'doctors_list' %}">
+             <p class="h5 m-0"><span class="mdi mdi-magnify"></span></p>
+             Search
+          </a>
+       </li>
+       <li class="more">
+          <a href="{% url 'profile_page' %}">
+             <p class="h5 m-0"><span class="mdi mdi-account-circle-outline"></span></p>
+             Profile
+          </a>
+       </li>
+    </ul>
+ </nav>
+
+ <!-- Bootstrap bundle js -->
+ <script src="{% static 'vender/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+ <!-- Jquery js -->
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+ <!-- Sidebar js -->
+ <script src="{% static 'vender/sidebar/hc-offcanvas-nav.js' %}"></script>
+ <!-- Custom js -->
+ <script src="{% static 'js/script.js' %}"></script>
+ <!-- Slick slider js -->
+ <script src="{% static 'vender/slick/slick/slick.min.js' %}"></script> 
+
+</body>
+</html>
+

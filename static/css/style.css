@@ -1,0 +1,786 @@
+/*
+Template Name: Dactorapp - Doctor Appointment Booking Mobile Template
+Author: Askbootstrap
+Author URI: https://themeforest.net/user/askbootstrap
+Version: 0.1
+*/
+
+/*
+- Body
+- Scroll Bar
+- Custom
+- Index
+- Landing Page
+- Country
+- Welcome
+- Footer Nav
+- Home
+- Favorte Doctor
+- Select Area
+- Doctor Profile
+- Book Appointment
+- Request Appointment
+- notification
+- Video
+- Doctor Profile Two
+- Visit Info / Chekout
+- Message
+- Call
+- Call Doctor
+- History
+- Profile
+- My Appointment
+- Play Recording
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@200;300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sofia+Sans+Extra+Condensed:wght@200;300;400;500;600;700;800&display=swap');
+
+:root {
+    --dark: #1b1e42;
+    --primary: #014CC4;
+    --light-primary: #01BDF3;
+    --lighter-primary: #598fff;
+    --lighter-primary-opacity: #e9f2ff;
+    --secondary: #595f73;
+    --light: #f5f5f5;
+    --success: #3dae14;
+    --light-success: #93cf88;
+    --warning: #fdbe00;
+    --light-warning: #fbf2d9;
+    --orange: #FF8811;
+    --light-orange: #f8efea;
+}
+
+/* Body */
+body {
+    font-family: 'Karla', sans-serif;
+    color: var(--dark);
+    font-size: 13px;
+}
+
+/* Scroll Bar */
+::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    height: 6px;
+    border: 4px solid transparent;
+    background-clip: padding-box;
+    -webkit-border-radius: 7px;
+    border-radius: 7px;
+    background-color: rgba(0, 0, 0, .15);
+    -webkit-box-shadow: inset -1px -1px 0 rgba(0, 0, 0, .05), inset 1px 1px 0 rgba(0, 0, 0, .05);
+    box-shadow: inset -1px -1px 0 rgba(0, 0, 0, .05), inset 1px 1px 0 rgba(0, 0, 0, .05);
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+    background-color: #ffffff;
+}
+
+::-webkit-scrollbar-thumb {
+    height: 50px;
+    background: hsla(0, 0%, 53.3%, 0.4);
+}
+
+.landing-slider.slick-initialized,
+.top-doctors.slick-initialized,
+.available-doctor.slick-initialized,
+.recent-doctors.slick-initialized {
+    visibility: visible;
+    opacity: 1;
+}
+
+.landing-slider,
+.top-doctors,
+.available-doctor,
+.recent-doctors {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease;
+    -webkit-transition: opacity 1s ease;
+}
+
+/* Custom */
+.osahan-card-body {
+    padding: 12px !important;
+}
+
+.osahan-card-footer {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+.osahan-user-profile img {
+    height: 50px;
+}
+
+.nav-wrapper.nav-wrapper-0 .nav-content h2 {
+    display: none;
+}
+
+li.nav-parent.level-open h2 {
+    display: block !important;
+}
+
+.border-bottom {
+    border-color: #eee !important;
+}
+
+.text-dark {
+    color: var(--dark) !important;
+}
+
+.text-primary {
+    color: var(--primary) !important;
+}
+
+.text-warning {
+    color: var(--warning) !important;
+}
+
+.text-success {
+    color: var(--success) !important;
+}
+
+.text-orange {
+    color: var(--orange);
+}
+
+.text-info {
+    color: var(--light-primary);
+}
+
+.bg-light {
+    background-color: var(--light) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary) !important;
+}
+
+.light-bg-primary {
+    background-color: var(--light-primary);
+}
+
+.lighter-bg-primary {
+    background-color: var(--lighter-primary);
+}
+
+.lighter-bg-primary-opacity {
+    background-color: var(--lighter-primary-opacity);
+}
+
+.light-bg-warning {
+    background-color: var(--light-warning);
+}
+
+.light-bg-success {
+    background-color: var(--light-success);
+}
+
+.light-bg-orange {
+    background-color: var(--light-orange);
+}
+
+.btn-primary,
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    background: #0147ff !important;
+    border-color: #0147ff !important;
+}
+
+.btn-outline-primary {
+    background-color: #ffffff !important;
+    border-color: #0147ff !important;
+    color: #0147ff !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    color: #ffffff !important;
+}
+
+.btn-secondary,
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus {
+    background: var(--orange) !important;
+    border-color: var(--orange) !important;
+}
+
+.btn-outline-secondary {
+    background-color: #ffffff !important;
+    border-color: var(--orange) !important;
+    color: var(--orange) !important;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus {
+    color: #ffffff !important;
+}
+
+.btn-info,
+.btn-outline-info:hover,
+.btn-outline-info:focus {
+    background: var(--light-primary) !important;
+    border-color: var(--light-primary) !important;
+    color: #ffffff !important;
+}
+
+.btn-outline-info {
+    background-color: #ffffff !important;
+    border-color: var(--light-primary) !important;
+    color: var(--light-primary) !important;
+}
+
+.btn-outline-info:hover,
+.btn-outline-info:focus {
+    color: #ffffff !important;
+}
+
+.bg-info {
+    background: var(--light-primary) !important;
+}
+
+.btn-white {
+    background-color: #ffffff !important;
+}
+
+.text-muted {
+    color: var(--secondary) !important;
+}
+
+.text-bg-success {
+    background-color: var(--success) !important;
+    font-weight: 400;
+}
+
+.fw-light {
+    font-weight: 200;
+}
+
+a {
+    text-decoration: none;
+}
+
+.form-control {
+    box-shadow: none !important;
+}
+
+.form-select {
+    box-shadow: none !important;
+}
+
+.rounded-4,
+.form-control {
+    border-radius: 10px !important;
+}
+
+.btn {
+    font-size: 13px;
+    padding: 13px 15px !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+}
+
+.btn-lg {
+    font-size: 16px;
+    padding: 15px 20px !important;
+    letter-spacing: 0.2px;
+}
+
+.btn-sm {
+    padding: 7px 12px !important;
+}
+
+.rounded-top-4 {
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+}
+
+.rounded-bottom-4 {
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
+.chat-rounded-left {
+    border-radius: 19px;
+    padding: 10px 15px !important;
+    font-size: 13px;
+}
+
+.chat-rounded-right {
+    border-radius: 19px;
+    padding: 10px 15px !important;
+    font-size: 13px;
+}
+
+.small-sm {
+    font-size: 12px;
+}
+
+.fs-14 {
+    font-size: 14px;
+}
+
+.border-primary-dotted {
+    border: 1px dashed var(--primary);
+}
+
+.border-dotted-bottom {
+    border-bottom: 1px dashed var(--secondary);
+}
+
+.border-dotted-top {
+    border-top: 1px dashed var(--secondary);
+}
+
+.border-dashed-muted {
+    border: 1px dashed var(--secondary);
+}
+
+.border-dashed-primary {
+    border: 1px dashed var(--primary);
+}
+
+.badge-success {
+    background-color: var(--light-success);
+    color: var(--success);
+}
+
+.fix-osahan-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 3px;
+}
+
+.shadow {
+    box-shadow: rgb(0 0 0 / 7%) 0px 6px 24px 0px, rgb(0 0 0 / 4%) 0px 0px 0px 1px !important;
+}
+
+/* Index */
+.logo {
+    width: 100px;
+}
+
+.top-doctor-item,
+.recent-doctor-item,
+.available-doctor-item {
+    margin: 4px 5px;
+}
+
+/* Landing Page */
+.landing ul.slick-dots {
+    bottom: auto;
+    margin: auto;
+    text-align: center;
+}
+
+.landing ul.slick-dots li {
+    margin: 0px;
+    padding: 0px;
+    width: auto !important;
+    height: auto !important;
+}
+
+.landing ul.slick-dots li button {
+    margin: 3px;
+    padding: 0px;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-radius: 50px;
+    border: 1px solid #ffffff;
+    box-shadow: 0px 0px 1px #6e6e6e;
+}
+
+.landing ul.slick-dots li button:before {
+    display: none;
+}
+
+.landing ul.slick-dots li.slick-active button {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.landing-slider-item img {
+    height: 230px;
+    object-fit: contain;
+    margin: auto;
+}
+
+/* Country */
+.flag-img {
+    width: 35px;
+}
+
+/* Welcome */
+.blue-logo {
+    width: 110px;
+}
+
+/* Footer Nav */
+.body-fix-osahan-footer {
+    padding-bottom: 82px;
+}
+
+.footer-bottom-nav {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    color: #989898;
+    padding: 5px 0 9px 0;
+    position: relative;
+}
+
+.footer-bottom-nav span {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.footer-bottom-nav i {
+    font-size: 20px;
+}
+
+.footer-bottom-nav.active {
+    color: #0148ff;
+}
+
+.footer-bottom-nav.active:after {
+    content: "";
+    width: 40px;
+    height: 10px;
+    background: #0148ff;
+    border-radius: 50px;
+    position: absolute;
+    bottom: -7px;
+}
+
+.bottom-nav-main {
+    background: #fff;
+}
+
+/* Home */
+.icon {
+    min-width: 35px;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-lg {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+}
+
+.doctor-book-back {
+    position: relative;
+    overflow: hidden;
+}
+
+.doctor-book-back-title {
+    font-family: 'Sofia Sans Extra Condensed', sans-serif;
+    padding-right: 77px;
+    letter-spacing: 0.8px;
+    line-height: 28px !important;
+}
+
+.doctor-book-img {
+    position: absolute;
+    bottom: 0;
+    width: 140px;
+    right: 0;
+}
+
+.btn-book {
+    font-weight: 500 !important;
+    padding: 6px 11px !important;
+    font-size: 11px;
+    z-index: 99 !important;
+    border-radius: 50px !important;
+    letter-spacing: 0.4px;
+}
+
+.btn-book i {
+    margin-left: 6px;
+}
+
+/* Favorte Doctor */
+.favorite-img {
+    width: 50px;
+}
+
+.cf-btn a.btn {
+    border-radius: 0px !important;
+}
+
+/* Doctor Profile */
+.appointment-doctor-img {
+    width: 90px;
+}
+
+/* Book Appointment */
+.appointment-banner {
+    background: url(../img/background-blob.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Request Appointment */
+.custom-check-day .btn {
+    border: none;
+    border-radius: 0;
+    border-top-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    background: #ffffff;
+    color: var(--dark);
+}
+
+.custom-check .btn {
+    background: #ffffff;
+    font-size: 13px;
+    color: var(--secondary);
+    padding: 7px 9px !important;
+    width: 100%;
+    line-height: 20px;
+    border-color: #d9d9d9;
+}
+
+.custom-check .btn span.fs-5 {
+    font-size: 19px !important;
+    font-weight: 600;
+}
+
+.custom-check .btn-check:checked+.btn,
+.custom-check .btn.active,
+.custom-check .btn.show,
+.custom-check .btn:first-child:active,
+:not(.btn-check)+.btn:active {
+    background: #16bef0 !important;
+    border-color: #16bef0 !important;
+    color: #fff !important;
+}
+
+.fee-icon {
+    height: 45px;
+    width: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+/* Notification */
+.notification-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+}
+
+/* Video */
+.video-tabs button {
+    border: none;
+    background-color: #ffffff;
+    color: var(--dark) !important;
+    font-size: 15px;
+    border-bottom: 3px solid #fff;
+    border-top: 3px solid #fff;
+    padding: 12px 10px;
+}
+
+.video-tabs button.active {
+    color: #14BEF0 !important;
+    border-bottom: 3px solid;
+    font-weight: 500;
+    background: #eefbff;
+    border-top: 3px solid #eefbff;
+}
+
+/* Doctor Profile Two */
+.doctor-profile-tabs button {
+    border: none;
+    background-color: #ffffff;
+    color: var(--dark) !important;
+    font-size: 15px;
+    border-bottom: 3px solid #fff;
+    border-top: 3px solid #fff;
+    padding: 12px 10px;
+}
+
+.doctor-profile-tabs button.active {
+    color: #14BEF0 !important;
+    border-bottom: 3px solid;
+    font-weight: 500;
+    background: #eefbff;
+    border-top: 3px solid #eefbff;
+}
+
+.review-profile {
+    width: 35px;
+}
+
+.offcanvas {
+    border-top-left-radius: 2rem;
+    border-top-right-radius: 2rem;
+}
+
+.offcanvas-footer {
+    padding: 1rem 1rem;
+}
+
+/* Visit Info / Chekout */
+.upload-file {
+    position: relative;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.upload-file-icon {
+    position: absolute;
+    top: -34px;
+    right: -32px;
+    height: 100px;
+    width: 100px;
+    border-bottom-left-radius: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+/* Message */
+.plus-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+}
+
+.message-profile {
+    width: 40px;
+}
+
+/* Call */
+.call-img {
+    width: 150px;
+}
+
+.call-display {
+    height: calc(100vh - 87px);
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
+}
+
+.call-icons a {
+    height: 50px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #ffffff;
+}
+
+/* Call Doctor */
+.call-doctor {
+    height: calc(100vh - 87px);
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
+    background: url(../img/favorite/favorite-4.jpg);
+    background-position: center;
+    background-size: cover;
+}
+
+.patient-icon {
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* History */
+.voice-img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+}
+
+/* Profile */
+.edit-profile-back {
+    position: relative;
+}
+
+.edit-profile-icon {
+    position: absolute;
+    top: -30px;
+    right: -25px;
+    height: 100px;
+    width: 100px;
+    border-bottom-left-radius: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+/* My Appointment */
+.btn-rounded {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Play Recording */
+.play-recording-background {
+    background: url(../img/favorite/favorite-4.jpg);
+    background-position: center;
+    background-size: cover;
+    height: calc(100vh - 87px);
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
+}
+
+.logout-form {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+
+.logout-form button {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    font-size: 13px;
+}

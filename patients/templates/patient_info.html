@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+   textarea::placeholder {
+      text-indent: 2px;
+      line-height: 2.5;
+      color: #6c757d;
+   }
+   .toast-msg {
+      position: fixed; 
+      bottom: 80px; 
+      left: 50%; 
+      transform: translateX(-50%); 
+      display: none; 
+      background-color: #3e4f4e; 
+      color: #fff; 
+      padding: 10px 20px; 
+      border-radius: 5px;
+      width:auto;
+  }
+  .file-item {
+      padding: 10px;
+      background-color: #f9f9f9;
+      border: 1px dashed #6666;
+      border-radius: 4px;
+   }
+</style>
+
+   <body class="bg-light">
+      <div class="visit-info d-flex flex-column vh-100">
+         <div class="d-flex align-items-center justify-content-between mb-auto p-3 bg-white shadow-sm osahan-header">
+            <a href="{% url 'request_appointment' doctor_id=doctor.id %}" class="text-dark bg-white shadow rounded-circle icon">
+                  <span class="mdi mdi-arrow-left mdi-18px"></span></a>
+            <h6 class="mb-0 ms-3 me-auto fw-bold">Visit Info</h6>
+            <div class="d-flex align-items-center gap-3">
+               <a class="toggle bg-white shadow rounded-circle icon d-flex align-items-center justify-content-center fs-5" href="#"><i class="bi bi-list"></i></a>
+            </div>
+         </div>
+         
+         <div class="vh-100 my-auto overflow-auto p-3">
+         <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+               <div class="mb-3">
+                  <label for="exampleFormControlName" class="form-label mb-1">Patient Name</label>
+                  <div class="input-group border bg-white rounded-3 py-1" id="exampleFormControlName">
+                     <span class="input-group-text bg-transparent rounded-0 border-0" id="name"><i class="bi bi-person-circle text-muted"></i></span>
+                     <input type="text" class="form-control bg-transparent rounded-0 border-0 px-0" name="patient-name" value="{{ patient_name }}"
+                        placeholder="Patient name" aria-label="Patient name" aria-describedby="name">
+                  </div>
+               </div>
+               <div class="mb-3">
+                  <label for="exampleFormControlAddress" class="form-label mb-1">Address</label>
+                  <div class="input-group border bg-white rounded-3 py-1" id="exampleFormControlAddress">
+                     <span class="input-group-text bg-transparent rounded-0 border-0" id="name"><i class="bi bi-geo-alt-fill text-muted"></i></span>
+                     <textarea class="form-control bg-transparent rounded-0 border-0 px-0" name="patient-address"
+                        placeholder="Type address..." aria-label="Patient address" aria-describedby="address">{{ patient_address }}</textarea>
+                  </div>
+               </div>
+               <div class="row g-2 mb-3">
+                  <div class="col">
+                     <div>
+                        <label for="exampleFormControlAge" class="form-label mb-1">Age</label>
+                        <div class="input-group border bg-white rounded-3 py-1" id="exampleFormControlAge">
+                           <span class="input-group-text bg-transparent rounded-0 border-0"><i class="bi bi-calendar-date text-muted"></i></span>
+                           <input type="number" class="form-control bg-transparent rounded-0 border-0 px-0" name="patient-age" placeholder="Age" value="{{ patient_age }}">
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col">
+                     <div>
+                        <label for="exampleFormControlMobile" class="form-label mb-1">Mobile</label>
+                        <div class="input-group border bg-white rounded-3 py-1" id="exampleFormControlMobile">
+                           <span class="input-group-text bg-transparent rounded-0 border-0"><i class="bi bi-phone text-muted"></i></span>
+                           <input type="text" class="form-control bg-transparent rounded-0 border-0 px-0" name="patient-mobile" placeholder="Mobile" value="{{ patient_mobile }}">
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="mb-3">
+                  <label for="exampleFormControlWight" class="form-label mb-1">Weight (KG)</label>
+                  <div class="input-group border bg-white rounded-3 py-1" id="exampleFormControlWight">
+                     <span class="input-group-text bg-transparent rounded-0 border-0"><i class="bi bi-speedometer2 text-muted"></i></span>
+                     <input type="text" class="form-control bg-transparent rounded-0 border-0 px-0" name="patient-weight" placeholder="Weight" maxlength="3" value="{{ patient_weight }}">
+                  </div>
+               </div>
+               <div class="mb-5">
+                  <label for="floatingTextarea" class="mb-1">Brifly describe the problem</label>
+                  <textarea class="form-control text-muted" style="height: 100px" name="patient-description" placeholder="Leave a comment here" id="floatingTextarea">{{ patient_description }}</textarea>
+               </div>
+         </div>
+         <input type="hidden" name="appointment-id" value="{{ appointment.id }}">
+         <input type="hidden" name="doctor-id" value="{{ doctor.id }}">
+         <!-- footer -->
+         <div class="footer mt-auto p-3">
+            <div class="file-upload-div" onclick="triggerUpload()" style="cursor:pointer"> 
+               <div class="bg-white rounded-4 border-primary-dotted py-3 ps-3 pe-5 upload-file mb-3">
+                  <p class="fw-bold mb-1 text-primary fs-14">Attach reports &<br> previous Prescriptions</p>
+                  <small class="text-muted">JPG, PNG, PDF (Max No. of attachments: 5)</small>
+                  <div class="upload-file-icon bg-primary">
+                     <label for="fileUpload" class="text-white fs-3 pt-4 pe-3">
+                        <i class="bi bi-file-earmark-arrow-up"></i>
+                     </label>
+                     <input type="file" id="fileUpload" name="attachments" class="d-none" multiple accept=".jpg,.png,.pdf" onchange="handleFiles()">
+                  </div>
+                  <small id="fileError" class="text-danger d-none">You can upload a maximum of 5 files.</small>
+               </div>   
+            </div>     
+            <ul id="fileList" class="mt-2 ps-0"></ul>  
+
+            <button type="submit" class="btn btn-info btn-lg w-100 rounded-4">CONFIRM BOOKING</button>
+         </form>
+         </div>         
+
+      <div id="toast" class="toast toast-msg" style="display: none;">
+         <i class="bi bi-exclamation-triangle" style="margin-right: 8px;"></i>
+         <span id="toast-message"></span>
+     </div>     
+
+     <script>
+      function showToast(message) {
+          var toast = document.getElementById('toast');
+          var toastMessage = document.getElementById('toast-message');
+          
+          toastMessage.textContent = message;
+          toast.style.display = 'block';
+  
+          setTimeout(function() {
+              toast.style.display = 'none';
+          }, 3000);
+      }
+  
+      {% if messages %}
+          {% for message in messages %}
+              showToast("{{ message|escapejs }}");
+          {% endfor %}
+      {% endif %}
+  </script>
+  
+
+      <script>
+
+         function triggerUpload() {
+            document.getElementById('fileUpload').click();
+         }
+         
+         let selectedFiles = [];
+         
+         function handleFiles() {
+            const fileInput = document.getElementById('fileUpload');
+            const fileList = document.getElementById('fileList');
+            const fileError = document.getElementById('fileError');
+            const maxFiles = 5;
+      
+            const existingFiles = fileList.getElementsByTagName('li').length;
+         
+            if (existingFiles + fileInput.files.length > maxFiles) {
+               fileError.classList.remove('d-none');
+               showToast("You can upload a maximum of 5 files.");
+               return;
+            } else {
+               fileError.classList.add('d-none');
+            }
+         
+            Array.from(fileInput.files).forEach(file => {
+               if (selectedFiles.some(f => f.name === file.name)) {
+                  showToast("This file is already selected.");
+                  return; 
+               }
+         
+               selectedFiles.push(file);
+
+               const li = document.createElement('li');
+               li.classList.add('file-item', 'd-flex', 'align-items-center', 'mb-2');
+         
+               const fileName = document.createElement('span');
+               fileName.classList.add('file-name', 'me-3');
+               fileName.textContent = file.name;
+         
+               const removeIcon = document.createElement('span');
+               removeIcon.classList.add('remove-icon', 'ms-auto', 'cursor-pointer', 'text-danger');
+               removeIcon.innerHTML = '<i class="bi bi-x-lg"></i>';
+         
+               removeIcon.onclick = function() {
+                  selectedFiles = selectedFiles.filter(f => f.name !== file.name);
+                  li.remove();
+                  checkFileLimit();
+                  updateFileInput();
+               };
+         
+               li.appendChild(fileName);
+               li.appendChild(removeIcon);
+         
+               fileList.appendChild(li);
+            });
+            
+            updateFileInput();
+         }
+         
+         function checkFileLimit() {
+            const fileList = document.getElementById('fileList');
+            const fileError = document.getElementById('fileError');
+            const maxFiles = 5;
+            const totalFiles = fileList.getElementsByTagName('li').length;
+         
+            if (totalFiles >= maxFiles) {
+               fileError.classList.remove('d-none');
+            } else {
+               fileError.classList.add('d-none');
+            }
+         }
+
+         function updateFileInput() {
+            const fileInput = document.getElementById('fileUpload');
+            const dataTransfer = new DataTransfer();
+        
+            selectedFiles.forEach(file => {
+                dataTransfer.items.add(file);
+            });
+        
+            fileInput.files = dataTransfer.files;
+        
+         }
+
+      </script>
+      
+{% endblock %}

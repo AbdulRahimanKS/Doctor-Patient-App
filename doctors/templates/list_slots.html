@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+   <!-- Data tables -->
+   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+<style>
+      .icon-btn {
+         background: none;
+         border: none;
+         color: #6c757d;
+         font-size: 1.2rem; 
+         cursor: pointer;
+         padding: 5px;
+         transition: color 0.2s ease;
+      }
+      .icon-btn:hover {
+         color: #007bff;
+      }
+      .icon-btn i {
+         vertical-align: middle; 
+      }
+      .text-uppercase {
+         text-transform: uppercase;
+      }
+      .tbody, td, tfoot, th, thead, tr {
+      border-style: none;
+      }
+      .dataTables_wrapper .dataTables_filter input {
+      margin-bottom: 8px;
+      }
+      .dataTables_wrapper .dataTables_paginate, .dataTables_wrapper .dataTables_info {
+      margin-top: 8px;
+      }
+</style>
+
+<body class="bg-light">
+   <div class="select-area d-flex flex-column vh-100">
+      <div class="bg-white shadow-sm">
+         <div class="d-flex align-items-center justify-content-between mb-auto p-3 osahan-header">
+            <div class="d-flex align-items-center gap-2 me-auto">
+               <a href="{% url 'doctor_home' %}" class="text-dark bg-white shadow rounded-circle icon">
+                  <span class="mdi mdi-arrow-left mdi-18px"></span>
+               </a>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+               <a class="toggle text-muted d-flex align-items-center justify-content-center fs-5 bg-white shadow rounded-circle icon" href="#"><i
+                     class="bi bi-list"></i></a>
+            </div>
+         </div>
+         <div class="px-3 pb-3">
+            <form method="get" action="{% url 'list_slots' %}">
+               <div class="input-group rounded-4 shadow overflow-hidden border-0 py-1 ps-3 bg-light">
+                  <span class="input-group-text bg-transparent text-muted border-0 p-0" id="search"><span class="mdi mdi-magnify mdi-24px text-primary"></span></span>
+                  <input type="text" name="q" value="{{ query }}" class="form-control bg-transparent text-muted border-0 px-3 fs-14" placeholder="Search" aria-label="Search" aria-describedby="search">
+               </div>
+            </form>
+         </div>
+      </div>
+      <!-- body -->
+      <div class="vh-100 my-auto overflow-auto body-fix-osahan-footer">
+        <div class="table-responsive px-3 mt-3">
+            <table class="table table-striped table-hover" id="slotsTable">
+               <thead class="bg-primary text-white">
+                  <tr>
+                     <th scope="col">#</th>
+                     <th scope="col">Date</th>
+                     <th scope="col">Start Time</th>
+                     <th scope="col">End Time</th>
+                     <th scope="col">Available</th>
+                     <th scope="col">Booked</th>
+                     <th scope="col">Actions</th>
+                  </tr>
+               </thead>
+               <tbody>
+                {% for slot in slots %}
+                  <tr>
+                     <th scope="row">{{ forloop.counter }}</th>
+                     <td class="text-uppercase">{{ slot.date }}</td>
+                     <td class="text-uppercase">{{ slot.start_time }}</td>
+                     <td class="text-uppercase">{{ slot.end_time }}</td>
+                     <td>
+                        {% if slot.is_available %}
+                        <span class="badge bg-success">Yes</span>
+                        {% else %}
+                        <span class="badge bg-secondary">No</span>
+                        {% endif %}
+                     </td>
+                     <td>
+                        {% if slot.is_booked %}
+                        <span class="badge bg-success">Yes</span>
+                        {% else %}
+                        <span class="badge bg-secondary">No</span>
+                        {% endif %}
+                     </td>
+                     <td>
+                        <a href="#" class="icon-btn"><i class="mdi mdi-pencil"></i></a>
+                        <button class="icon-btn"><i class="mdi mdi-delete"></i></button>
+                     </td>
+                  </tr>
+                {% endfor %}
+               </tbody>
+            </table>
+         </div>
+      </div>
+      <!-- footer -->
+      <div class="footer mt-auto p-3 fix-osahan-footer">
+        <div
+           class="d-flex align-items-center justify-content-between rounded-4 shadow overflow-hidden bottom-nav-main">
+           <a href="{% url 'doctor_home' %}" class="col footer-bottom-nav">
+              <span class="mdi mdi-home-variant-outline mdi-24px"></span>
+              <span>Home</span>
+           </a>
+           <a href="{% url 'list_slots' %}" class="col footer-bottom-nav active">
+              <span class="mdi mdi-magnify mdi-24px"></span>
+              <span>Search</span>
+           </a>
+           <a href="#" class="col footer-bottom-nav">
+              <span class="mdi mdi-video-outline mdi-24px"></span>
+              <span>Video</span>
+           </a>
+           <a href="#" class="col footer-bottom-nav">
+              <span class="mdi mdi-message-processing-outline mdi-24px"></span>
+              <span>Chat</span>
+           </a>
+           <a href="#" class="col footer-bottom-nav">
+              <span class="mdi mdi-account-outline mdi-24px"></span>
+              <span>Profile</span>
+           </a>
+        </div>
+     </div>
+   </div>
+
+   <nav id="main-nav">
+    <ul class="second-nav">
+       <li class="osahan-user-profile bg-primary">
+          <div class="d-flex align-items-center gap-2">
+            {% if request.user.doctor_profile.profile_picture %}
+             <img src="{{ request.user.doctor_profile.profile_picture.url }}" alt="" class="rounded-pill img-fluid">
+            {% elif request.user.doctor_profile.gender == 'Male' %}
+             <img src="{% static 'img/home/male-doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+            {% elif request.user.doctor_profile.gender == 'Female' %}
+             <img src="{% static 'img/home/female-doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+            {% else %}
+             <img src="{% static 'img/home/doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+            {% endif %}
+             <div class="ps-1">
+                <h6 class="fw-bold text-white mb-0">Hey, {{ request.user.name }}!</h6>
+                <p class="text-white-50 m-0 small">{{ request.user.countryCode }} {{ request.user.mobile }}</p>
+             </div>
+          </div>
+       </li>
+       <li><a href="{% url 'doctor_home' %}"><span class="mdi mdi-home-variant-outline me-3"></span>Homepage</a></li>
+       <li>
+         <form method="POST" action="{% url 'sign_out' %}" class="logout-form">
+            {% csrf_token %}
+            <button type="submit"><span class="mdi mdi-logout me-3"></span>Sign out</button>
+         </form>     
+       </li>
+    </ul>
+    <ul class="bottom-nav">
+       <li class="home">
+          <a href="{% url 'doctor_home' %}">
+             <p class="h5 m-0"><span class="mdi mdi-home-variant-outline"></span></p>
+             Home
+          </a>
+       </li>
+       <li class="find">
+         <a href="{% url 'list_slots' %}">
+            <p class="h5 m-0"><span class="mdi mdi-magnify"></span></p>
+            Search
+         </a>
+      </li>
+       <li class="more">
+          <a href="#">
+             <p class="h5 m-0"><span class="mdi mdi-account-circle-outline"></span></p>
+             Profile
+          </a>
+       </li>
+    </ul>
+ </nav>
+
+ <!-- jQuery and DataTables JS -->
+ <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+ <script type="text/javascript">
+   $(document).ready(function() {
+      $('.slotsTable').DataTable(); 
+   });
+
+   $('#slotsTable').DataTable({
+      lengthChange: false,
+      pageLength: 6,
+      columnDefs: [{
+            "orderable": false, 
+            "targets": 6
+      }],
+  });
+ </script>
+
+{% endblock %}
+   

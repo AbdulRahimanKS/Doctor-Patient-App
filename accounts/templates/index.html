@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+      <div class="welcome d-flex align-items-center justify-content-center vh-100">
+         <div class="text-center pb-5 mb-5">
+            <div class="mb-5">
+               <img src="{% static 'img/logo.svg' %}" alt="" class="img-fluid blue-logo mb-3">
+               <h1 class="text-primary mb-1">Dactorapp</h1>
+               <p class="text-muted">Welcom to Dactorapp</p>
+            </div>
+         </div>
+      </div>
+      <!-- fixed-footer -->
+      <div class="footer fixed-bottom d-grid gap-3 m-4">
+         <a href="{% url 'landing_page' %}" class="btn btn-info btn-lg">Sign Up</a>
+         <a href="{% url 'sign_in' %}" class="btn btn-outline-info btn-lg">Sign In</a>
+      </div>
+
+{% endblock %}
+

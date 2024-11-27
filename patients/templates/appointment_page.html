@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<body class="bg-light">
+   <div class="select-area d-flex flex-column vh-100">
+      <div class="bg-white shadow-sm">
+         <div class="d-flex align-items-center justify-content-between mb-auto p-3 osahan-header">
+            <div class="d-flex align-items-center gap-2 me-auto">
+               <a href="{% url 'home' %}" class="text-dark bg-white shadow rounded-circle icon">
+                  <span class="mdi mdi-arrow-left mdi-18px"></span>
+               </a>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+               <a class="toggle text-muted d-flex align-items-center justify-content-center fs-5 bg-white shadow rounded-circle icon" href="#"><i
+                     class="bi bi-list"></i></a>
+            </div>
+         </div>
+         <div class="px-3 pb-3">
+            <form method="get" action="{% url 'doctors_list' %}">
+               <div class="input-group rounded-4 shadow overflow-hidden border-0 py-1 ps-3 bg-light">
+                  <span class="input-group-text bg-transparent text-muted border-0 p-0" id="search"><span class="mdi mdi-magnify mdi-24px text-primary"></span></span>
+                  <input type="text" name="q" value="{{ query }}" class="form-control bg-transparent text-muted border-0 px-3 fs-14" placeholder="Search" aria-label="Search" aria-describedby="search">
+               </div>
+            </form>
+         </div>
+      </div>
+      <!-- body -->
+      <div class="vh-100 my-auto overflow-auto body-fix-osahan-footer">
+         <div class="py-3">
+            <!-- Specialist -->
+            <div>
+               <h6 class="mb-2 pb-1 px-3 fw-bold text-black">Available Doctors</h6>
+               <!-- 1st -->
+               {% if doctors %}
+               {% for doctor in doctors %}
+               <a href="{% url 'request_appointment' doctor_id=doctor.id %}" class="link-dark">
+                  <div class="d-flex align-items-center gap-3 bg-white border-bottom shadow-sm p-3">
+                     {% if doctor.profile_picture %}
+                        <img src="{{ doctor.profile_picture.url }}" alt="" class="img-fluid rounded-4 favorite-img">
+                     {% elif doctor.gender == 'Male' %}
+                        <img src="{% static 'img/home/male-doctor.png' %}" alt="" class="img-fluid rounded-4 favorite-img">
+                     {% elif doctor.gender == 'Female' %}
+                        <img src="{% static 'img/home/female-doctor.png' %}" alt="" class="img-fluid rounded-4 favorite-img">
+                     {% else %}
+                        <img src="{% static 'img/home/doctor.png' %}" alt="" class="img-fluid rounded-4 favorite-img">
+                     {% endif %}
+                     <div class="small">
+                        <h6 class="mb-1 fs-14">Dr. {{ doctor.full_name }}</h6>
+                        <div class="d-flex align-items-center gap-1 small">
+                           <span class="mdi mdi-star text-warning"></span>
+                           <span class="mdi mdi-star text-warning"></span>
+                           <span class="mdi mdi-star text-warning"></span>
+                           <span class="mdi mdi-star text-warning"></span>
+                           <span class="mdi mdi-star text-warning"></span>
+                           <span class="text-warning">4.9</span>
+                           <span>(5,380)</span>
+                        </div>
+                        <small class="text-muted">{{ doctor.specialization.name }} - {{ doctor.college }}</small>
+                     </div>
+                  </div>
+               </a>
+               {% endfor %}
+               {% else %}
+                  <p class="text-muted text-center">No doctors found</p>
+               {% endif %}
+            </div>
+         </div>
+      </div>
+      <!-- footer -->
+      <div class="footer mt-auto p-3 fix-osahan-footer">
+         <div class="d-flex align-items-center justify-content-between rounded-4 shadow overflow-hidden bottom-nav-main">
+            <a href="{% url 'home' %}" class="col footer-bottom-nav">
+            <span class="mdi mdi-home-variant-outline mdi-24px"></span>
+            <span>Home</span>
+            </a>
+            <a href="{% url 'doctors_list' %}" class="col footer-bottom-nav active">
+            <span class="mdi mdi-magnify mdi-24px"></span>
+            <span>Search</span>
+            </a>
+            <a href="{% url 'video_page' %}" class="col footer-bottom-nav">
+            <span class="mdi mdi-video-outline mdi-24px"></span>
+            <span>Video</span>
+            </a>
+            <a href="#" class="col footer-bottom-nav">
+            <span class="mdi mdi-message-processing-outline mdi-24px"></span>
+            <span>Chat</span>
+            </a>
+            <a href="{% url 'profile_page' %}" class="col footer-bottom-nav">
+            <span class="mdi mdi-account-outline mdi-24px"></span>
+            <span>Profile</span>
+            </a>
+         </div>
+      </div>
+   </div>
+
+{% endblock %}
+   

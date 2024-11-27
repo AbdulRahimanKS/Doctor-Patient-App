@@ -1,0 +1,314 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+    <style>
+        .toast-msg {
+            position: fixed; 
+            bottom: 80px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            display: none; 
+            background-color: #3e4f4e; 
+            color: #fff; 
+            padding: 10px 20px; 
+            border-radius: 5px;
+            width:auto;
+        }
+        .booked-label {
+            border: 1px solid #6666 !important; 
+        }
+    </style>
+
+   <body class="bg-light">
+      <!-- navbar -->
+      <div class="request-appointment d-flex flex-column vh-100">
+         <div class="d-flex align-items-center justify-content-between mb-auto p-3 bg-white shadow-sm osahan-header">
+            <a href="{% url 'home' %}" class="text-dark bg-white shadow rounded-circle icon">
+                  <span class="mdi mdi-arrow-left mdi-18px"></span></a>
+            <h6 class="mb-0 ms-3 me-auto fw-bold">Appointment</h6>
+            <div class="d-flex align-items-center gap-3">
+               <a class="toggle bg-white shadow rounded-circle icon d-flex align-items-center justify-content-center fs-5" href="#"><i class="bi bi-list"></i></a>
+            </div>
+         </div>
+         <!-- body -->
+         <div class="vh-100 my-auto overflow-auto p-3">
+            <!-- banner -->
+            <div class="rounded-4 px-3 appointment-banner mb-4">
+               <div class="d-flex align-items-center gap-3">
+                {% if doctor.profile_picture %}
+                  <img src="{{ doctor.profile_picture.url }}" alt="" class="img-fluid appointment-doctor-img">
+                {% elif doctor.gender == 'Male' %}
+                  <img src="{% static 'img/home/male-doctor.png' %}" alt="" class="img-fluid appointment-doctor-img" style="padding:10px">
+                {% elif doctor.gender == 'Female' %}
+                    <img src="{% static 'img/home/female-doctor.png' %}" alt="" class="img-fluid appointment-doctor-img" style="padding:10px">
+                {% else %}
+                    <img src="{% static 'img/home/doctor.png' %}" alt="" class="img-fluid appointment-doctor-img" style="padding:10px">
+                {% endif %}
+                  <div>
+                     <h6>Consultation Fee</h6>
+                     <h1 class="text-primary mb-0 fw-bold">₹ {{ doctor.consultation_fee }}
+                        <span class="text-muted fw-normal fs-6">Inc. VAT</span>
+                     </h1>
+                  </div>
+               </div>
+            </div>
+            <form onsubmit="return validateForm()" method="POST">
+            {% csrf_token %}
+            <div id="slots-container">
+                {% if filtered_slots.items %}
+                <div class="mb-3">
+                    <div class="row g-2 custom-check">
+                        {% for month, days in filtered_slots.items %}
+                            <div class="col">
+                                <p class="fs-14 fw-bold text-black mb-3">{{ month }}</p>
+                                <div class="row g-1">
+                                    {% for day, times in days.items %}
+                                        <div class="col text-center">
+                                            <input type="radio" class="btn-check day-selector" name="btnradio" 
+                                                   data-month="{{ month }}" data-day="{{ day.0 }}" data-day-name="{{ day.1 }}" data-year="{{ day.2 }}"
+                                                   id="btnradio{{ forloop.parentloop.counter0 }}{{ forloop.counter }}" value="{{ day.0 }}-{{ month }}-{{ day.2 }}"
+                                                   autocomplete="off"
+                                                   {% if forloop.parentloop.first and forloop.first %}checked{% endif %}>
+                                            <label class="btn btn-outline-info w-100" 
+                                                   for="btnradio{{ forloop.parentloop.counter0 }}{{ forloop.counter }}">
+                                                {{ day.1 }}<br><span class="fs-5">{{ day.0 }}</span>
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <input type="hidden" name="doctor_id" value="{{doctor.id}}">
+
+                <div class="mb-4" id="slots-for-selected-date">
+                    <h5 class="fs-14 fw-bold text-black mb-3">Morning Slots</h5>
+                    <div class="row align-items-center justify-content-between g-2 custom-check" id="morning-slots">
+                        {% if first_day_slots.morning %}
+                        {% for slot in first_day_slots.morning %}
+                            <div class="col">
+                                <input type="radio" class="btn-check" name="btnradio1" value="{{ slot.time }}" 
+                                    id="btnradio{{ forloop.counter }}" autocomplete="off" {% if slot.is_booked %} disabled {% endif %}>
+                                <label class="btn {% if slot.is_booked %}booked-label{% else %}btn-outline-info{% endif %}" for="btnradio{{ forloop.counter }}">
+                                    {{ slot.time }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                        {% else %}
+                            <p class="fs-14 text-muted">No morning slots available</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <h5 class="fs-14 fw-bold text-black mb-3">Afternoon Slots</h5>
+                    <div class="row align-items-center justify-content-between g-2 custom-check" id="afternoon-slots">
+                        {% if first_day_slots.afternoon %}
+                        {% for slot in first_day_slots.afternoon %}
+                            <div class="col slot-col">
+                                <input type="radio" class="btn-check" name="btnradio1" value="{{ slot.time }}" 
+                                    id="btnradio{{ forloop.counter }}" autocomplete="off" {% if slot.is_booked %} disabled {% endif %}>
+                                <label class="btn {% if slot.is_booked %}booked-label{% else %}btn-outline-info{% endif %}" for="btnradio{{ forloop.counter }}">
+                                    {{ slot.time }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                        {% else %}
+                            <p class="fs-14 text-muted">No afternoon slots available</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <h5 class="fs-14 fw-bold text-black mb-3">Evening Slots</h5>
+                    <div class="row align-items-center justify-content-between g-2 custom-check" id="evening-slots">
+                        {% if first_day_slots.evening %}
+                        {% for slot in first_day_slots.evening %}
+                            <div class="col">
+                                <input type="radio" class="btn-check" name="btnradio1" value="{{ slot.time }}" 
+                                    id="btnradio{{ forloop.counter }}" autocomplete="off" {% if slot.is_booked %} disabled {% endif %}>
+                                <label class="btn {% if slot.is_booked %}booked-label{% else %}btn-outline-info{% endif %}" for="btnradio{{ forloop.counter }}">
+                                    {{ slot.time }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                        {% else %}
+                            <p class="fs-14 text-muted">No evening slots available</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                    <p class="fs-6 text-muted text-center p-5">No Slots available</p>
+                {% endif %}
+            </div>
+            <div class="mb-4">
+               <h5 class="fs-14 fw-bold text-black mb-3">Fee Information</h5>
+               <div class="mb-2">
+                  <div class="bg-white rounded-4 shadow-sm d-flex align-items-center gap-3 p-3">
+                     <div class="light-bg-primary rounded-4 fee-icon">
+                        <span class="mdi mdi-phone-outline text-white"></span>
+                     </div>
+                     <div>
+                        <h6 class="mb-1 fs-14">Voice Call</h6>
+                        <p class="text-muted m-0 small">Can make a voice call</p>
+                     </div>
+                     <div class="ms-auto">
+                        <h4 class="text-primary m-0 fw-bold">₹ 120</h4>
+                     </div>
+                  </div>
+               </div>
+               <div class="mb-2">
+                  <div class="bg-white rounded-4 shadow-sm d-flex align-items-center gap-3 p-3">
+                     <div class="light-bg-primary rounded-4 fee-icon">
+                        <span class="mdi mdi-video text-white"></span>
+                     </div>
+                     <div>
+                        <h6 class="mb-1 fs-14">Video Call</h6>
+                        <p class="text-muted m-0 small">Can make a video call</p>
+                     </div>
+                     <div class="ms-auto">
+                        <h4 class="text-primary m-0 fw-bold">₹ 200</h4>
+                     </div>
+                  </div>
+               </div>
+               {% comment %} <div class="mb-2">
+                  <div class="bg-white rounded-4 shadow-sm d-flex align-items-center gap-3 p-3">
+                     <div class="light-bg-primary rounded-4 fee-icon">
+                        <span class="mdi mdi-message-processing-outline text-white"></span>
+                     </div>
+                     <div>
+                        <h6 class="mb-1 fs-14">Messaging</h6>
+                        <p class="text-muted m-0 small">Can make a message</p>
+                     </div>
+                     <div class="ms-auto">
+                        <h4 class="text-primary m-0 fw-bold">₹ 50</h4>
+                     </div>
+                  </div>
+               </div> {% endcomment %}
+            </div>
+         </div>
+         <!-- footer -->
+         <div class="footer mt-auto p-3">
+            <button type="submit" class="btn btn-info btn-lg w-100 rounded-4">Request For Appointment</button>
+         </div>
+        </form>
+      </div>
+
+      <div id="toast" class="toast toast-msg">
+        <i class="bi bi-info-circle" style="margin-right:8px"></i>
+        <span id="toast-message"></span>
+      </div>
+
+      <script>
+        const filteredSlots = {{ js_slots|safe }};
+
+        // Function to populate the available slots
+        function populateSlots(month, dayKey) {
+            document.getElementById('morning-slots').innerHTML = '';
+            document.getElementById('afternoon-slots').innerHTML = '';
+            document.getElementById('evening-slots').innerHTML = '';
+
+            const selectedSlots = filteredSlots[month] && filteredSlots[month][dayKey] ? filteredSlots[month][dayKey] : { morning: [], afternoon: [], evening: [] };
+        
+            // Populate the morning slots
+            if (selectedSlots.morning && selectedSlots.morning.length > 0) {
+                selectedSlots.morning.forEach(slot => {
+                    const isBookedClass = slot.is_booked ? 'booked-label' : 'btn-outline-info';
+                    const isDisabled = slot.is_booked ? 'disabled' : '';
+                    document.getElementById('morning-slots').innerHTML += `
+                        <div class="col">
+                            <input type="radio" class="btn-check" name="btnradio1" value="${slot.time}" id="btnradio-morning-${slot.time}" autocomplete="off" ${isDisabled}>
+                            <label class="btn ${isBookedClass}" for="btnradio-morning-${slot.time}">${slot.time}</label>
+                        </div>
+                    `;
+                });
+            } else {
+                document.getElementById('morning-slots').innerHTML = '<p class="fs-14 text-muted">No morning slots available</p>';
+            }
+        
+            // Populate the afternoon slots
+            if (selectedSlots.afternoon && selectedSlots.afternoon.length > 0) {
+                selectedSlots.afternoon.forEach(slot => {
+                    const isBookedClass = slot.is_booked ? 'booked-label' : 'btn-outline-info';
+                    const isDisabled = slot.is_booked ? 'disabled' : '';
+                    document.getElementById('afternoon-slots').innerHTML += `
+                        <div class="col">
+                            <input type="radio" class="btn-check" name="btnradio1" value="${slot.time}" id="btnradio-afternoon-${slot.time}" autocomplete="off" ${isDisabled}>
+                            <label class="btn ${isBookedClass}" for="btnradio-afternoon-${slot.time}">${slot.time}</label>
+                        </div>
+                    `;
+                });
+            } else {
+                document.getElementById('afternoon-slots').innerHTML = '<p class="fs-14 text-muted">No afternoon slots available</p>';
+            }
+        
+            // Populate the evening slots
+            if (selectedSlots.evening && selectedSlots.evening.length > 0) {
+                selectedSlots.evening.forEach(slot => {
+                    const isBookedClass = slot.is_booked ? 'booked-label' : 'btn-outline-info';
+                    const isDisabled = slot.is_booked ? 'disabled' : '';
+                    document.getElementById('evening-slots').innerHTML += `
+                        <div class="col">
+                            <input type="radio" class="btn-check" name="btnradio1" value="${slot.time}" id="btnradio-evening-${slot.time}" autocomplete="off" ${isDisabled}>
+                            <label class="btn ${isBookedClass}" for="btnradio-evening-${slot.time}">${slot.time}</label>
+                        </div>
+                    `;
+                });
+            } else {
+                document.getElementById('evening-slots').innerHTML = '<p class="fs-14 text-muted">No evening slots available</p>';
+            }
+        }
+        
+        // Listen for a click on any date radio button
+        document.querySelectorAll('.day-selector').forEach(button => {
+            button.addEventListener('click', function() {
+                const month = this.getAttribute('data-month');
+                const day = this.getAttribute('data-day');
+                const dayName = this.getAttribute('data-day-name')
+                const year = this.getAttribute('data-year')
+                const dayKey = `${day}-${dayName}-${year}`;
+                populateSlots(month, dayKey);
+            });
+        });
+        
+    </script>
+
+    <script>
+        function showToast(message) {
+            document.getElementById('toast-message').innerText = message;
+            var toast = document.getElementById('toast');
+            toast.style.display = 'block';
+            
+            setTimeout(function() {
+              toast.style.display = 'none';
+            }, 3000);
+        }
+
+        function validateForm() {
+            let dateSelected = document.querySelector('input[name="btnradio"]:checked');
+            let slotSelected = document.querySelector('input[name="btnradio1"]:checked');
+            
+            if (!dateSelected && !slotSelected) {
+                showToast('Please select both a date and a time slot for your appointment');
+                return false;
+              } else if (!dateSelected) {
+                showToast('Please select a date for your appointment');
+                return false;
+              } else if (!slotSelected) {
+                showToast('Please select a time slot for your appointment');
+                return false;
+              }
+          
+              return true
+          }
+
+          {% if messages %}
+            {% for message in messages %}
+                showToast("{{ message }}");
+            {% endfor %}
+          {% endif %}
+
+    </script>
+      
+{% endblock %}
+

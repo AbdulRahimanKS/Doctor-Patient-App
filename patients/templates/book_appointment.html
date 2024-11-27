@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<body class="bg-light">
+   <div class="appointment d-flex flex-column vh-100">
+      <!-- navbar -->
+      <div class="d-flex align-items-center justify-content-between mb-auto p-3 bg-white shadow-sm osahan-header">
+         <a href="{% url 'request_appointment' doctor_id=doctor.id %}" class="text-dark bg-white shadow rounded-circle icon">
+            <span class="mdi mdi-arrow-left mdi-18px"></span></a>
+         <h6 class="mb-0 ms-3 me-auto fw-bold">Doctor Profile</h6>
+         <div class="d-flex align-items-center gap-2">
+            <a href="#" class="bg-white shadow rounded-circle icon">
+               <span class="mdi mdi-cards-heart-outline mdi-18px text-primary"></span>
+            </a>
+            <a href="#" class="bg-white shadow rounded-circle icon">
+               <span class="mdi mdi-bell-outline mdi-18px text-primary"></span>
+            </a>
+            <a class="toggle d-flex align-items-center justify-content-center bg-white shadow rounded-circle icon fs-5" href="#"><i
+                  class="bi bi-list"></i></a>
+         </div>
+      </div>
+      <!-- banner -->
+      <div class="vh-100 my-auto overflow-auto p-3">
+         <div class="overflow-hidden rounded-4 shadow-sm mb-4">
+            <div class="px-3 appointment-banner">
+               <div class="d-flex align-items-center gap-3">
+                  {% if doctor.profile_picture %}
+                     <img src="{{ doctor.profile_picture.url }}" alt="" class="img-fluid appointment-doctor-img">
+                  {% elif doctor.gender == 'Male' %}
+                     <img src="{% static 'img/home/male-doctor.png' %}" alt="" class="img-fluid appointment-doctor-img" style="padding:10px">
+                  {% elif doctor.gender == 'Female' %}
+                     <img src="{% static 'img/home/female-doctor.png' %}" alt="" class="img-fluid appointment-doctor-img" style="padding:10px">
+                  {% else %}
+                     <img src="{% static 'img/home/doctor.png' %}" alt="" class="img-fluid appointment-doctor-img" style="padding:10px">
+                  {% endif %}
+                  <div>
+                     <h5 class="mb-1">Dr. {{ doctor.full_name }}</h5>
+                     <p class="text-muted mb-2">{{ doctor.qualification }} - <span class="text-muted">{{ doctor.specialization.category.name }} - {{ doctor.specialization.name }}</p>
+                     <div class="d-flex align-items-center gap-1 text-warning small">
+                        <span class="mdi mdi-star"></span>
+                        <span class="mdi mdi-star"></span>
+                        <span class="mdi mdi-star"></span>
+                        <span class="mdi mdi-star"></span>
+                        <span class="mdi mdi-star"></span>
+                        <span>4.9</span>
+                        <span class="text-primary">(5,380)</span>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between bg-white">
+               <a href="#" class="col text-center rounded-0 p-3">
+                  <span class="mdi mdi-phone-outline h4 m-0 text-primary"></span>
+               </a>
+               <a href="#" class="col text-center rounded-0 p-3 border-end border-start">
+                  <span class="mdi mdi-video-outline h4 m-0 text-primary"></span>
+               </a>
+               <a href="#" class="col text-center rounded-0 p-3">
+                  <span class="mdi mdi-message-processing-outline h4 m-0 text-primary"></span>
+               </a>
+            </div>
+         </div>
+         <div class="body">
+            <div class="mb-4">
+               <h5 class="mb-1 text-black">Medicine & Dental Specialist</h5>
+               <p class="text-muted mb-2">Good health clinic, MBBC, FCPS</p>
+               <div class="d-flex align-items-center gap-1 text-warning">
+                  <span class="mdi mdi-star"></span>
+                  <span class="mdi mdi-star"></span>
+                  <span class="mdi mdi-star"></span>
+                  <span class="mdi mdi-star"></span>
+                  <span class="mdi mdi-star"></span>
+                  <span class="badge rounded-pill text-bg-warning">4.9</span>
+               </div>
+            </div>
+            <!-- about -->
+            <div class="mb-4">
+               <h6>About</h6>
+               <p class="text-muted">
+                {{ doctor.about }}
+               </p>
+            </div>
+            <div class="d-flex align-items-center justify-content-between border rounded-4 overflow-hidden bg-white shadow-sm">
+               <div class="text-center col px-2 py-3">
+                  <p class="mb-1">Pataint</p>
+                  <h5 class="text-primary m-0 fw-bold">2.05K</h5>
+               </div>
+               <div class="text-center col px-2 py-3 border-start border-end">
+                  <p class="mb-1">Experience</p>
+                  <h5 class="text-primary m-0 fw-bold">{% if doctor.experience_years <= 1 %}{{ doctor.experience_years }} year{% else %}{{ doctor.experience_years }} years{% endif %}</h5>
+               </div>
+               <div class="text-center col px-2 py-3">
+                  <p class="mb-1">Review</p>
+                  <h5 class="text-primary m-0 fw-bold">5.3K</h5>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- footer -->
+      <form method="POST">
+      {% csrf_token %}
+      <input type="hidden" name="doctor_id" value="{{ doctor.id }}">
+      <input type="hidden" name="slot_id" value="{{ slot.id }}">
+      <div class="footer osahan-footer mt-auto p-3">
+         <button type="submit" class="btn btn-info btn-lg w-100 rounded-4">Book on Appointment</button>
+      </div>
+      <form>
+   </div>
+
+{% endblock %}
+

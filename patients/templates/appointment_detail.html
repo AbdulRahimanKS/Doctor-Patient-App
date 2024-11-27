@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+   <body class="bg-light">
+      <div class="appointment-upcoming d-flex flex-column vh-100">
+         <!-- navbar -->
+         <div class="d-flex align-items-center justify-content-between mb-auto p-3 bg-white shadow-sm osahan-header">
+            <a href="{% url 'appointments_page' %}" class="text-dark bg-white shadow rounded-circle icon">
+                  <span class="mdi mdi-arrow-left mdi-18px"></span></a>
+            <h6 class="mb-0 ms-3 me-auto fw-bold">My Appointment</h6>
+            <div class="d-flex align-items-center gap-3">
+               <a class="toggle d-flex align-items-center justify-content-center fs-5 bg-white shadow rounded-circle icon" href="#"><i class="bi bi-list"></i></a>
+            </div>
+         </div>
+         <!-- body -->
+         <div class="vh-100 my-auto overflow-auto body-fix-osahan-footer">
+            <div class="p-3 bg-white shadow-sm">
+               <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom">
+                  {% if appointment.doctor.profile_picture %}
+                     <img src="{{ appointment.doctor.profile_picture.url }}" alt="" class="img-fluid rounded-4 voice-img">
+                  {% elif appointment.doctor.gender == 'Male' %}
+                     <img src="{% static 'img/home/male-doctor.png' %}" alt="" class="img-fluid rounded-4 voice-img">
+                  {% elif appointment.doctor.gender == 'Female' %}
+                     <img src="{% static 'img/home/female-doctor.png' %}" alt="" class="img-fluid rounded-4 voice-img">
+                  {% else %}
+                     <img src="{% static 'img/home/doctor.png' %}" alt="" class="img-fluid rounded-4 voice-img">
+                  {% endif %}
+                  <div>
+                     <h6 class="mb-1">Dr. {{ appointment.doctor.full_name }}</h6>
+                     <p class="text-muted mb-2">{{ appointment.doctor.specialization.name }}</p>
+                     <p class="text-muted small m-0"><span class="mdi mdi-calendar-month text-primary me-1"></span>
+                        {{ appointment.slot.date }}
+                     </p>
+                  </div>
+                  <div class="ms-auto">
+                     <div class="d-flex justify-content-end">
+                        <div class="bg-info-subtle rounded-circle icon mb-3">
+                           <span class="mdi mdi-phone-outline mdi-18px text-info"></span>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="d-flex align-items-center justify-content-between">
+                  <div class="d-flex align-items-center gap-3 col">
+                     <span class="mdi mdi-account-supervisor-outline mdi-24px text-info"></span>
+                     <div>
+                        <p class="mb-0 small text-muted">Patient</p>
+                        <p class="text-primary m-0 fw-bold">2.05K</p>
+                     </div>
+                  </div>
+                  <div class="d-flex align-items-center gap-3 col">
+                     <span class="mdi mdi-star-outline mdi-24px text-info"></span>
+                     <div>
+                        <p class="mb-0 small text-muted">Review</p>
+                        <p class="text-primary m-0 fw-bold">5.3K</p>
+                     </div>
+                  </div>
+                  <div class="d-flex align-items-center gap-3 col">
+                     <span class="mdi mdi-medal-outline mdi-24px text-info"></span>
+                     <div>
+                        <p class="mb-0 small text-muted">Experience</p>
+                        <p class="text-primary m-0 fw-bold">
+                            {% if appointment.doctor.experience_years <= 1 %}{{ appointment.doctor.experience_years }} year{% else %}{{ appointment.doctor.experience_years }} years{% endif %}
+                        </p>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="p-3">
+               <!-- visit time -->
+               <div class="bg-white rounded-4 border p-3 mb-2">
+                  <p class="mb-2 fs-14 fw-bold text-black">Visit Time</p>
+                  <div class="d-flex align-items-center gap-4">
+                     <div>
+                        <p class="mb-1">Day</p>
+                        <p class="mb-0">Visit Time</p>
+                     </div>
+                     <div>
+                        <p class="mb-1">: {{ appointment.slot.date|date:"l, M d, Y" }}</p>
+                        <p class="mb-0">: {{ appointment.slot.start_time|time:"h:i" }} - {{ appointment.slot.end_time|time:"h:i A" }}</p>
+                     </div>
+                  </div>
+               </div>
+               <!-- patient info -->
+               <div class="bg-white rounded-4 border p-3 mb-2">
+                  <p class="mb-2 fs-14 fw-bold text-black">Patient Info</p>
+                  <div class="d-flex align-items-center gap-4">
+                     <div>
+                        <p class="mb-1">Full Name</p>
+                        <p class="mb-1">Age</p>
+                        <p class="m-0">Phone</p>
+                     </div>
+                     <div>
+                        <p class="mb-1">: {{ appointment.patient_info.patient_name }}</p>
+                        <p class="mb-1">: {{ appointment.patient_info.age }}</p>
+                        <p class="m-0">: {{ appointment.patient_info.mobile }}</p>
+                     </div>
+                  </div>
+               </div>
+               <!-- fee info -->
+               <div class="bg-white rounded-4 border p-3 mb-3">
+                  <p class="mb-2 fs-14 fw-bold text-black">Fee Information</p>
+                  <div class="d-flex align-items-center gap-4">
+                    ₹ {{ appointment.doctor.consultation_fee }}
+                  </div>
+               </div>
+               {% if is_past %}
+               <a href="#" class="btn btn-dark btn-lg w-100 rounded-4 disabled">Call (Appointment completed on {{ appointment.slot.date|date:"d M, Y" }} at {{ appointment.slot.start_time|time:"h:i A" }})</a>
+               {% else %}
+               <button id="startMeetingBtn" data-doctor-id="{{ appointment.doctor.id }}" data-appointment-id="{{ appointment.slot.id }}" onclick="startMeeting(event)" 
+                  class="btn btn-info btn-lg w-100 rounded-4">Call (Scheduled for {{ appointment.slot.date|date:"d M, Y" }} at {{ appointment.slot.start_time|time:"h:i A" }})
+               </button>
+               {% endif %}
+            </div>
+         </div>
+         <!-- footer -->
+         <div class="footer mt-auto p-3 fix-osahan-footer">
+            <div class="d-flex align-items-center justify-content-between rounded-4 shadow overflow-hidden bottom-nav-main">
+               <a href="{% url 'home' %}" class="col footer-bottom-nav">
+               <span class="mdi mdi-home-variant-outline mdi-24px"></span>
+               <span>Home</span>
+               </a>
+               <a href="{% url 'doctors_list' %}" class="col footer-bottom-nav">
+               <span class="mdi mdi-magnify mdi-24px"></span>
+               <span>Search</span>
+               </a>
+               <a href="{% url 'video_page' %}" class="col footer-bottom-nav">
+               <span class="mdi mdi-video-outline mdi-24px"></span>
+               <span>Video</span>
+               </a>
+               <a href="#" class="col footer-bottom-nav">
+               <span class="mdi mdi-message-processing-outline mdi-24px"></span>
+               <span>Chat</span>
+               </a>
+               <a href="{% url 'profile_page' %}" class="col footer-bottom-nav active">
+               <span class="mdi mdi-account-outline mdi-24px"></span>
+               <span>Profile</span>
+               </a>
+            </div>
+         </div>
+      </div>
+
+      <script>
+         document.addEventListener("DOMContentLoaded", function () {
+            function getCSRFToken() {
+               let cookieValue = null;
+               const cookies = document.cookie.split(';');
+               for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  if (cookie.startsWith('csrftoken=')) {
+                     cookieValue = cookie.substring('csrftoken='.length, cookie.length);
+                     break;
+                  }
+               }
+               return cookieValue;
+            }
+   
+            window.startMeeting = function(event) {
+               event.preventDefault();
+   
+               const button = event.target.closest('button');
+               const doctorId = button.dataset.doctorId;
+               const appointmentId = button.dataset.appointmentId;
+   
+               const data = {
+                  doctor_id: doctorId,
+                  appointment_id: appointmentId
+               };
+   
+               fetch("{% url 'start_meeting' %}", {
+                  method: "POST", 
+                  headers: {
+                     "Content-Type": "application/json",
+                     "X-CSRFToken": getCSRFToken()
+                  },
+                  body: JSON.stringify(data)  
+               })
+               .then(response => response.json()) 
+               .then(data => {
+                  if (data.success) {
+                     const meetingId = data.meeting_id;
+                     const apiKey = data.apiKey;
+                     const userName = data.user_name;
+                     const isDoctor = data.is_doctor;
+                     
+                     const otherProjectUrl = `http://127.0.0.1:8001/?meeting_id=${meetingId}&api_key=${apiKey}&is_doctor=${isDoctor}&user_name=${encodeURIComponent(userName)}`;
+                     window.location.href = otherProjectUrl;
+                  } else {
+                     console.error("Error starting meeting:", data.error);
+                  }
+               })
+               .catch(error => {
+                  console.error("Error during API request:", error);
+               });
+   
+   
+            
+            }
+      });
+      </script>
+
+{% endblock %}
+

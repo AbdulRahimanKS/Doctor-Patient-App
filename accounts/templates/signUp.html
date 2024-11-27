@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+   .error-message {
+      color: red;
+      font-size: 0.875rem;
+      margin-top: 5px;
+  }
+</style>
+
+   <body class="bg-light">
+      <div class="sign-in p-4">
+         <div class="d-flex align-items-start justify-content-between mb-4">
+            <div>
+               <span class="mdi mdi-account-plus-outline display-1 text-primary"></span>
+               <h2 class="my-3 fw-bold">Getting Started</h2>
+               <p class="text-muted mb-0">Create an account to continue!</p>
+            </div>
+         </div>
+         <form id="mainForm" method="POST" action="{% url 'sign_up' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+               <label for="exampleFormControlName" class="form-label mb-1">Name</label>
+               <div class="input-group border bg-white rounded-3 py-1" id="exampleFormControlName">
+                  <span class="input-group-text bg-transparent rounded-0 border-0" id="name"><span class="mdi mdi-account-circle-outline mdi-18px text-muted"></span></span>
+                  <input type="text" class="form-control bg-transparent rounded-0 border-0 px-0" name="name"
+                     placeholder="Type your name" aria-label="Type your name" aria-describedby="name" value="{{name}}" required>
+               </div>
+               <div class="error-message" id="name-error"></div>
+            </div>
+            <div class="mb-3">
+               <label for="exampleFormControlEmail" class="form-label mb-1">Email</label>
+               <div class="input-group border bg-white rounded-3 py-1" id="exampleFormControlEmail">
+                  <span class="input-group-text bg-transparent rounded-0 border-0" id="mail"><span class="mdi mdi-email-outline mdi-18px text-muted"></span></span>
+                  <input type="email" class="form-control bg-transparent rounded-0 border-0 px-0" name="email"
+                     placeholder="Type your email" aria-label="Type your email or phone" aria-describedby="mail" value="{{email}}" required>
+               </div>
+               <div class="error-message" id="email-error"></div>
+               <div class="error-message" id="email-error" 
+                  style="display: {% if errors.email %} block {% else %} none {% endif %};">
+                  {{ errors.email }}
+               </div>
+            </div>
+            <div class="mb-3">
+               <label for="exampleFormControlMobile" class="form-label mb-1">Mobile</label>
+               <div class="input-group border bg-white rounded-3 py-1" id="exampleFormControlMobile">
+                  <span class="input-group-text bg-transparent rounded-0 border-0" id="mobile"><span class="mdi mdi-phone mdi-18px text-muted"></span></span>
+                  <input type="text" class="form-control bg-transparent rounded-0 border-0 px-0" name="mobile"
+                     placeholder="Type your mobile" aria-label="Type your mobile" aria-describedby="mobile" autocomplete="off" value="{{mobile}}" required>
+               </div>
+               <div class="error-message" id="mobile-error"></div>
+               <div class="error-message" id="mobile-error" 
+                  style="display: {% if errors.mobile %} block {% else %} none {% endif %};">
+                  {{ errors.mobile }}
+               </div>
+            </div>
+            <div class="mb-3">
+               <label for="exampleFormControlNewPassword" class="form-label mb-1">New Password</label>
+               <div class="input-group border bg-white rounded-3 py-1" id="exampleFormControlNewPassword">
+                  <span class="input-group-text bg-transparent rounded-0 border-0" id="new_password"><span class="mdi mdi-lock-outline mdi-18px text-muted"></span></span>
+                  <input type="password" class="form-control bg-transparent rounded-0 border-0 px-0" name="new_password"
+                     placeholder="Type your new password" aria-label="Type your new password" aria-describedby="new password" autocomplete="new-password" required>
+               </div>
+               <div class="error-message" id="password-error"></div>
+            </div>
+            <div class="mb-3">
+               <label for="exampleFormControlConfirmPassword" class="form-label mb-1">Confirm Password</label>
+               <div class="input-group border bg-white rounded-3 py-1" id="exampleFormControlConfirmPassword">
+                  <span class="input-group-text bg-transparent rounded-0 border-0" id="confirm_password"><span class="mdi mdi-lock-outline mdi-18px text-muted"></span></span>
+                  <input type="password" class="form-control bg-transparent rounded-0 border-0 px-0" name="confirm_password"
+                     placeholder="Confirm your password" aria-label="Confirm your password" aria-describedby="confirm password" autocomplete="off" required>
+               </div>
+               <div class="error-message" id="confirmPassword-error"></div>
+               <div class="error-message" id="confirmPassword-error" 
+                  style="display: {% if errors.confirm_password %} block {% else %} none {% endif %};">
+                  {{ errors.confirm_password }}
+               </div>
+            </div>
+            <div>
+               <a class="btn btn-info btn-lg w-100 rounded-4 mb-3 mt-3" id="createAccountBtn" aria-controls="offcanvasBottomCountry">Create Account</a>
+               <p class="text-muted text-center fs-8">Already have an account? <a class="text-primary" href="{% url 'sign_in' %}">Sign In</a></p>
+            </div>
+
+            <input type="hidden" id="selectedCountry" name="country">
+            <input type="hidden" id="selectedCountryCode" name="country_code">
+         </form>
+      </div>
+      <!-- fixed-bottom -->
+      {% comment %} <div class="footer fixed-bottom m-4">
+         <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
+            <hr class="col">
+            <span>Or Continue With</span>
+            <hr class="col">
+         </div>
+         <div class="d-flex gap-2">
+            <a href="sign-in-email.html" class="btn btn-white btn-lg bg-white col d-flex align-items-center justify-content-center shadow-sm border">
+            <i class="bi bi-google h4 mb-0 me-3"></i>Google</a>
+            <a href="sign-in-email.html" class="btn btn-white btn-lg bg-white col d-flex align-items-center justify-content-center shadow-sm border">
+            <i class="bi bi-apple h4 mb-0 me-3"></i>Apple</a>
+         </div>
+      </div> {% endcomment %}
+      <!-- offcanvas country -->
+      <div class="offcanvas offcanvas-bottom bg-light overflow-hidden" tabindex="-1" id="offcanvasBottomCountry" aria-labelledby="offcanvasBottomCountryLabel" style="height: 85%;">
+        <form class="p-3 shadow-sm bg-white" id="countrySelectForm">
+            <div class="input-group rounded-4 py-1 px-3 border bg-white">
+               <span class="input-group-text bg-transparent text-muted border-0 p-0" id="search">
+                  <span class="mdi mdi-magnify mdi-24px"></span>
+               </span>
+               <input type="text" class="form-control text-muted border-0 px-3" id="countrySearchInput" placeholder="Search country" aria-label="Search" aria-describedby="search">
+            </div>
+            <div class="offcanvas-body p-0">
+               <div id="countryList">
+                   <!-- Example Country Item -->
+                   <a href="#" class="link-dark country-item" data-country="India" data-code="+91">
+                       <div class="d-flex align-items-center gap-3 border-bottom p-3 border-bottom">
+                           <img src="{% static 'img/flags/india.png' %}" alt="" class="img-fluid rounded-circle flag-img">
+                           <div>India</div>
+                           <p class="text-black fs-14 m-0 ms-auto">+91</p>
+                       </div>
+                   </a>
+                   <a href="#" class="link-dark country-item" data-country="USA" data-code="+1">
+                       <div class="d-flex align-items-center gap-3 border-bottom p-3 border-bottom">
+                           <img src="{% static 'img/flags/usa.png' %}" alt="" class="img-fluid rounded-circle flag-img">
+                           <div>USA</div>
+                           <p class="text-black fs-14 m-0 ms-auto">+1</p>
+                       </div>
+                   </a>
+                   <a href="#" class="link-dark country-item" data-country="Saudi Arabia" data-code="+966">
+                       <div class="d-flex align-items-center gap-3 border-bottom p-3 border-bottom">
+                           <img src="{% static 'img/flags/south-arabica.png' %}" alt="" class="img-fluid rounded-circle flag-img">
+                           <div>Saudi Arabia</div>
+                           <p class="text-black fs-14 m-0 ms-auto">+966</p>
+                        </div>
+                     </a>
+                 </div>
+             </div>
+         </form>
+     </div>
+
+     <script>
+
+      document.addEventListener("DOMContentLoaded", function () {
+         const createAccountBtn = document.getElementById("createAccountBtn");
+         const countryList = document.getElementById("countryList");
+         const countrySearchInput = document.getElementById("countrySearchInput");
+         const selectedCountryInput = document.getElementById("selectedCountry");
+         const selectedCountryCodeInput = document.getElementById("selectedCountryCode");
+         const mainForm = document.getElementById("mainForm");
+     
+         function validateForm() {
+            let isValid = true;
+            const errorElements = mainForm.querySelectorAll('.error-message');
+            errorElements.forEach((errorElem) => {
+                  errorElem.textContent = '';
+            });
+
+            const name = mainForm.querySelector('input[placeholder="Type your name"]');
+            const email = mainForm.querySelector('input[placeholder="Type your email"]');
+            const mobile = mainForm.querySelector('input[placeholder="Type your mobile"]');
+            const password = mainForm.querySelector('input[placeholder="Type your new password"]');
+            const confirmPassword = mainForm.querySelector('input[placeholder="Confirm your password"]');
+
+            if (!name.value) {
+                  document.getElementById('name-error').textContent = "Name is required.";
+                  isValid = false;
+            }
+
+            if (!email.value) {
+               document.getElementById('email-error').textContent = "Email is required.";
+               isValid = false;
+
+            } else if (!isValidEmail(email.value)) {
+               document.getElementById('email-error').textContent = "Please enter a valid email address.";
+               isValid = false;
+            }
+
+            if (!mobile.value) {
+                  document.getElementById('mobile-error').textContent = "Mobile number is required.";
+                  isValid = false;
+            }
+
+            if (!password.value) {
+                  document.getElementById('password-error').textContent = "Password is required.";
+                  isValid = false;
+            }
+
+            if (!confirmPassword.value) {
+                  document.getElementById('confirmPassword-error').textContent = "Confirm password is required.";
+                  isValid = false;
+            }
+
+            if (password.value && confirmPassword.value) {
+               if (password.value !== confirmPassword.value) {
+                   document.getElementById('confirmPassword-error').textContent = "Passwords do not match.";
+                   isValid = false;
+               }
+           }
+
+            return isValid;
+         }
+         
+         createAccountBtn.addEventListener("click", function (e) {
+             e.preventDefault();
+             if (validateForm()) {
+                 const offcanvasElement = document.getElementById("offcanvasBottomCountry");
+                 const bootstrapOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                 bootstrapOffcanvas.show();
+             }
+         });
+     
+         countrySearchInput.addEventListener("input", function () {
+             const query = countrySearchInput.value.toLowerCase();
+             const countryItems = countryList.getElementsByClassName("country-item");
+     
+             Array.from(countryItems).forEach(item => {
+                 const countryName = item.getAttribute("data-country").toLowerCase();
+                 if (countryName.includes(query)) {
+                     item.style.display = "block";
+                 } else {
+                     item.style.display = "none";
+                 }
+             });
+         });
+     
+         countryList.addEventListener("click", function (e) {
+             const countryItem = e.target.closest(".country-item");
+             if (countryItem) {
+                 const countryName = countryItem.getAttribute("data-country");
+                 const countryCode = countryItem.getAttribute("data-code");
+     
+                 selectedCountryInput.value = countryName;
+                 selectedCountryCodeInput.value = countryCode;
+
+                 mainForm.submit();
+             }
+         });
+
+         function isValidEmail(email) {
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailPattern.test(email);
+        }
+     });
+     
+      </script>
+
+{% endblock %}

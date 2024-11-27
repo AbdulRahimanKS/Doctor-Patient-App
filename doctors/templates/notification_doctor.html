@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<body class="bg-light">
+   <!-- navbar -->
+   <div class="notification d-flex flex-column vh-100">
+      <div class="d-flex align-items-center justify-content-between mb-auto p-3 bg-white shadow-sm osahan-header">
+         <a href="{% url 'doctor_home' %}" class="text-dark bg-white shadow rounded-circle icon">
+               <span class="mdi mdi-arrow-left mdi-18px"></span></a>
+         <h6 class="mb-0 ms-3 me-auto fw-bold">Notification</h6>
+         <div class="d-flex align-items-center gap-3">
+            <a class="toggle bg-white shadow rounded-circle icon d-flex align-items-center justify-content-center fs-5" href="#"><i class="bi bi-list"></i></a>
+         </div>
+      </div>
+      <!-- body -->
+      <div class="vh-100 my-auto overflow-auto body-fix-osahan-footer">
+         {% if grouped_notifications.items %}
+         {% for date, notifications in grouped_notifications.items %}
+             <div>
+                 <h6 class="border-bottom fw-bold text-black p-3 mb-0">{{ date }}</h6>
+                 {% for notification in notifications %}
+                     <div class="d-flex gap-3 bg-white border-bottom p-3">
+                         <div>
+                             <span class="bg-success-subtle rounded-pill notification-icon">
+                                 <span class="mdi mdi-calendar-check text-success"></span>
+                             </span>
+                         </div>
+                         <div>
+                             <p class="text-muted mb-2">{{ notification.message }}</p>
+                             <a href="#">Just Now</a>
+                         </div>
+                     </div>
+                 {% endfor %}
+             </div>
+         {% endfor %}
+         {% endif %}
+     </div>
+      
+   <!-- sidebar nav -->
+   <nav id="main-nav">
+      <ul class="second-nav">
+         <li class="osahan-user-profile bg-primary">
+            <div class="d-flex align-items-center gap-2">
+              {% if request.user.doctor_profile.profile_picture %}
+               <img src="{{ request.user.doctor_profile.profile_picture.url }}" alt="" class="rounded-pill img-fluid">
+              {% elif request.user.doctor_profile.gender == 'Male' %}
+               <img src="{% static 'img/home/male-doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+              {% elif request.user.doctor_profile.gender == 'Female' %}
+               <img src="{% static 'img/home/female-doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+              {% else %}
+               <img src="{% static 'img/home/doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+              {% endif %}
+               <div class="ps-1">
+                  <h6 class="fw-bold text-white mb-0">Hey, {{ request.user.name }}!</h6>
+                  <p class="text-white-50 m-0 small">{{ request.user.countryCode }} {{ request.user.mobile }}</p>
+               </div>
+            </div>
+         </li>
+         <li><a href="{% url 'doctor_home' %}"><span class="mdi mdi-home-variant-outline me-3"></span>Homepage</a></li>
+         <li>
+           <form method="POST" action="{% url 'sign_out' %}" class="logout-form">
+              {% csrf_token %}
+              <button type="submit"><span class="mdi mdi-logout me-3"></span>Sign out</button>
+           </form>     
+         </li>
+      </ul>
+      <ul class="bottom-nav">
+         <li class="home">
+            <a href="{% url 'doctor_home' %}">
+               <p class="h5 m-0"><span class="mdi mdi-home-variant-outline"></span></p>
+               Home
+            </a>
+         </li>
+         <li class="find">
+           <a href="{% url 'list_slots' %}">
+              <p class="h5 m-0"><span class="mdi mdi-magnify"></span></p>
+              Search
+           </a>
+        </li>
+         <li class="more">
+            <a href="#">
+               <p class="h5 m-0"><span class="mdi mdi-account-circle-outline"></span></p>
+               Profile
+            </a>
+         </li>
+      </ul>
+   </nav>
+
+{% endblock %}

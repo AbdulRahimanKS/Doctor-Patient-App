@@ -1,0 +1,410 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+   .capitalize-text {
+      text-transform: capitalize;
+   }
+</style>
+
+<body class="bg-light">
+   <!-- navbar -->
+   <div class="home d-flex flex-column vh-100">
+      <div class="bg-white shadow-sm">
+         <div class="d-flex align-items-center justify-content-between mb-auto p-3 osahan-header">
+            <div class="d-flex align-items-center gap-2 me-auto">
+               {% if request.user.patients.profile_image %}
+               <img src="{{ request.user.patients.profile_image.url }}" alt="" class="img-fluid rounded-circle icon">
+               {% else %}
+                  <img src="{% static 'img/home/default-patient.png' %}" alt="" class="img-fluid rounded-circle icon">
+               {% endif %}
+               <div class="ps-1">
+                  <p class="text-orange m-0 small">Welcome</p>
+                  <p class="fw-bold mb-0 text-primary fw-bold capitalize-text">Hey, {{ request.user.name }}!</p>
+               </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+               <a href="#" class="bg-white shadow rounded-circle icon">
+                  <span class="mdi mdi-cards-heart-outline mdi-18px text-primary"></span>
+               </a>
+               <div class="position-relative">
+                  <a href="{% url 'notification_view' %}" class="bg-white shadow rounded-circle icon">
+                      <span class="mdi mdi-bell-outline mdi-18px text-primary"></span>
+                  </a>
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: {% if notification_count > 0 %}block{% else %}none{% endif %}">
+                     {{ notification_count }}
+                  </span>
+              </div>
+               <a class="toggle bg-white shadow rounded-circle icon d-flex align-items-center justify-content-center"
+                  href="#"><i class="bi bi-list text-primary fs-5 d-flex"></i></a>
+            </div>
+         </div>
+         <div class="px-3 pb-3">
+            <form method="get" action="{% url 'doctors_list' %}">
+               <div class="input-group rounded-4 shadow py-1 px-3 bg-light">
+                  <span class="input-group-text bg-transparent text-muted border-0 p-0" id="search">
+                     <span class="mdi mdi-magnify mdi-24px text-primary"></span>
+                  </span>
+                  <input type="text" name="q" value="{{ query }}" class="form-control bg-transparent text-muted rounded-0 border-0 px-3"
+                     placeholder="Find your suitable doctor!" aria-label="Search" aria-describedby="search">
+                  <a href="#" class="input-group-text bg-transparent text-muted border-0 border-start pe-0" id="search">
+                     <span class="mdi mdi-filter-outline mdi-18px"></span></a>
+               </div>
+            </form>
+         </div>
+      </div>
+      <!-- body -->
+      <div class="vh-100 my-auto overflow-auto body-fix-osahan-footer">
+         <!-- Available doctors -->
+         <div class="mb-3 pt-3">
+            <div class="available-doctor ps-2 ms-1">
+               <div class="available-doctor-item">
+                  <div class="bg-primary text-white rounded-4 p-3 doctor-book-back">
+                     <h1 class="mb-1 doctor-book-back-title">Book Your Next
+                        <span class="h4 text-warning overflow-hidden rounded-4 m-0 bg-white">
+                           <b class="bg-light-subtle text-primary px-1 rounded">Appointment</b>
+                           <b class="bg-info fw-normal text-white px-1 rounded">Online!</b>
+                        </span>
+                     </h1>
+                      <p class="mb-2 text-white-50 small">Book Now and Get 30% OFF</p>
+                     <a href="{% url 'appointment_page' %}" class="btn btn-sm btn-book btn-secondary">BOOK NOW <i class="bi bi-arrow-right"></i></a>
+                     {% comment %} <div class="doctor-book-img">
+                        <img src="{% static 'img/home/medical-appointment.png' %}" alt="" class="img-fluid">
+                     </div> {% endcomment %}
+                  </div>
+               </div>
+               {% for doctor in doctors|slice:":1" %}
+               <div class="available-doctor-item">
+                  <div class="btn-info text-white rounded-4 p-3 doctor-book-back">
+                     <h1 class="mb-1 doctor-book-back-title"> 
+                        <span class="h4 overflow-hidden m-0">
+                           <b class="text-primary">Find Your</b>
+                        </span>
+                        Specialist Doctor
+                     </h1>
+                     <p class="mb-2 small">Dr. {{ doctor.full_name }} <span class="bg-white rounded-pill px-1 small text-orange"><i class="mdi mdi-star"></i> 4.9</span></p>
+                     <a href="{% url 'request_appointment' doctor_id=doctor.id %}" class="btn btn-sm btn-primary btn-book">BOOK NOW <i class="bi bi-arrow-right"></i></a>
+                     {% comment %} {% if doctor.profile_picture %}
+                     <div class="doctor-book-img">
+                        <img src="{{ doctor.profile_picture.url }}" alt="" class="img-fluid">
+                     </div>
+                     {% endif %} {% endcomment %}
+                  </div>
+               </div>
+               {% endfor %}
+               <div class="available-doctor-item">
+                  <div class="btn-secondary text-white rounded-4 p-3 doctor-book-back">
+                     <h1 class="mb-1 doctor-book-back-title">Find the Right <br>
+                        <span class="h4 text-warning overflow-hidden rounded-4 m-0">
+                           <b class="bg-warning text-black px-1 rounded">Doctor for Your</b>
+                           <b class="text-black">Needs!</b>
+                        </span>
+                     </h1>
+                      <p class="mb-2 text-white small">Book Now and Get 30% OFF</p>
+                     <a href="{% url 'doctors_list' %}" class="btn btn-sm btn-dark btn-book">BOOK NOW <i class="bi bi-arrow-right"></i></a>
+                     {% comment %} <div class="doctor-book-img">
+                        <img src="{% static 'img/home/available-doctor-2.png' %}" alt="" class="img-fluid">
+                     </div> {% endcomment %}
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="p-3 mb-2">
+            <div class="row row-cols-4 g-2">
+               <div class="col">
+                  <div class="bg-white text-center rounded-4 p-2 shadow-sm">
+                     <a href="{% url 'doctors_list' %}" class="link-dark">
+                        <img src="{% static 'img/home/doctor.png' %}" alt="" class="img-fluid px-2">
+                        <p class="text-truncate small pt-2 m-0">Doctor</p>
+                     </a>
+                  </div>
+               </div>
+               <div class="col">
+                  <div class="bg-white text-center rounded-4 p-2 shadow-sm">
+                     <a href="{% url 'appointment_page' %}" class="link-dark">
+                        <img src="{% static 'img/home/schedule.png' %}" alt="" class="img-fluid px-2">
+                        <p class="text-truncate small pt-2 m-0">Appointment</p>
+                     </a>
+                  </div>
+               </div>
+               <div class="col">
+                  <div class="bg-white text-center rounded-4 p-2 shadow-sm">
+                     <a href="#" class="link-dark">
+                        <img src="{% static 'img/home/prescription.png' %}" alt="" class="img-fluid px-2">
+                        <p class="text-truncate small pt-2 m-0">Prescription</p>
+                     </a>
+                  </div>
+               </div>
+               <div class="col">
+                  <div class="bg-white text-center rounded-4 p-2 shadow-sm">
+                     <a href="#" class="link-dark">
+                        <img src="{% static 'img/home/medicine.png' %}" alt="" class="img-fluid px-2">
+                        <p class="text-truncate small pt-2 m-0">Medicine</p>
+                     </a>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!-- My appointments -->
+         <div class="p-3 mb-3">
+            <h6 class="mb-2 pb-2 fw-bold text-black">My Appointments</h6>
+            {% if appointments %}
+            <div class="row row-cols-2 g-3">
+               {% for appointment in appointments %}
+               <div class="col">
+                  <div class="card rounded-4 border-0 position-relative shadow-sm overflow-hidden">
+                     {% if appointment.doctor.profile_picture %}
+                     <img src="{{ appointment.doctor.profile_picture.url }}" class="card-img-top top-doctor-img" alt="...">
+                     {% elif appointment.doctor.gender == 'Male' %}
+                     <img src="{% static 'img/home/male-doctor.png' %}" class="card-img-top top-doctor-img" alt="..." style="padding:20px">
+                     {% elif appointment.doctor.gender == 'Female' %}
+                     <img src="{% static 'img/home/female-doctor.png' %}" class="card-img-top top-doctor-img" alt="..." style="padding:20px">
+                     {% else %}
+                     <img src="{% static 'img/home/doctor.png' %}" class="card-img-top top-doctor-img" alt="..." style="padding:20px">
+                     {% endif %}
+                     <div class="card-body small p-3 osahan-card-body">
+                        <h6 class="card-title fs-14 mb-1">Dr. {{ appointment.doctor.full_name }}</h6>
+                        <p class="card-text text-muted mb-1">{{ appointment.doctor.specialization.name }}</p>
+                        <div class="d-flex align-items-center gap-3 small mb-3">
+                           <div><span class="mdi mdi-star text-warning me-1"></span>4.9 (5,380)</div>
+                           <div><span class="mdi mdi-medical-bag text-primary me-1"></span>
+                              {% if appointment.doctor.experience_years <= 1 %}{{ appointment.doctor.experience_years }}+ year{% else %}{{ appointment.doctor.experience_years }}+ years{% endif %}
+                           </div>
+                        </div>
+                        <h6 class="mb-0">₹ {{ appointment.doctor.consultation_fee }}<span class="text-muted small ms-1">Inc.VAT</span></h6>
+                     </div>
+                     <div class="card-footer bg-transparent border-0 p-0 cf-btn">
+                        <button id="startMeetingBtn" class="btn btn-sm btn-primary d-flex align-items-center justify-content-between small start-room-btn w-100" 
+                        data-doctor-id="{{ appointment.doctor.id }}" 
+                        data-appointment-id="{{ appointment.slot.id }}"
+                        onclick="startMeeting(event)">
+                           <span class="small">Call (Scheduled for {{ appointment.slot.date|date:"d M, Y" }} at {{ appointment.slot.start_time|time:"h:i A" }})</span>
+                           <span class="mdi mdi-video-outline mdi-18px"></span>
+                        </button>
+                     </div>
+                  </div>
+               </div>
+               {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-center text-muted p-5">Currently no appointments found</p>
+            {% endif %}
+         </div>
+         <!-- Top Doctor -->
+         {% if doctors %}
+         <div class="mb-3">
+            <h6 class="mb-2 pb-1 fw-bold px-3 text-black">Top Doctors</h6>
+            <div class="top-doctors ps-2 ms-1">
+               {% for doctor in doctors %}
+               <div class="top-doctor-item">
+                  <a href="{% url 'doctor_profile' doctor_id=doctor.id %}" class="link-dark">
+                     <div class="card bg-white border-0 rounded-4 shadow-sm overflow-hidden">
+                        {% if doctor.profile_picture %}
+                        <img src="{{ doctor.profile_picture.url }}" class="card-img-top top-doctor-img" alt="...">
+                        {% elif doctor.gender == 'Male' %}
+                        <img src="{% static 'img/home/male-doctor.png' %}" class="card-img-top top-doctor-img" alt="..." style="padding:20px">
+                        {% elif doctor.gender == 'Female' %}
+                        <img src="{% static 'img/home/female-doctor.png' %}" class="card-img-top top-doctor-img" alt="..." style="padding:20px">
+                        {% else %}
+                        <img src="{% static 'img/home/doctor.png' %}" class="card-img-top top-doctor-img" alt="..." style="padding:20px">
+                        {% endif %}
+                        <div class="card-body small p-3 osahan-card-body">
+                           <p class="card-title fw-semibold mb-0 text-truncate fs-14">Dr. {{ doctor.full_name }}</p>
+                           <p class="card-text text-muted small m-0">{{ doctor.specialization.name }}</p>
+                        </div>
+                     </div>
+                  </a>
+               </div>
+               {% endfor %}
+            </div>
+         </div>
+         {% endif %}
+         {% comment %} <div class="p-3">
+            <h6 class="mb-2 pb-2 fw-bold text-black">Available Doctor</h6>
+            <div class="row row-cols-2 g-3">
+               <div class="col">
+                  <div class="card rounded-4 border-0 position-relative shadow-sm overflow-hidden">
+                     <div class="position-absolute m-2">
+                        <span class="badge text-bg-success rounded-pill float-end">ONLINE</span>
+                     </div>
+                     <img src="{% static 'img/video/available-doctor-1.jpg' %}" alt="" class="card-img-top top-doctor-img">
+                     <div class="card-body small p-3 osahan-card-body">
+                        <h6 class="card-title fs-14 mb-1">Dr. Taylor Samaro</h6>
+                        <p class="card-text text-muted mb-1">MBBS, BCS</p>
+                        <div class="d-flex align-items-center gap-3 small mb-3">
+                           <div><span class="mdi mdi-star text-warning me-1"></span>4.9 (5,380)</div>
+                           <div><span class="mdi mdi-medical-bag text-primary me-1"></span>4+ Years</div>
+                        </div>
+                        <h6 class="mb-0">$199<span class="text-muted small ms-1">Inc.VAT</span></h6>
+                     </div>
+                     <div class="card-footer bg-transparent border-0 p-0 cf-btn">
+                        <a href="#"
+                           class="btn btn-sm btn-primary d-flex align-items-center justify-content-between small">
+                           <span class="small">SEE DOCTOR NOW</span>
+                           <span class="mdi mdi-video-outline mdi-18px"></span>
+                        </a>
+                     </div>
+                  </div>
+               </div>
+               <div class="col">
+                  <div class="card rounded-4 border-0 position-relative shadow-sm overflow-hidden">
+                     <div class="position-absolute m-2">
+                        <span class="badge text-bg-success rounded-pill float-end">ONLINE</span>
+                     </div>
+                     <img src="{% static 'img/video/available-doctor-2.jpg' %}" alt="" class="card-img-top top-doctor-img">
+                     <div class="card-body small p-3 osahan-card-body">
+                        <h6 class="card-title fs-14 mb-1">Dr. Leabow</h6>
+                        <p class="card-text text-muted mb-1">MBBS, BCS</p>
+                        <div class="d-flex align-items-center gap-3 small mb-3">
+                           <div><span class="mdi mdi-star text-warning me-1"></span>4.9 (5,380)</div>
+                           <div><span class="mdi mdi-medical-bag text-primary me-1"></span>4+ Years</div>
+                        </div>
+                        <h6 class="mb-0">$199<span class="text-muted small ms-1">Inc.VAT</span></h6>
+                     </div>
+                     <div class="card-footer bg-transparent border-0 p-0 cf-btn">
+                        <a href="#"
+                           class="btn btn-sm btn-primary d-flex align-items-center justify-content-between small">
+                           <span class="small">SEE DOCTOR NOW</span>
+                           <span class="mdi mdi-video-outline mdi-18px"></span>
+                        </a>
+                     </div>
+                  </div>
+               </div>
+               <div class="col">
+                  <div class="card rounded-4 border-0 position-relative shadow-sm overflow-hidden">
+                     <img src="{% static 'img/video/available-doctor-3.jpg' %}" alt="" class="card-img-top top-doctor-img">
+                     <div class="card-body small p-3 osahan-card-body">
+                        <h6 class="card-title fs-14 mb-1">Dr. Morgan</h6>
+                        <p class="card-text text-muted mb-1">MBBS, BCS</p>
+                        <div class="d-flex align-items-center gap-3 small mb-3">
+                           <div><span class="mdi mdi-star text-warning me-1"></span>4.9 (5,380)</div>
+                           <div><span class="mdi mdi-medical-bag text-primary me-1"></span>4+ Years</div>
+                        </div>
+                        <h6 class="mb-0">$199<span class="text-muted small ms-1">Inc.VAT</span></h6>
+                     </div>
+                     <div class="card-footer bg-transparent border-0 p-0 cf-btn">
+                        <a href="#"
+                           class="btn btn-sm btn-primary d-flex align-items-center justify-content-between small">
+                           <span class="small">SEE DOCTOR NOW</span>
+                           <span class="mdi mdi-video-outline mdi-18px"></span>
+                        </a>
+                     </div>
+                  </div>
+               </div>
+               <div class="col">
+                  <div class="card rounded-4 border-0 position-relative shadow-sm overflow-hidden">
+                     <div class="position-absolute m-2">
+                        <span class="badge text-bg-success rounded-pill float-end">ONLINE</span>
+                     </div>
+                     <img src="{% static 'img/video/available-doctor-4.jpg' %}" alt="" class="card-img-top top-doctor-img">
+                     <div class="card-body small p-3 osahan-card-body">
+                        <h6 class="card-title fs-14 mb-1">Dr. Cayden Stack</h6>
+                        <p class="card-text text-muted mb-1">MBBS, BCS</p>
+                        <div class="d-flex align-items-center gap-3 small mb-3">
+                           <div><span class="mdi mdi-star text-warning me-1"></span>4.9 (5,380)</div>
+                           <div><span class="mdi mdi-medical-bag text-primary me-1"></span>4+ Years</div>
+                        </div>
+                        <h6 class="mb-0">$199<span class="text-muted small ms-1">Inc.VAT</span></h6>
+                     </div>
+                     <div class="card-footer bg-transparent border-0 p-0 cf-btn">
+                        <a href="#"
+                           class="btn btn-sm btn-primary d-flex align-items-center justify-content-between small">
+                           <span class="small">SEE DOCTOR NOW</span>
+                           <span class="mdi mdi-video-outline mdi-18px"></span>
+                        </a>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div> {% endcomment %}
+      </div>
+      <!-- footer -->
+      <div class="footer mt-auto p-3 fix-osahan-footer">
+         <div
+            class="d-flex align-items-center justify-content-between rounded-4 shadow overflow-hidden bottom-nav-main">
+            <a href="{% url 'home' %}" class="col footer-bottom-nav active">
+               <span class="mdi mdi-home-variant-outline mdi-24px"></span>
+               <span>Home</span>
+            </a>
+            <a href="{% url 'doctors_list' %}" class="col footer-bottom-nav">
+               <span class="mdi mdi-magnify mdi-24px"></span>
+               <span>Search</span>
+            </a>
+            <a href="{% url 'video_page' %}" class="col footer-bottom-nav">
+               <span class="mdi mdi-video-outline mdi-24px"></span>
+               <span>Video</span>
+            </a>
+            <a href="#" class="col footer-bottom-nav">
+               <span class="mdi mdi-message-processing-outline mdi-24px"></span>
+               <span>Chat</span>
+            </a>
+            <a href="{% url 'profile_page' %}" class="col footer-bottom-nav">
+               <span class="mdi mdi-account-outline mdi-24px"></span>
+               <span>Profile</span>
+            </a>
+         </div>
+      </div>
+   </div>
+
+   <script>
+      document.addEventListener("DOMContentLoaded", function () {
+         function getCSRFToken() {
+            let cookieValue = null;
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+               const cookie = cookies[i].trim();
+               if (cookie.startsWith('csrftoken=')) {
+                  cookieValue = cookie.substring('csrftoken='.length, cookie.length);
+                  break;
+               }
+            }
+            return cookieValue;
+         }
+
+         window.startMeeting = function(event) {
+            event.preventDefault();
+
+            const button = event.target.closest('button');
+            const doctorId = button.dataset.doctorId;
+            const appointmentId = button.dataset.appointmentId;
+
+            const data = {
+               doctor_id: doctorId,
+               appointment_id: appointmentId
+            };
+
+            fetch("{% url 'start_meeting' %}", {
+               method: "POST", 
+               headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRFToken": getCSRFToken()
+               },
+               body: JSON.stringify(data)  
+            })
+            .then(response => response.json()) 
+            .then(data => {
+               if (data.success) {
+                  const meetingId = data.meeting_id;
+                  const apiKey = data.apiKey;
+                  const userName = data.user_name;
+                  const isDoctor = data.is_doctor;
+                  
+                  const otherProjectUrl = `http://127.0.0.1:8001/?meeting_id=${meetingId}&api_key=${apiKey}&is_doctor=${isDoctor}&user_name=${encodeURIComponent(userName)}`;
+                  window.location.href = otherProjectUrl;
+               } else {
+                  console.error("Error starting meeting:", data.error);
+               }
+            })
+            .catch(error => {
+               console.error("Error during API request:", error);
+            });
+
+
+         
+         }
+   });
+   </script>
+
+{% endblock %}
+

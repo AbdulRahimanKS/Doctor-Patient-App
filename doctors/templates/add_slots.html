@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+   textarea::placeholder {
+      text-indent: 2px;
+      line-height: 2.5;
+      color: #6c757d;
+   }
+   .toast-msg {
+    position: fixed; 
+    bottom: 80px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    display: none; 
+    background-color: #3e4f4e; 
+    color: #fff; 
+    padding: 10px 20px; 
+    border-radius: 5px;
+    width:auto;
+}
+</style>
+
+   <body class="bg-light">
+      <div class="visit-info d-flex flex-column vh-100">
+         <div class="d-flex align-items-center justify-content-between mb-auto p-3 bg-white shadow-sm osahan-header">
+            <a href="{% url 'doctor_home' %}" class="text-dark bg-white shadow rounded-circle icon">
+                  <span class="mdi mdi-arrow-left mdi-18px"></span></a>
+            <h6 class="mb-0 ms-3 me-auto fw-bold">Add Slot</h6>
+            <div class="d-flex align-items-center gap-3">
+               <a class="toggle bg-white shadow rounded-circle icon d-flex align-items-center justify-content-center fs-5" href="#"><i class="bi bi-list"></i></a>
+            </div>
+         </div>
+         
+         <div class="vh-100 my-auto overflow-auto p-4">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="exampleFormControlDate" class="form-label mb-1">Date</label>
+                    <div class="input-group border bg-white rounded-3 py-1" id="exampleFormControlDate">
+                        <span class="input-group-text bg-transparent rounded-0 border-0" id="date">
+                            <i class="bi bi-calendar-date text-muted"></i>
+                        </span>
+                        <input type="date" class="form-control bg-transparent rounded-0 border-0 px-0" name="appointment-date" value="{{ appointment_date }}" required>
+                    </div>
+                </div>
+        
+                <div class="row g-2 mb-3">
+                    <div class="col">
+                        <div>
+                            <label for="exampleFormControlStartTime" class="form-label mb-1">Start Time</label>
+                            <div class="input-group border bg-white rounded-3 py-1" id="exampleFormControlStartTime">
+                                <span class="input-group-text bg-transparent rounded-0 border-0">
+                                    <i class="bi bi-clock text-muted"></i>
+                                </span>
+                                <input type="time" class="form-control bg-transparent rounded-0 border-0 px-0" name="start-time" value="{{ start_time }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div>
+                            <label for="exampleFormControlEndTime" class="form-label mb-1">End Time</label>
+                            <div class="input-group border bg-white rounded-3 py-1" id="exampleFormControlEndTime">
+                                <span class="input-group-text bg-transparent rounded-0 border-0">
+                                    <i class="bi bi-clock text-muted"></i>
+                                </span>
+                                <input type="time" class="form-control bg-transparent rounded-0 border-0 px-0" name="end-time" value="{{ end_time }}" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="footer mt-auto p-3">
+                    <button type="submit" class="btn btn-info btn-lg w-100 rounded-4">ADD NEW SLOT</button>
+                </div>
+            </form>
+        </div>
+        
+        <nav id="main-nav">
+            <ul class="second-nav">
+               <li class="osahan-user-profile bg-primary">
+                  <div class="d-flex align-items-center gap-2">
+                    {% if request.user.doctor_profile.profile_picture %}
+                    <img src="{{ request.user.doctor_profile.profile_picture.url }}" alt="" class="rounded-pill img-fluid">
+                    {% elif request.user.doctor_profile.gender == 'Male' %}
+                    <img src="{% static 'img/home/male-doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+                    {% elif request.user.doctor_profile.gender == 'Female' %}
+                    <img src="{% static 'img/home/female-doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+                    {% else %}
+                    <img src="{% static 'img/home/doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+                    {% endif %}
+                     <div class="ps-1">
+                        <h6 class="fw-bold text-white mb-0">Hey, {{ request.user.name }}!</h6>
+                        <p class="text-white-50 m-0 small">{{ request.user.countryCode }} {{ request.user.mobile }}</p>
+                     </div>
+                  </div>
+               </li>
+               <li><a href="{% url 'doctor_home' %}"><span class="mdi mdi-home-variant-outline me-3"></span>Homepage</a></li>
+               <li>
+                 <form method="POST" action="{% url 'sign_out' %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit"><span class="mdi mdi-logout me-3"></span>Sign out</button>
+                 </form>     
+               </li>
+            </ul>
+            <ul class="bottom-nav">
+               <li class="home">
+                  <a href="{% url 'doctor_home' %}">
+                     <p class="h5 m-0"><span class="mdi mdi-home-variant-outline"></span></p>
+                     Home
+                  </a>
+               </li>
+               <li class="find">
+                <a href="{% url 'list_slots' %}">
+                   <p class="h5 m-0"><span class="mdi mdi-magnify"></span></p>
+                   Search
+                </a>
+             </li>
+               <li class="more">
+                  <a href="#">
+                     <p class="h5 m-0"><span class="mdi mdi-account-circle-outline"></span></p>
+                     Profile
+                  </a>
+               </li>
+            </ul>
+         </nav>
+
+        <div id="toast" class="toast toast-msg" style="display: none;">
+        <i class="bi bi-info-circle" style="margin-right:8px"></i>
+        <span id="toast-message"></span>
+        </div>
+
+        <script>
+            function showToast(message) {
+                document.getElementById('toast-message').innerText = message;
+                var toast = document.getElementById('toast');
+                toast.style.display = 'block';
+                
+                setTimeout(function() {
+                  toast.style.display = 'none';
+                }, 3000);
+            }
+
+            {% if messages %}
+                {% for message in messages %}
+                    showToast("{{ message }}");
+                {% endfor %}
+            {% endif %}
+        </script>
+      
+{% endblock %}

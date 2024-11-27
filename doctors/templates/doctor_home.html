@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+   .capitalize-text {
+         text-transform: capitalize;
+   }
+</style>
+
+<body class="bg-light">
+   <div class="home d-flex flex-column vh-100">
+      <div class="bg-white shadow-sm">
+         <div class="d-flex align-items-center justify-content-between mb-auto p-3 osahan-header">
+            <div class="d-flex align-items-center gap-2 me-auto">
+               {% if request.user.doctor_profile.profile_picture %}
+                  <img src="{{ request.user.doctor_profile.profile_picture.url }}" alt="" class="img-fluid rounded-circle icon">
+               {% elif request.user.doctor_profile.gender == 'Male' %}
+                  <img src="{% static 'img/home/male-doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+               {% elif request.user.doctor_profile.gender == 'Female' %}
+                  <img src="{% static 'img/home/female-doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+               {% else %}
+                  <img src="{% static 'img/home/doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+               {% endif %}
+               <div class="ps-1">
+                  <p class="text-orange m-0 small">Welcome</p>
+                  <p class="fw-bold mb-0 text-primary fw-bold capitalize-text">Hey, {{ request.user.name }}!</p>
+               </div>
+            </div>   
+            <div class="d-flex align-items-center gap-2">
+               <div class="position-relative">
+                  <a href="{% url 'notification_view' %}" class="bg-white shadow rounded-circle icon">
+                      <span class="mdi mdi-bell-outline mdi-18px text-primary"></span>
+                  </a>
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: {% if notification_count > 0 %}block{% else %}none{% endif %}">
+                     {{ notification_count }}
+                  </span>
+              </div>
+               <a class="toggle bg-white shadow rounded-circle icon d-flex align-items-center justify-content-center"
+                  href="#"><i class="bi bi-list text-primary fs-5 d-flex"></i></a>
+            </div>  
+         </div>
+         <div class="px-3 pb-3">
+            <form method="get" action="{% url 'list_slots' %}">
+               <div class="input-group rounded-4 shadow py-1 px-3 bg-light">
+                  <span class="input-group-text bg-transparent text-muted border-0 p-0" id="search">
+                     <span class="mdi mdi-magnify mdi-24px text-primary"></span>
+                  </span>
+                  <input type="text" name="q" value="{{ query }}" class="form-control bg-transparent text-muted rounded-0 border-0 px-3"
+                     placeholder="Find your slot!" aria-label="Search" aria-describedby="search">
+                  <a href="#" class="input-group-text bg-transparent text-muted border-0 border-start pe-0" id="search">
+                     <span class="mdi mdi-filter-outline mdi-18px"></span></a>
+               </div>
+            </form>
+         </div>
+      </div>
+      <!-- body -->
+      <div class="vh-100 my-auto overflow-auto body-fix-osahan-footer">
+         <div class="p-3 mb-2">
+            <div class="row row-cols-4 g-2">
+               <div class="col">
+                  <div class="bg-white text-center rounded-4 p-2 shadow-sm">
+                     <a href="{% url 'add_slot' %}" class="link-dark">
+                        <img src="{% static 'img/home/add.ico' %}" alt="" class="img-fluid px-2">
+                        <p class="text-truncate small pt-2 m-0">Add Slot</p>
+                     </a>
+                  </div>
+               </div>
+               <div class="col">
+                  <div class="bg-white text-center rounded-4 p-2 shadow-sm">
+                     <a href="{% url 'list_slots' %}" class="link-dark">
+                        <img src="{% static 'img/home/schedule.png' %}" alt="" class="img-fluid px-2">
+                        <p class="text-truncate small pt-2 m-0">List Slots</p>
+                     </a>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!-- Today's appointments -->
+         <div class="p-3 mb-3">
+            <h6 class="mb-2 pb-2 fw-bold text-black">Today's Appointments</h6>
+            {% if today_appointments %}
+            <div class="row row-cols-2 g-3">
+               {% for slot in today_appointments %}
+               <div class="col"> 
+                  <div class="card rounded-4 border-0 position-relative shadow-sm overflow-hidden">
+                     <div class="card-body small p-3 osahan-card-body">
+                           {% if slot.confirmed_appointment %}
+                           <h6 class="card-title fs-14 mb-1 capitalize-text">{{ slot.patient_info.patient_name }}</h6>
+                           <p class="card-text text-muted mb-1">Age: {{ slot.patient_info.age }}</p>
+                           <p class="card-text text-muted mb-1">Mobile: {{ slot.patient_info.mobile }}</p>
+                           {% if slot.patient_info.description %}
+                              <p class="card-text text-muted mb-1">{{ slot.patient_info.description }}</p>
+                           {% endif %}
+
+                           {% if slot.patient_attachments %}
+                           <div class="position-absolute top-0 end-0">
+                              <a href="{% url 'download_attachments' patient_id=slot.patient_info.id %}" class="btn btn-sm">
+                                 <span class="mdi mdi-download mdi-18px"></span>
+                              </a>
+                           </div>
+                           {% endif %}
+                           
+                           <h6 class="mb-0">₹ {{ slot.doctor.consultation_fee }}<span class="text-muted small ms-1">Inc.VAT</span></h6>
+                           {% endif %}
+                     </div>
+
+                     <div class="card-footer bg-transparent border-0 p-0 cf-btn">
+                        <button id="startMeetingBtn" class="btn btn-sm btn-primary d-flex align-items-center justify-content-between small start-room-btn w-100" 
+                        data-doctor-id="{{ slot.doctor.id }}" 
+                        data-appointment-id="{{ slot.id }}"
+                        onclick="startMeeting(event)">
+                            <span class="small">Call (Scheduled for {{ slot.date|date:"d M, Y" }} at {{ slot.start_time|time:"h:i A" }})</span>
+                            <span class="mdi mdi-video-outline mdi-18px"></span>
+                        </button>
+                    </div>
+                  </div>
+               </div>
+               {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-center text-muted p-5">Currently no appointments today</p>
+            {% endif %}
+         </div>
+      </div>
+      <!-- footer -->
+      <div class="footer mt-auto p-3 fix-osahan-footer">
+         <div
+            class="d-flex align-items-center justify-content-between rounded-4 shadow overflow-hidden bottom-nav-main">
+            <a href="{% url 'doctor_home' %}" class="col footer-bottom-nav active">
+               <span class="mdi mdi-home-variant-outline mdi-24px"></span>
+               <span>Home</span>
+            </a>
+            <a href="{% url 'list_slots' %}" class="col footer-bottom-nav">
+               <span class="mdi mdi-magnify mdi-24px"></span>
+               <span>Search</span>
+            </a>
+            <a href="#" class="col footer-bottom-nav">
+               <span class="mdi mdi-video-outline mdi-24px"></span>
+               <span>Video</span>
+            </a>
+            <a href="#" class="col footer-bottom-nav">
+               <span class="mdi mdi-message-processing-outline mdi-24px"></span>
+               <span>Chat</span>
+            </a>
+            <a href="#" class="col footer-bottom-nav">
+               <span class="mdi mdi-account-outline mdi-24px"></span>
+               <span>Profile</span>
+            </a>
+         </div>
+      </div>
+   </div>
+
+   <nav id="main-nav">
+    <ul class="second-nav">
+       <li class="osahan-user-profile bg-primary">
+          <div class="d-flex align-items-center gap-2">
+            {% if request.user.doctor_profile.profile_picture %}
+             <img src="{{ request.user.doctor_profile.profile_picture.url }}" alt="" class="rounded-pill img-fluid">
+            {% elif request.user.doctor_profile.gender == 'Male' %}
+             <img src="{% static 'img/home/male-doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+            {% elif request.user.doctor_profile.gender == 'Female' %}
+             <img src="{% static 'img/home/female-doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+            {% else %}
+             <img src="{% static 'img/home/doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+            {% endif %}
+             <div class="ps-1">
+                <h6 class="fw-bold text-white mb-0">Hey, {{ request.user.name }}!</h6>
+                <p class="text-white-50 m-0 small">{{ request.user.countryCode }} {{ request.user.mobile }}</p>
+             </div>
+          </div>
+       </li>
+       <li><a href="{% url 'doctor_home' %}"><span class="mdi mdi-home-variant-outline me-3"></span>Homepage</a></li>
+       <li>
+         <form method="POST" action="{% url 'sign_out' %}" class="logout-form">
+            {% csrf_token %}
+            <button type="submit"><span class="mdi mdi-logout me-3"></span>Sign out</button>
+         </form>     
+       </li>
+    </ul>
+    <ul class="bottom-nav">
+       <li class="home">
+          <a href="{% url 'doctor_home' %}">
+             <p class="h5 m-0"><span class="mdi mdi-home-variant-outline"></span></p>
+             Home
+          </a>
+       </li>
+       <li class="find">
+         <a href="{% url 'list_slots' %}">
+            <p class="h5 m-0"><span class="mdi mdi-magnify"></span></p>
+            Search
+         </a>
+      </li>
+       <li class="more">
+          <a href="#">
+             <p class="h5 m-0"><span class="mdi mdi-account-circle-outline"></span></p>
+             Profile
+          </a>
+       </li>
+    </ul>
+ </nav>
+
+   <script>
+      document.addEventListener("DOMContentLoaded", function () {
+         function getCSRFToken() {
+            let cookieValue = null;
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+               const cookie = cookies[i].trim();
+               if (cookie.startsWith('csrftoken=')) {
+                  cookieValue = cookie.substring('csrftoken='.length, cookie.length);
+                  break;
+               }
+            }
+            return cookieValue;
+         }
+
+         window.startMeeting = function(event) {
+            event.preventDefault();
+
+            const button = event.target.closest('button');
+            const doctorId = button.dataset.doctorId;
+            const appointmentId = button.dataset.appointmentId;
+
+            const data = {
+               doctor_id: doctorId,
+               appointment_id: appointmentId
+            };
+
+            fetch("{% url 'start_meeting' %}", {
+               method: "POST", 
+               headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRFToken": getCSRFToken()
+               },
+               body: JSON.stringify(data)  
+            })
+            .then(response => response.json()) 
+            .then(data => {
+               if (data.success) {
+                  const meetingId = data.meeting_id;
+                  const apiKey = data.apiKey;
+                  const userName = data.user_name;
+                  const isDoctor = data.is_doctor;
+
+                  const otherProjectUrl = `http://127.0.0.1:8001/?meeting_id=${meetingId}&api_key=${apiKey}&is_doctor=${isDoctor}&user_name=${encodeURIComponent(userName)}`;
+                  window.location.href = otherProjectUrl;
+               } else {
+                  console.error("Error starting meeting:", data.error);
+               }
+            })
+            .catch(error => {
+               console.error("Error during API request:", error);
+            });
+
+
+         
+         }
+   });
+   </script>
+
+
+{% endblock %}
+

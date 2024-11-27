@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+   <body class="bg-light">
+      <div class="my-profile d-flex flex-column vh-100">
+         <!-- navbar -->
+         <div class="d-flex align-items-center justify-content-between mb-auto p-3 bg-white shadow-sm osahan-header">
+            <a href="{% url 'home' %}" class="text-dark bg-white shadow rounded-circle icon">
+            <span class="mdi mdi-arrow-left mdi-18px"></span></a>
+            <div class="d-flex align-items-center gap-2 ms-3 me-auto">
+                {% if user_profile.profile_image %}
+                <img src="{{ user_profile.profile_image.url }}" alt=""
+                  class="img-fluid rounded-circle icon">
+                {% else %}
+               <img src="{% static 'img/home/default-patient.png' %}" alt=""
+                  class="img-fluid rounded-circle icon">
+                {% endif %}
+               <div>
+                  <p class="mb-0 fw-bold">
+                    {% if user_profile.gender == 'Male' %}Mr. {{ user_profile.user.name }} 
+                    {% elif user_profile.gender == 'Female' %}Mrs. {{ user_profile.user.name }}
+                    {% else %} {{ user_profile.user.name }} {% endif %}   
+                </p>
+               </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+               <a class="toggle d-flex align-items-center justify-content-center fs-5 bg-white shadow rounded-circle icon hc-nav-trigger hc-nav-1"
+                  href="#" role="button" aria-controls="hc-nav-1"><i class="bi bi-list"></i></a>
+            </div>
+         </div>
+         <!-- body -->
+         <div class="vh-100 my-auto overflow-auto body-fix-osahan-footer">
+            <div class="p-3">
+               <div class="bg-white rounded-4 px-3 pt-3 overflow-hidden edit-profile-back shadow mb-3">
+                  <h6 class="pb-2">Personal Info</h6>
+                  <div class="d-flex">
+                     <div class="col">
+                        <p><span class="text-muted small">Name</span><br>
+                            {% if user_profile.gender == 'Male' %}Mr. {{ user_profile.user.name }} 
+                            {% elif user_profile.gender == 'Female' %}Mrs. {{ user_profile.user.name }}
+                            {% else %} {{ user_profile.user.name }} {% endif %} 
+                        </p>
+                     </div>
+                     <div class="col">
+                        <p><span class="text-muted small">Date of Birth</span><br>{{ user_profile.dob|default:"Not set" }}</p>
+                     </div>
+                  </div>
+                  <div class="d-flex">
+                     <div class="col">
+                        <p><span class="text-muted small">Gender</span><br>{{ user_profile.gender|default:"Not set" }}</p>
+                     </div>
+                     <div class="col">
+                        <p><span class="text-muted small">Phone</span><br>{{ user_profile.user.mobile|default:"Not set" }}</p>
+                     </div>
+                  </div>
+                  <div class="d-flex">
+                     <div class="col">
+                        <p><span class="text-muted small">Email</span><br>{{ user_profile.user.email|default:"Not set" }}</p>
+                     </div>
+                     <div class="col">
+                        <p><span class="text-muted small">Loaction</span><br>{{ user_profile.user.country|default:"Not set" }}</p>
+                     </div>
+                  </div>
+                  <a href="{% url 'profile_update' id=user_profile.id %}" class="link-dark">
+                     <div class="edit-profile-icon bg-primary text-white">
+                        <span class="mdi mdi-square-edit-outline h2 m-0 pt-3 pe-2"></span>
+                     </div>
+                  </a>
+               </div>
+               <div class="rounded-4 shadow overflow-hidden">
+                  <a href="{% url 'appointments_page' %}" class="link-dark">
+                     <div class="bg-white d-flex align-items-center justify-content-between p-3 border-bottom">
+                        <h6 class="m-0">My Appointment</h6>
+                        <span class="mdi mdi-chevron-right mdi-24px icon shadow rounded-pill"></span>
+                     </div>
+                  </a>
+                  {% comment %} <a href="#" class="link-dark">
+                     <div class="bg-white d-flex align-items-center justify-content-between p-3 border-bottom">
+                        <h6 class="m-0">History</h6>
+                        <span class="mdi mdi-chevron-right mdi-24px icon shadow rounded-pill"></span>
+                     </div>
+                  </a> {% endcomment %}
+                  <a href="#" class="link-dark">
+                     <div class="bg-white d-flex align-items-center justify-content-between p-3">
+                        <h6 class="m-0">Favorite Doctor</h6>
+                        <span class="mdi mdi-chevron-right mdi-24px icon shadow rounded-pill"></span>
+                     </div>
+                  </a>
+               </div>
+            </div>
+         </div>
+         <!-- footer -->
+         <div class="footer mt-auto p-3 fix-osahan-footer">
+            <div
+               class="d-flex align-items-center justify-content-between rounded-4 shadow overflow-hidden bottom-nav-main">
+               <a href="{% url 'home' %}" class="col footer-bottom-nav">
+               <span class="mdi mdi-home-variant-outline mdi-24px"></span>
+               <span>Home</span>
+               </a>
+               <a href="{% url 'doctors_list' %}" class="col footer-bottom-nav">
+               <span class="mdi mdi-magnify mdi-24px"></span>
+               <span>Search</span>
+               </a>
+               <a href="{% url 'video_page' %}" class="col footer-bottom-nav">
+               <span class="mdi mdi-video-outline mdi-24px"></span>
+               <span>Video</span>
+               </a>
+               <a href="#" class="col footer-bottom-nav">
+               <span class="mdi mdi-message-processing-outline mdi-24px"></span>
+               <span>Chat</span>
+               </a>
+               <a href="{% url 'profile_page' %}" class="col footer-bottom-nav active">
+               <span class="mdi mdi-account-outline mdi-24px"></span>
+               <span>Profile</span>
+               </a>
+            </div>
+         </div>
+      </div>
+
+{% endblock %}
+

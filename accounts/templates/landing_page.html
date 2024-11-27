@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+      <div class="landing text-center vh-100">
+         <div class="landing-slider vh-100 m-0">
+            <div class="landing-slider-item">
+               <div class="card bg-transparent border-0 pt-5 mt-5">
+                  <img src="{% static 'img/landing/medical-appointment.png' %}" alt="" class="rounded-0 card-img-top landing-img">
+                  <div class="card-body p-4">
+                     <h3 class="card-title mb-2 lh-base">Schedule <span class="fw-bold text-primary">appointments</span><br> with expert doctors!</h3>
+                     <p class="card-text text-muted">Easily book appointments with top-rated specialists in just a few clicks.</p>
+                  </div>
+               </div>
+            </div>
+            <div class="landing-slider-item">
+               <div class="card bg-transparent border-0 pt-5 mt-5">
+                  <img src="{% static 'img/landing/medical-team.png' %}" alt="" class="rounded-0 card-img-top landing-img">
+                  <div class="card-body p-4">
+                     <h3 class="card-title mb-2 lh-base">Find the best <span class="fw-bold text-info">Doctors</span><br> in your vicinity</h3>
+                     <p class="card-text text-muted">Your health, our priority – find expert care near you!</p>
+                  </div>
+               </div>
+            </div>
+            <div class="landing-slider-item">
+               <div class="card bg-transparent border-0 pt-5 mt-5">
+                  <img src="{% static 'img/landing/medical-history.png' %}" alt="" class="rounded-0 card-img-top landing-img">
+                  <div class="card-body p-4">
+                     <h3 class="card-title mb-2 lh-base">Book <span class="fw-bold">face-to-face</span><br> Appointment!</h3>
+                     <p class="card-text text-muted">Face-to-face consultations with expert doctors near you.</p>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="footer fixed-bottom d-flex justify-content-end m-4">
+         <a href="{% url 'sign_up' %}" class="btn btn-info btn-lg w-100 rounded-4">NEXT</a>
+      </div>
+
+{% endblock  %}
+

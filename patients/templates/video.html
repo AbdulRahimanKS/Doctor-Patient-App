@@ -1,0 +1,369 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<body class="bg-light">
+    <div class="video d-flex flex-column vh-100">
+       <!-- navbar -->
+       <div class="bg-white d-flex align-items-center justify-content-between shadow-sm mb-auto p-3">
+          <h5 class="m-0">Video<span class="badge bg-info ms-2 rounded-1 fw-normal">consultation</span></h5>
+          <a class="toggle text-dark d-flex align-items-center justify-content-center bg-white shadow rounded-circle icon" href="#"><i class="bi bi-list fs-5"></i></a>
+       </div>
+       <!-- body -->
+       <div class="vh-100 my-auto overflow-auto body-fix-osahan-footer">
+          <!-- search -->
+          <div class="mb-4">
+             <div class="bg-white shadow-sm">
+                <div class="bg-primary text-white p-3">
+                   <h3 class="mb-1 fw-bold">Discover</h3>
+                   <p class="text-white-50 m-0">Find your suitable doctor!</p>
+                </div>
+                <div>
+                    <form method="get" action="{% url 'doctors_list' %}">
+                      <div class="input-group py-2 px-3">
+                         <span class="input-group-text bg-transparent text-muted border-0 p-0" id="search"><span class="mdi mdi-magnify mdi-24px text-primary"></span></span>
+                         <input type="text" name="q" value="{{ query }}" class="form-control text-muted border-0 px-3"
+                            placeholder="Search suitable doctor" aria-label="Search" aria-describedby="search">
+                         <a href="#" class="input-group-text bg-transparent text-muted border-0 border-start py-0 pe-0"
+                            id="search"><span class="mdi mdi-filter-outline mdi-18px"></span></a>
+                      </div>
+                   </form>
+                </div>
+             </div>
+          </div>
+          <!-- consult doctor -->
+          <div class="mb-4">
+             <h6 class="mb-2 pb-1 fw-bold px-3 text-black">Consult a specialist</h6>
+             <div class="top-doctors ps-2 ms-1">
+                {% if doctors %}
+                {% for doctor in doctors %}
+                <div class="top-doctor-item">
+                   <div class="card bg-white border-0 rounded-4 shadow-sm overflow-hidden">
+                   {% if doctor.profile_picture %}
+                      <img src="{{ doctor.profile_picture.url }}" class="card-img-top top-doctor-img" alt="...">
+                   {% elif doctor.gender == 'Male' %}
+                      <img src="{% static 'img/home/male-doctor.png' %}" class="card-img-top top-doctor-img" alt="..." style="padding:20px">
+                   {% elif doctor.gender == 'Female' %}
+                      <img src="{% static 'img/home/female-doctor.png' %}" class="card-img-top top-doctor-img" alt="..." style="padding:20px">
+                   {% else %}
+                      <img src="{% static 'img/home/doctor.png' %}" class="card-img-top top-doctor-img" alt="..." style="padding:20px">
+                   {% endif %}
+                      <div class="card-body p-3 osahan-card-body">
+                         <p class="card-title m-0">Experienced {{ doctor.qualification }} {{ doctor.specialization.name }}</p>
+                      </div>
+                      <div
+                         class="card-footer bg-transparent border-0 d-flex align-items-center justify-content-between pt-0 osahan-card-footer">
+                         <p class="m-0">
+                            ₹ {{ doctor.consultation_fee }}
+                         </p>
+                         <a href="{% url 'request_appointment' doctor_id=doctor.id %}"><span class="mdi mdi-video-outline mdi-18px"></span></a>
+                      </div>
+                   </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                  <p class="text-muted text-center">No doctors found</p>
+               {% endif %}
+             </div>
+          </div>
+          <!-- Symtom -->
+          <div class="px-3">
+             <h6 class="mb-0 pb-1 fw-bold text-black">Choose a department or symptom</h6>
+             <p class="text-muted small">Find your doctor from 90+ clinical areas</p>
+          </div>
+          <div class="bg-white shadow-sm border-top">
+             <ul class="nav video-tabs gap-1 p-0" id="pills-tab" role="tablist">
+                <li class="nav-item col" role="presentation">
+                   <button class="nav-link w-100 active" id="pills-department-tab" data-bs-toggle="pill"
+                      data-bs-target="#pills-department" type="button" role="tab" aria-controls="pills-department"
+                      aria-selected="true">Department</button>
+                </li>
+                <li class="nav-item col" role="presentation">
+                   <button class="nav-link w-100" id="pills-symptom-tab" data-bs-toggle="pill"
+                      data-bs-target="#pills-symptom" type="button" role="tab" aria-controls="pills-symptom"
+                      aria-selected="false">Symptom</button>
+                </li>
+             </ul>
+          </div>
+          <div class="p-3 mb-2">
+             <!-- tabs -->
+             <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-department" role="tabpanel"
+                   aria-labelledby="pills-department-tab" tabindex="0">
+                   <div class="row row-cols-4 g-2">
+                      <div class="col">
+                         <div class="bg-white rounded-4 text-center p-1 shadow-sm">
+                            <img src="{% static 'img/video/symptom-1.svg' %}" alt="" class="img-fluid">
+                            <p class="text-truncate pt-2 m-0 small">Gynaecology</p>
+                         </div>
+                      </div>
+                      <div class="col">
+                         <div class="bg-white rounded-4 text-center p-2 shadow-sm">
+                            <img src="{% static 'img/video/symptom-2.svg' %}" alt="" class="img-fluid">
+                            <p class="text-truncate pt-2 m-0 small">Sexology</p>
+                         </div>
+                      </div>
+                      <div class="col">
+                         <div class="bg-white rounded-4 text-center p-2 shadow-sm">
+                            <img src="{% static 'img/video/symptom-3.svg' %}" alt="" class="img-fluid">
+                            <p class="text-truncate pt-2 m-0 small">General physician</p>
+                         </div>
+                      </div>
+                      <div class="col">
+                         <div class="bg-white rounded-4 text-center p-2 shadow-sm">
+                            <img src="{% static 'img/video/symptom-4.svg' %}" alt="" class="img-fluid">
+                            <p class="text-truncate pt-2 m-0 small">Dermatology</p>
+                         </div>
+                      </div>
+                      <div class="col">
+                         <div class="bg-white rounded-4 text-center p-2 shadow-sm">
+                            <img src="{% static 'img/video/symptom-5.svg' %}" alt="" class="img-fluid">
+                            <p class="text-truncate pt-2 m-0 small">Psychiatry</p>
+                         </div>
+                      </div>
+                      <div class="col">
+                         <div class="bg-white rounded-4 text-center p-2 shadow-sm">
+                            <img src="{% static 'img/video/symptom-6.svg' %}" alt="" class="img-fluid">
+                            <p class="text-truncate pt-2 m-0 small">Stomach and digestion</p>
+                         </div>
+                      </div>
+                      <div class="col">
+                         <div class="bg-white rounded-4 text-center p-2 shadow-sm">
+                            <img src="{% static 'img/video/symptom-7.svg' %}" alt="" class="img-fluid">
+                            <p class="text-truncate pt-2 m-0 small">Pediatrics</p>
+                         </div>
+                      </div>
+                      <div class="col">
+                         <div class="bg-white rounded-4 text-center p-2 shadow-sm">
+                            <img src="{% static 'img/video/symptom-8.svg' %}" alt="" class="img-fluid">
+                            <p class="text-truncate pt-2 m-0 small">Urology</p>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+                <div class="tab-pane fade" id="pills-symptom" role="tabpanel" aria-labelledby="pills-symptom-tab"
+                   tabindex="0">
+                   <div class="row row-cols-4 g-2">
+                      <div class="col">
+                         <div class="rounded-4 text-center p-2">
+                            <img src="{% static 'img/video/symptom-1.svg' %}" alt="" class="img-fluid">
+                            <p class="text-truncate pt-2 m-0 small">Gynaecology</p>
+                         </div>
+                      </div>
+                      <div class="col">
+                         <div class="rounded-4 text-center p-2">
+                            <img src="{% static 'img/video/symptom-6.svg' %}" alt="" class="img-fluid">
+                            <p class="text-truncate pt-2 m-0 small">Stomach and digestion</p>
+                         </div>
+                      </div>
+                      <div class="col">
+                         <div class="rounded-4 text-center p-2">
+                            <img src="{% static 'img/video/symptom-7.svg' %}" alt="" class="img-fluid">
+                            <p class="text-truncate pt-2 m-0 small">Pediatrics</p>
+                         </div>
+                      </div>
+                      <div class="col">
+                         <div class="rounded-4 text-center p-2">
+                            <img src="{% static 'img/video/symptom-8.svg' %}" alt="" class="img-fluid">
+                            <p class="text-truncate pt-2 m-0 small">Urology</p>
+                         </div>
+                      </div>
+                      <div class="col">
+                         <div class="rounded-4 text-center p-2">
+                            <img src="{% static 'img/video/symptom-2.svg' %}" alt="" class="img-fluid">
+                            <p class="text-truncate pt-2 m-0 small">Sexology</p>
+                         </div>
+                      </div>
+                      <div class="col">
+                         <div class="rounded-4 text-center p-2">
+                            <img src="{% static 'img/video/symptom-3.svg' %}" alt="" class="img-fluid">
+                            <p class="text-truncate pt-2 m-0 small">General physician</p>
+                         </div>
+                      </div>
+                      <div class="col">
+                         <div class="rounded-4 text-center p-2">
+                            <img src="{% static 'img/video/symptom-4.svg' %}" alt="" class="img-fluid">
+                            <p class="text-truncate pt-2 m-0 small">Dermatology</p>
+                         </div>
+                      </div>
+                      <div class="col">
+                         <div class="rounded-4 text-center p-2">
+                            <img src="{% static 'img/video/symptom-5.svg' %}" alt="" class="img-fluid">
+                            <p class="text-truncate pt-2 m-0 small">Psychiatry</p>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div>
+          <!-- Recent view Doctor -->
+          {% comment %} <div class="mb-1">
+             <h6 class="mb-2 pb-1 fw-bold px-3 text-black">Recently Viewed Doctors</h6>
+             <div class="recent-doctors">
+                <div class="recent-doctor-item ms-3 me-2">
+                   <div class="card bg-white border-0 rounded-4 shadow-sm overflow-hidden">
+                      <img src="img/home/top-doctor-1.jpg" class="card-img-top top-doctor-img" alt="...">
+                      <div class="card-body small p-3 osahan-card-body">
+                         <p class="card-title m-0">Dr. Kawsar</p>
+                         <p class="card-text text-muted m-0">Gynecolist</p>
+                      </div>
+                   </div>
+                </div>
+                <div class="recent-doctor-item me-2">
+                   <div class="card bg-white border-0 rounded-4 shadow-sm overflow-hidden">
+                      <img src="img/home/top-doctor-2.jpg" class="card-img-top top-doctor-img" alt="...">
+                      <div class="card-body small p-3 osahan-card-body">
+                         <p class="card-title m-0">Dr. Mahabu</p>
+                         <p class="card-text text-muted m-0">Surgon</p>
+                      </div>
+                   </div>
+                </div>
+                <div class="recent-doctor-item me-2">
+                   <div class="card bg-white border-0 rounded-4 shadow-sm overflow-hidden">
+                      <img src="img/home/top-doctor-3.jpg" class="card-img-top top-doctor-img" alt="...">
+                      <div class="card-body small p-3 osahan-card-body">
+                         <p class="card-title m-0">Dr. Edwin Carli</p>
+                         <p class="card-text text-muted m-0">Dental</p>
+                      </div>
+                   </div>
+                </div>
+                <div class="recent-doctor-item">
+                   <div class="card bg-white border-0 rounded-4 shadow-sm overflow-hidden">
+                      <img src="img/home/top-doctor-1.jpg" class="card-img-top top-doctor-img" alt="...">
+                      <div class="card-body small p-3 osahan-card-body">
+                         <p class="card-title m-0">Dr. Mahabu</p>
+                         <p class="card-text text-muted m-0">Surgon</p>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div> {% endcomment %}
+          <!-- available doctor -->
+          {% comment %} <div class="p-3">
+             <h6 class="mb-2 pb-2 fw-bold text-black">Available Doctor</h6>
+             <div class="row row-cols-2 g-3">
+                <div class="col">
+                   <div class="card rounded-4 border-0 position-relative shadow-sm overflow-hidden">
+                      <div class="position-absolute m-2">
+                         <span class="badge text-bg-success rounded-pill float-end">ONLINE</span>
+                      </div>
+                      <img src="img/video/available-doctor-1.jpg" alt="" class="card-img-top top-doctor-img">
+                      <div class="card-body small p-3 osahan-card-body">
+                         <h6 class="card-title fs-14 mb-1">Dr. Taylor Samaro</h6>
+                         <p class="card-text text-muted mb-1">MBBS, BCS</p>
+                         <div class="d-flex align-items-center gap-3 small mb-3">
+                            <div><span class="mdi mdi-star text-warning me-1"></span>4.9 (5,380)</div>
+                            <div><span class="mdi mdi-medical-bag text-primary me-1"></span>4+ Years</div>
+                         </div>
+                         <h6 class="mb-0">$199<span class="text-muted small ms-1">Inc.VAT</span></h6>
+                      </div>
+                      <div class="card-footer bg-transparent border-0 p-0 cf-btn">
+                         <a href="call-doctor.html"
+                            class="btn btn-sm btn-primary d-flex align-items-center justify-content-between small">
+                            <span class="small">SEE DOCTOR NOW</span>
+                            <span class="mdi mdi-video-outline mdi-18px"></span>
+                         </a>
+                      </div>
+                   </div>
+                </div>
+                <div class="col">
+                   <div class="card rounded-4 border-0 position-relative shadow-sm overflow-hidden">
+                      <div class="position-absolute m-2">
+                         <span class="badge text-bg-success rounded-pill float-end">ONLINE</span>
+                      </div>
+                      <img src="img/video/available-doctor-2.jpg" alt="" class="card-img-top top-doctor-img">
+                      <div class="card-body small p-3 osahan-card-body">
+                         <h6 class="card-title fs-14 mb-1">Dr. Leabow</h6>
+                         <p class="card-text text-muted mb-1">MBBS, BCS</p>
+                         <div class="d-flex align-items-center gap-3 small mb-3">
+                            <div><span class="mdi mdi-star text-warning me-1"></span>4.9 (5,380)</div>
+                            <div><span class="mdi mdi-medical-bag text-primary me-1"></span>4+ Years</div>
+                         </div>
+                         <h6 class="mb-0">$199<span class="text-muted small ms-1">Inc.VAT</span></h6>
+                      </div>
+                      <div class="card-footer bg-transparent border-0 p-0 cf-btn">
+                         <a href="call-doctor.html"
+                            class="btn btn-sm btn-primary d-flex align-items-center justify-content-between small">
+                            <span class="small">SEE DOCTOR NOW</span>
+                            <span class="mdi mdi-video-outline mdi-18px"></span>
+                         </a>
+                      </div>
+                   </div>
+                </div>
+                <div class="col">
+                   <div class="card rounded-4 border-0 position-relative shadow-sm overflow-hidden">
+                      <img src="img/video/available-doctor-3.jpg" alt="" class="card-img-top top-doctor-img">
+                      <div class="card-body small p-3 osahan-card-body">
+                         <h6 class="card-title fs-14 mb-1">Dr. Morgan</h6>
+                         <p class="card-text text-muted mb-1">MBBS, BCS</p>
+                         <div class="d-flex align-items-center gap-3 small mb-3">
+                            <div><span class="mdi mdi-star text-warning me-1"></span>4.9 (5,380)</div>
+                            <div><span class="mdi mdi-medical-bag text-primary me-1"></span>4+ Years</div>
+                         </div>
+                         <h6 class="mb-0">$199<span class="text-muted small ms-1">Inc.VAT</span></h6>
+                      </div>
+                      <div class="card-footer bg-transparent border-0 p-0 cf-btn">
+                         <a href="call-doctor.html"
+                            class="btn btn-sm btn-primary d-flex align-items-center justify-content-between small">
+                            <span class="small">SEE DOCTOR NOW</span>
+                            <span class="mdi mdi-video-outline mdi-18px"></span>
+                         </a>
+                      </div>
+                   </div>
+                </div>
+                <div class="col">
+                   <div class="card rounded-4 border-0 position-relative shadow-sm overflow-hidden">
+                      <div class="position-absolute m-2">
+                         <span class="badge text-bg-success rounded-pill float-end">ONLINE</span>
+                      </div>
+                      <img src="img/video/available-doctor-4.jpg" alt="" class="card-img-top top-doctor-img">
+                      <div class="card-body small p-3 osahan-card-body">
+                         <h6 class="card-title fs-14 mb-1">Dr. Cayden Stack</h6>
+                         <p class="card-text text-muted mb-1">MBBS, BCS</p>
+                         <div class="d-flex align-items-center gap-3 small mb-3">
+                            <div><span class="mdi mdi-star text-warning me-1"></span>4.9 (5,380)</div>
+                            <div><span class="mdi mdi-medical-bag text-primary me-1"></span>4+ Years</div>
+                         </div>
+                         <h6 class="mb-0">$199<span class="text-muted small ms-1">Inc.VAT</span></h6>
+                      </div>
+                      <div class="card-footer bg-transparent border-0 p-0 cf-btn">
+                         <a href="call-doctor.html"
+                            class="btn btn-sm btn-primary d-flex align-items-center justify-content-between small">
+                            <span class="small">SEE DOCTOR NOW</span>
+                            <span class="mdi mdi-video-outline mdi-18px"></span>
+                         </a>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div> {% endcomment %}
+       </div>
+       <!-- footer -->
+       <div class="footer mt-auto p-3 fix-osahan-footer">
+          <div
+             class="d-flex align-items-center justify-content-between rounded-4 shadow overflow-hidden bottom-nav-main">
+             <a href="{% url 'home' %}" class="col footer-bottom-nav">
+                <span class="mdi mdi-home-variant-outline mdi-24px"></span>
+                <span>Home</span>
+             </a>
+             <a href="{% url 'doctors_list' %}" class="col footer-bottom-nav">
+                <span class="mdi mdi-magnify mdi-24px"></span>
+                <span>Search</span>
+             </a>
+             <a href="{% url 'video_page' %}" class="col footer-bottom-nav active">
+                <span class="mdi mdi-video-outline mdi-24px"></span>
+                <span>Video</span>
+             </a>
+             <a href="#" class="col footer-bottom-nav">
+                <span class="mdi mdi-message-processing-outline mdi-24px"></span>
+                <span>Chat</span>
+             </a>
+             <a href="{% url 'profile_page' %}" class="col footer-bottom-nav">
+                <span class="mdi mdi-account-outline mdi-24px"></span>
+                <span>Profile</span>
+             </a>
+          </div>
+       </div>
+    </div>
+
+{% endblock %}
