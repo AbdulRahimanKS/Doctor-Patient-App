@@ -108,6 +108,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CORS_aLLOWED_ORIGINS = [
+    "http://128.140.45.169:8221",
+]
+
+CORS_ALLOW_ALL_CREDENTIALS = True
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
