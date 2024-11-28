@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', '127.0.0.1']
 
 
 # Application definition
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'patients.apps.PatientsConfig',
     'doctors.apps.DoctorsConfig',
     'rest_framework',
+    'call.apps.CallConfig',
 ]
 
 MIDDLEWARE = [

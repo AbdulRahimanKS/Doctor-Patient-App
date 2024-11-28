@@ -178,7 +178,7 @@ class DownloadAttachmentsView(View):
                     
 # To show notifications
 class NotificationPageView(TemplateView):
-    template_name = 'test.html'
+    template_name = 'notification_doctor.html'
     
     def get_context_data(self, **kwargs) :
         context = super().get_context_data(**kwargs)
