@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+   <body class="bg-light">
+      <div class="my-profile d-flex flex-column vh-100">
+         <!-- navbar -->
+         <div class="d-flex align-items-center justify-content-between mb-auto p-3 bg-white shadow-sm osahan-header">
+            <a href="{% url 'doctor_home' %}" class="text-dark bg-white shadow rounded-circle icon">
+            <span class="mdi mdi-arrow-left mdi-18px"></span></a>
+            <div class="d-flex align-items-center gap-2 ms-3 me-auto">
+                {% if doctor_profile.profile_picture %}
+                <img src="{{ doctor_profile.profile_picture.url }}" alt="" class="img-fluid rounded-circle icon">
+                {% elif doctor_profile.gender == 'Male' %}
+                <img src="{% static 'img/home/male-doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+                {% elif doctor_profile.gender == 'Female' %}
+                <img src="{% static 'img/home/female-doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+                {% else %}
+                <img src="{% static 'img/home/doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+                {% endif %}
+               <div>
+                <p class="mb-0 fw-bold">
+                    Dr. {{ doctor_profile.full_name }} 
+                </p>
+               </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+               <a class="toggle d-flex align-items-center justify-content-center fs-5 bg-white shadow rounded-circle icon hc-nav-trigger hc-nav-1"
+                  href="#" role="button" aria-controls="hc-nav-1"><i class="bi bi-list"></i></a>
+            </div>
+         </div>
+         <!-- body -->
+         <div class="vh-100 my-auto overflow-auto body-fix-osahan-footer">
+            <div class="p-3">
+               <div class="bg-white rounded-4 px-3 pt-3 overflow-hidden edit-profile-back shadow mb-3">
+                  <h6 class="pb-2">Personal Info</h6>
+                  <div class="d-flex mb-2">
+                    <p><span class="text-muted small">About</span><br>
+                        {{ doctor_profile.about }}
+                    </p>
+                  </div>
+                  <div class="d-flex">
+                     <div class="col">
+                        <p><span class="text-muted small">Name</span><br>
+                            {{ doctor_profile.full_name }}
+                        </p>
+                     </div>
+                     <div class="col">
+                        <p><span class="text-muted small">Date of Birth</span><br>{{ doctor_profile.dob|default:"Not set" }}</p>
+                     </div>
+                  </div>
+                  <div class="d-flex">
+                     <div class="col">
+                        <p><span class="text-muted small">Gender</span><br>{{ doctor_profile.gender|default:"Not set" }}</p>
+                     </div>
+                     <div class="col">
+                        <p><span class="text-muted small">Phone</span><br>{{ doctor_profile.user.mobile|default:"Not set" }}</p>
+                     </div>
+                  </div>
+                  <div class="d-flex">
+                     <div class="col">
+                        <p><span class="text-muted small">Email</span><br>{{ doctor_profile.user.email|default:"Not set" }}</p>
+                     </div>
+                     <div class="col">
+                        <p><span class="text-muted small">Country</span><br>{{ doctor_profile.user.country|default:"Not set" }}</p>
+                     </div>
+                  </div>
+                  <div class="d-flex">
+                    <div class="col">
+                       <p><span class="text-muted small">Specialization</span><br>{{ doctor_profile.specialization.category }} - {{ doctor_profile.specialization.name|default:"Not set" }}</p>
+                    </div>
+                    <div class="col">
+                       <p><span class="text-muted small">Experience</span><br>
+                        {{ doctor_profile.experience_years|default:"Not set" }} {% if doctor_profile.experience_years %} {% if doctor_profile.experience_years <= 1 %}{{ doctor_profile.experience_years }} year{% else %}{{ doctor.experience_years }} years{% endif %} {% endif %} </p>
+                    </div>
+                 </div>
+                 <div class="d-flex">
+                    <div class="col">
+                       <p><span class="text-muted small">Qualification</span><br>{{ doctor_profile.qualification|default:"Not set" }}</p>
+                    </div>
+                    <div class="col">
+                       <p><span class="text-muted small">College</span><br>{{ doctor_profile.college|default:"Not set" }}</p>
+                    </div>
+                 </div>
+                 <div class="d-flex">
+                    <div class="col">
+                       <p><span class="text-muted small">Consultation fee</span><br>₹ {{ doctor_profile.consultation_fee|default:"Not set" }}</p>
+                    </div>
+                    <div class="col">
+                        <p><span class="text-muted small">Clinic address</span><br>{{ doctor_profile.clinic_address|default:"-" }}</p>
+                     </div>
+                 </div>
+                  <a href="{% url 'doctor_profile_edit' id=doctor_profile.id %}" class="link-dark">
+                     <div class="edit-profile-icon bg-primary text-white">
+                        <span class="mdi mdi-square-edit-outline h2 m-0 pt-3 pe-2"></span>
+                     </div>
+                  </a>
+               </div>
+            </div>
+         </div>
+         <!-- footer -->
+        <div class="footer mt-auto p-3 fix-osahan-footer">
+            <div
+            class="d-flex align-items-center justify-content-between rounded-4 shadow overflow-hidden bottom-nav-main">
+            <a href="{% url 'doctor_home' %}" class="col footer-bottom-nav">
+                <span class="mdi mdi-home-variant-outline mdi-24px"></span>
+                <span>Home</span>
+            </a>
+            <a href="{% url 'list_slots' %}" class="col footer-bottom-nav">
+                <span class="mdi mdi-magnify mdi-24px"></span>
+                <span>Search</span>
+            </a>
+            <a href="{% url 'doctor_video_page' %}" class="col footer-bottom-nav">
+                <span class="mdi mdi-video-outline mdi-24px"></span>
+                <span>Video</span>
+            </a>
+            <a href="#" class="col footer-bottom-nav">
+                <span class="mdi mdi-message-processing-outline mdi-24px"></span>
+                <span>Chat</span>
+            </a>
+            <a href="{% url 'doctor_profile_page' %}" class="col footer-bottom-nav active">
+                <span class="mdi mdi-account-outline mdi-24px"></span>
+                <span>Profile</span>
+            </a>
+            </div>
+        </div>
+      </div>
+
+      <!-- sidebar nav -->
+      <nav id="main-nav">
+        <ul class="second-nav">
+        <li class="osahan-user-profile bg-primary">
+            <div class="d-flex align-items-center gap-2">
+                {% if request.user.doctor_profile.profile_picture %}
+                <img src="{{ request.user.doctor_profile.profile_picture.url }}" alt="" class="rounded-pill img-fluid">
+                {% elif request.user.doctor_profile.gender == 'Male' %}
+                <img src="{% static 'img/home/male-doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+                {% elif request.user.doctor_profile.gender == 'Female' %}
+                <img src="{% static 'img/home/female-doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+                {% else %}
+                <img src="{% static 'img/home/doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+                {% endif %}
+                <div class="ps-1">
+                    <h6 class="fw-bold text-white mb-0">Hey, {{ request.user.name }}!</h6>
+                    <p class="text-white-50 m-0 small">{{ request.user.countryCode }} {{ request.user.mobile }}</p>
+                </div>
+            </div>
+        </li>
+        <li><a href="{% url 'doctor_home' %}"><span class="mdi mdi-home-variant-outline me-3"></span>Homepage</a></li>
+        <li>
+            <a href="#"><span class="mdi mdi-account-outline me-3"></span>My Profile</a>
+            <ul>
+                <li><a href="{% url 'doctor_profile_page' %}"><span class="mdi mdi-account-outline me-3"></span>My Account</a></li>
+            </ul>
+        </li>
+        <li>
+            <form method="POST" action="{% url 'sign_out' %}" class="logout-form">
+                {% csrf_token %}
+                <button type="submit"><span class="mdi mdi-logout me-3"></span>Sign out</button>
+            </form>     
+        </li>
+        </ul>
+        <ul class="bottom-nav">
+        <li class="home">
+            <a href="{% url 'doctor_home' %}">
+                <p class="h5 m-0"><span class="mdi mdi-home-variant-outline"></span></p>
+                Home
+            </a>
+        </li>
+        <li class="find">
+            <a href="{% url 'list_slots' %}">
+                <p class="h5 m-0"><span class="mdi mdi-magnify"></span></p>
+                Search
+            </a>
+        </li>
+        <li class="more">
+            <a href="{% url 'doctor_profile_page' %}">
+                <p class="h5 m-0"><span class="mdi mdi-account-circle-outline"></span></p>
+                Profile
+            </a>
+        </li>
+        </ul>
+    </nav>
+
+{% endblock %}
+

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+   .no-notifications {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      width: 100%;
+      text-align: center;
+   }
+</style>
+
+<body class="bg-light">
+   <!-- navbar -->
+   <div class="notification d-flex flex-column vh-100">
+      <div class="d-flex align-items-center justify-content-between mb-auto p-3 bg-white shadow-sm osahan-header">
+         <a href="{% url 'home' %}" class="text-dark bg-white shadow rounded-circle icon">
+               <span class="mdi mdi-arrow-left mdi-18px"></span></a>
+         <h6 class="mb-0 ms-3 me-auto fw-bold">Notification</h6>
+         <div class="d-flex align-items-center gap-3">
+            <a class="toggle bg-white shadow rounded-circle icon d-flex align-items-center justify-content-center fs-5" href="#"><i class="bi bi-list"></i></a>
+         </div>
+      </div>
+      <!-- body -->
+      <div class="vh-100 my-auto overflow-auto body-fix-osahan-footer">
+         {% if grouped_notifications.items %}
+         {% for date, notifications in grouped_notifications.items %}
+             <div>
+                 <h6 class="border-bottom fw-bold text-black p-3 mb-0">{{ date }}</h6>
+                 {% for notification in notifications %}
+                     <div class="d-flex gap-3 border-bottom p-3 
+                     {% if not notification.is_read %}bg-white {% else %}bg-light text-muted{% endif %}" 
+                     onclick="markAsRead({{ notification.id }}, this)" style="cursor:pointer">
+                         <div>
+                             <span class="bg-success-subtle rounded-pill notification-icon">
+                                 <span class="mdi mdi-calendar-check text-success"></span>
+                             </span>
+                         </div>
+                         <div>
+                             <p class="text-muted mb-2">{{ notification.message }}</p>
+                             <a href="#">
+                              {% if notification.is_just_now %}
+                                    Just Now
+                              {% else %}
+                                    {{ notification.created_at|timesince }} ago
+                              {% endif %}
+                             </a>
+                         </div>
+                     </div>
+                 {% endfor %}
+             </div>
+         {% endfor %}
+         {% else %}
+         <p class="text-center text-muted p-5 no-notifications">No notifications found</p>
+         {% endif %} 
+     </div>
+
+{% endblock %}
