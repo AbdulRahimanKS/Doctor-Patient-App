@@ -20,6 +20,18 @@
         align-items: center;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
      }
+     @media (max-width: 768px) {
+         .row.g-2 {
+            flex-wrap: wrap !important;
+         }
+         .row .col {
+            flex: 0 0 100%; 
+            max-width: 100%;
+         }
+         .input-group {
+            flex-direction: row;
+         }
+      }  
 </style>
 
 <body class="bg-light">
@@ -61,6 +73,7 @@
                        </label>
                    </div>
                </div>
+               <input type="hidden" name="remove_profile_picture" id="removeProfilePictureFlag" value="false">
            </div>
                        
             <div class="mb-3">
@@ -164,6 +177,7 @@
           const reader = new FileReader();
           reader.onload = function(e) {
              preview.src = e.target.result;
+             document.getElementById('removeProfilePictureFlag').value = 'false';
           };
           reader.readAsDataURL(file);
        }
@@ -172,6 +186,7 @@
     function removeProfilePicture() {
       document.getElementById('profilePicturePreview').src = '{% static "img/home/default_profile.jpg" %}';
       document.getElementById('profilePictureUpload').value = ''; 
+      document.getElementById('removeProfilePictureFlag').value = 'true';
   }  
    </script>    
    

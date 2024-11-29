@@ -1,6 +1,7 @@
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
+from django.utils.timezone import now, localtime
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView
 from patients.models import DoctorProfile, AppointmentSlot, AppointmentRequest, PatientInfo, PatientAttachments, Notification
@@ -338,6 +339,7 @@ class ProfileUpdateView(TemplateView):
         country = request.POST.get('country') 
         countryCode = request.POST.get('country_code')
         mobile = request.POST.get('mobile')
+        remove_profile_picture = request.POST.get('remove_profile_picture') == 'true'
         
         user_profile = get_object_or_404(UserProfile.objects.select_related('user'), id=user_profile_id)
         user = user_profile.user
@@ -347,22 +349,53 @@ class ProfileUpdateView(TemplateView):
         user.country = country
         user.countryCode = countryCode
         user.mobile = mobile
+        user.save()
     
         user_profile.gender = gender
         if dob:
             user_profile.dob = dob
         else:
             user_profile.dob = None
-        if profile_picture:
-            user_profile.profile_image = profile_picture
-        else:
+            
+        if remove_profile_picture:
             user_profile.profile_image = None
+        elif profile_picture:
+            user_profile.profile_image = profile_picture
         
-        user.save()
         user_profile.save()
 
         return redirect('profile_page')
       
+                 
+# To show notifications
+class NotificationPatientView(TemplateView):
+    template_name = 'notification_patient.html'
+    
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        
+        notifications = Notification.objects.filter(user=self.request.user).order_by('-created_at')        
+        grouped_notifications = defaultdict(list)
+        
+        for notification in notifications:
+            notification_date = localtime(notification.created_at).date()
+            today = now().date()
+            yesterday = (now() - timedelta(days=1)).date()
+
+            if notification_date == today:
+                group_key = "Today"
+            elif notification_date == yesterday:
+                group_key = "Yesterday"
+            else:
+                group_key = notification_date.strftime('%d %b, %Y')
+
+            grouped_notifications[group_key].append(notification)
+            time_diff = now() - notification.created_at
+            notification.is_just_now = time_diff < timedelta(minutes=1)
+            
+        context['grouped_notifications'] = dict(grouped_notifications)
+        
+        return context  
     
 
         

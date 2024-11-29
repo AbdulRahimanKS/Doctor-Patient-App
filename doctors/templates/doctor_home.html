@@ -29,7 +29,7 @@
             </div>   
             <div class="d-flex align-items-center gap-2">
                <div class="position-relative">
-                  <a href="{% url 'notification_view' %}" class="bg-white shadow rounded-circle icon">
+                  <a href="{% url 'notification_doctor_view' %}" class="bg-white shadow rounded-circle icon">
                       <span class="mdi mdi-bell-outline mdi-18px text-primary"></span>
                   </a>
                   <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: {% if notification_count > 0 %}block{% else %}none{% endif %}">
@@ -132,7 +132,7 @@
                <span class="mdi mdi-magnify mdi-24px"></span>
                <span>Search</span>
             </a>
-            <a href="#" class="col footer-bottom-nav">
+            <a href="{% url 'doctor_video_page' %}" class="col footer-bottom-nav">
                <span class="mdi mdi-video-outline mdi-24px"></span>
                <span>Video</span>
             </a>
@@ -140,7 +140,7 @@
                <span class="mdi mdi-message-processing-outline mdi-24px"></span>
                <span>Chat</span>
             </a>
-            <a href="#" class="col footer-bottom-nav">
+            <a href="{% url 'doctor_profile_page' %}" class="col footer-bottom-nav">
                <span class="mdi mdi-account-outline mdi-24px"></span>
                <span>Profile</span>
             </a>
@@ -169,6 +169,12 @@
        </li>
        <li><a href="{% url 'doctor_home' %}"><span class="mdi mdi-home-variant-outline me-3"></span>Homepage</a></li>
        <li>
+         <a href="#"><span class="mdi mdi-account-outline me-3"></span>My Profile</a>
+         <ul>
+            <li><a href="{% url 'doctor_profile_page' %}"><span class="mdi mdi-account-outline me-3"></span>My Account</a></li>
+         </ul>
+      </li>
+       <li>
          <form method="POST" action="{% url 'sign_out' %}" class="logout-form">
             {% csrf_token %}
             <button type="submit"><span class="mdi mdi-logout me-3"></span>Sign out</button>
@@ -189,7 +195,7 @@
          </a>
       </li>
        <li class="more">
-          <a href="#">
+          <a href="{% url 'doctor_profile_page' %}">
              <p class="h5 m-0"><span class="mdi mdi-account-circle-outline"></span></p>
              Profile
           </a>

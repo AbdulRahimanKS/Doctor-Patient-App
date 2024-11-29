@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'patients.apps.PatientsConfig',
     'doctors.apps.DoctorsConfig',
     'rest_framework',
-    'call.apps.CallConfig',
 ]
 
 MIDDLEWARE = [

@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const port = 8223;
 
-app.get('/', (req, res) => {
+app.get('/videocall/', (req, res) => {
     const meetingId = req.query.meeting_id;
     const apiKey = req.query.api_key;
     const userName = req.query.user_name;
@@ -14,9 +14,9 @@ app.get('/', (req, res) => {
 
     let redirectUrl;
     if (isDoctor === 'true') {
-        redirectUrl = "http://128.140.45.169:8222/doctors/doctor_home/";
+        redirectUrl = "http://128.140.45.169:8221/doctors/doctor_home/";
     } else {
-        redirectUrl = "http://128.140.45.169:8222/patients/home/";
+        redirectUrl = "http://128.140.45.169:8221/patients/home/";
     }
 
     const html = `

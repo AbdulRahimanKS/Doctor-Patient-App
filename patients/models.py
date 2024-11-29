@@ -29,7 +29,7 @@ class DoctorProfile(models.Model):
     gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
     dob = models.DateField(null=True, blank=True)
     profile_picture = models.ImageField(upload_to='doctor_images/', null=True, blank=True)
-    specialization = models.OneToOneField(Specialization, on_delete=models.CASCADE)
+    specialization = models.ForeignKey(Specialization, on_delete=models.CASCADE)
     experience_years = models.PositiveIntegerField(default=0)
     qualification = models.CharField(max_length=150)
     college = models.CharField(max_length=150)

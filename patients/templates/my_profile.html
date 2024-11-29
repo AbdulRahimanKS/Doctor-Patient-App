@@ -37,9 +37,7 @@
                   <div class="d-flex">
                      <div class="col">
                         <p><span class="text-muted small">Name</span><br>
-                            {% if user_profile.gender == 'Male' %}Mr. {{ user_profile.user.name }} 
-                            {% elif user_profile.gender == 'Female' %}Mrs. {{ user_profile.user.name }}
-                            {% else %} {{ user_profile.user.name }} {% endif %} 
+                           {{ user_profile.user.name }}
                         </p>
                      </div>
                      <div class="col">
@@ -59,7 +57,7 @@
                         <p><span class="text-muted small">Email</span><br>{{ user_profile.user.email|default:"Not set" }}</p>
                      </div>
                      <div class="col">
-                        <p><span class="text-muted small">Loaction</span><br>{{ user_profile.user.country|default:"Not set" }}</p>
+                        <p><span class="text-muted small">Country</span><br>{{ user_profile.user.country|default:"Not set" }}</p>
                      </div>
                   </div>
                   <a href="{% url 'profile_update' id=user_profile.id %}" class="link-dark">

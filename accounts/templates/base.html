@@ -99,6 +99,31 @@
  <script src="{% static 'js/script.js' %}"></script>
  <!-- Slick slider js -->
  <script src="{% static 'vender/slick/slick/slick.min.js' %}"></script> 
+ <!-- To read notifications -->
+ <script>
+
+   function markAsRead(notificationId, element) {
+       const redirectUrl = "{% url 'read_notifications' %}";
+       fetch(redirectUrl, {
+           method: 'POST',
+           headers: {
+               'X-CSRFToken': '{{ csrf_token }}',  
+               'Content-Type': 'application/json'
+           },
+           body: JSON.stringify({ notification_id: notificationId })
+       })
+       .then(response => response.json())
+       .then(data => {
+           if (data.status === 'success') {
+               window.location.reload();
+           } else {
+               console.error(data.message);
+           }
+       })
+       .catch(error => console.error('Error:', error));
+   }
+
+ </script>
 
 </body>
 </html>

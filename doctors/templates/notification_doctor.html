@@ -2,6 +2,17 @@
 {% block content %}
 {% load static %}
 
+<style>
+   .no-notifications {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      width: 100%;
+      text-align: center;
+   }
+</style>
+
 <body class="bg-light">
    <!-- navbar -->
    <div class="notification d-flex flex-column vh-100">
@@ -20,7 +31,9 @@
              <div>
                  <h6 class="border-bottom fw-bold text-black p-3 mb-0">{{ date }}</h6>
                  {% for notification in notifications %}
-                     <div class="d-flex gap-3 bg-white border-bottom p-3">
+                     <div class="d-flex gap-3 border-bottom p-3 
+                     {% if not notification.is_read %}bg-white {% else %}bg-light text-muted{% endif %}" 
+                     onclick="markAsRead({{ notification.id }}, this)" style="cursor:pointer">
                          <div>
                              <span class="bg-success-subtle rounded-pill notification-icon">
                                  <span class="mdi mdi-calendar-check text-success"></span>
@@ -28,13 +41,21 @@
                          </div>
                          <div>
                              <p class="text-muted mb-2">{{ notification.message }}</p>
-                             <a href="#">Just Now</a>
+                             <a href="#">
+                              {% if notification.is_just_now %}
+                                    Just Now
+                              {% else %}
+                                    {{ notification.created_at|timesince }} ago
+                              {% endif %}
+                             </a>
                          </div>
                      </div>
                  {% endfor %}
              </div>
          {% endfor %}
-         {% endif %}
+         {% else %}
+         <p class="text-center text-muted p-5 no-notifications">No notifications found</p>
+         {% endif %} 
      </div>
       
    <!-- sidebar nav -->
@@ -59,6 +80,12 @@
          </li>
          <li><a href="{% url 'doctor_home' %}"><span class="mdi mdi-home-variant-outline me-3"></span>Homepage</a></li>
          <li>
+            <a href="#"><span class="mdi mdi-account-outline me-3"></span>My Profile</a>
+            <ul>
+               <li><a href="{% url 'doctor_profile_page' %}"><span class="mdi mdi-account-outline me-3"></span>My Account</a></li>
+            </ul>
+         </li>
+         <li>
            <form method="POST" action="{% url 'sign_out' %}" class="logout-form">
               {% csrf_token %}
               <button type="submit"><span class="mdi mdi-logout me-3"></span>Sign out</button>
@@ -79,7 +106,7 @@
            </a>
         </li>
          <li class="more">
-            <a href="#">
+            <a href="{% url 'doctor_profile_page' %}">
                <p class="h5 m-0"><span class="mdi mdi-account-circle-outline"></span></p>
                Profile
             </a>

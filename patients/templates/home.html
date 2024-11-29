@@ -29,7 +29,7 @@
                   <span class="mdi mdi-cards-heart-outline mdi-18px text-primary"></span>
                </a>
                <div class="position-relative">
-                  <a href="{% url 'notification_view' %}" class="bg-white shadow rounded-circle icon">
+                  <a href="{% url 'notification_patient_view' %}" class="bg-white shadow rounded-circle icon">
                       <span class="mdi mdi-bell-outline mdi-18px text-primary"></span>
                   </a>
                   <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: {% if notification_count > 0 %}block{% else %}none{% endif %}">
@@ -390,7 +390,7 @@
                   const userName = data.user_name;
                   const isDoctor = data.is_doctor;
                   
-                  const otherProjectUrl = `http://128.140.45.169:8223/?meeting_id=${meetingId}&api_key=${apiKey}&is_doctor=${isDoctor}&user_name=${encodeURIComponent(userName)}`;
+                  const otherProjectUrl = `http://128.140.45.169:8221/videocall/?meeting_id=${meetingId}&api_key=${apiKey}&is_doctor=${isDoctor}&user_name=${encodeURIComponent(userName)}`;
                   window.location.href = otherProjectUrl;
                } else {
                   console.error("Error starting meeting:", data.error);
@@ -399,10 +399,7 @@
             .catch(error => {
                console.error("Error during API request:", error);
             });
-
-
-         
-         }
+         };
    });
    </script>
 

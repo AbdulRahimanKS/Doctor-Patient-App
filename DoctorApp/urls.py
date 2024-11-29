@@ -24,7 +24,6 @@ urlpatterns = [
     path('', include('accounts.urls')),
     path('patients/', include('patients.urls')),
     path('doctors/', include('doctors.urls')),
-    path('call/', include('call.urls'))
 ]
 
 if settings.DEBUG:
