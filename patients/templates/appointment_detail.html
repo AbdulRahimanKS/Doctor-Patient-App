@@ -129,7 +129,7 @@
                <span class="mdi mdi-video-outline mdi-24px"></span>
                <span>Video</span>
                </a>
-               <a href="#" class="col footer-bottom-nav">
+               <a href="{% url 'chat_page' %}" class="col footer-bottom-nav">
                <span class="mdi mdi-message-processing-outline mdi-24px"></span>
                <span>Chat</span>
                </a>
@@ -184,7 +184,7 @@
                      const userName = data.user_name;
                      const isDoctor = data.is_doctor;
                      
-                     const otherProjectUrl = `http://128.140.45.169:8221/videocall/?meeting_id=${meetingId}&api_key=${apiKey}&is_doctor=${isDoctor}&user_name=${encodeURIComponent(userName)}`;
+                     const otherProjectUrl = `https://doctorapp.zapto.org/videocall/?meeting_id=${meetingId}&api_key=${apiKey}&is_doctor=${isDoctor}&user_name=${encodeURIComponent(userName)}`;
                      window.location.href = otherProjectUrl;
                   } else {
                      console.error("Error starting meeting:", data.error);

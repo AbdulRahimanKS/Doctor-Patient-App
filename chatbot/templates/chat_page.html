@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+   .no-messages {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80%;
+      width: 100%;
+      text-align: center;
+   }
+</style>
+
+<body class="bg-light">
+   <div class="chat d-flex flex-column vh-100">
+      <div class="d-flex align-items-center justify-content-between mb-auto p-3 bg-white shadow-sm osahan-header">
+         <a href="{% url 'home' %}" class="text-dark bg-white shadow rounded-circle icon">
+            <span class="mdi mdi-arrow-left mdi-18px"></span></a>
+         <div class="d-flex align-items-center gap-2 ms-3 me-auto">
+            <a href="#"><img src="{% static 'img/home/bot.png' %}" alt=""
+                  class="img-fluid rounded-circle icon"></a>
+            <div>
+               <p class="mb-0 fw-bold">Bot</p>
+               {% comment %} <p class="text-orange m-0 small">Online</p> {% endcomment %}
+            </div>
+         </div>
+         <div class="d-flex align-items-center gap-2">
+            {% comment %} <a href="call-doctor.html" class="bg-white shadow rounded-circle icon">
+               <span class="mdi mdi-phone-outline mdi-18px"></span>
+            </a>
+            <a href="call-doctor.html" class="bg-white shadow rounded-circle icon">
+               <span class="mdi mdi-video-outline mdi-18px"></span>
+            </a> {% endcomment %}
+            <a class="toggle bg-white shadow rounded-circle icon d-flex align-items-center justify-content-center fs-5" href="#"><i
+                  class="bi bi-list"></i></a>
+         </div>
+      </div>
+      <!-- body -->
+      <div class="vh-100 my-auto overflow-auto p-3">
+         {% if chat_history %}
+         {% for date_label, messages in chat_history.items %}
+         <p class="text-center">{{ date_label }}</p>
+         {% for msg in messages %}
+               <div class="mb-3">
+                  {% if msg.is_user_message %}
+                     <div class="d-flex align-items-end gap-2 mb-1">
+                        <div class="d-flex align-items-center gap-3 text-white w-100 text-right">
+                           <span class="bg-info ms-auto chat-rounded-right p-3 shadow-sm">
+                              {{ msg.message }}
+                           </span>
+                        </div>
+                        {% if request.user.patients.profile_image %}
+                        <img src="{{ request.user.patients.profile_image.url }}" alt="" class="img-fluid rounded-circle icon-lg">
+                        {% else %}
+                           <img src="{% static 'img/home/default-patient.png' %}" alt="" class="img-fluid rounded-circle icon-lg">
+                        {% endif %}
+                     </div>
+                     <p class="text-muted m-0 pe-5 small me-3 text-end">{{ msg.created_at }}</p>
+                  {% else %}
+                     <div class="d-flex align-items-end gap-2 mb-1">
+                           <img src="{% static 'img/home/bot.png' %}" alt="" class="img-fluid rounded-circle icon-lg">
+                           <div class="bg-white chat-rounded-left p-3 shadow-sm">
+                              {{ msg.message }}
+                           </div>
+                     </div>
+                     <p class="text-muted mb-0 ps-5 small ms-3">{{ msg.created_at }}</p>
+                  {% endif %}
+               </div>
+         {% endfor %}
+      {% endfor %}
+      {% else %}
+         <p class="text-center text-muted mt-5 no-messages">No messages yet. Start a conversation!</p>
+      {% endif %}
+      </div>
+      <!-- footer -->
+      <div class="footer bg-white mt-auto shadow border-top">
+         <div class="input-group pe-3">
+            <input type="text" class="form-control p-3 border-0" id="messageInput" placeholder="Type a message">
+            {% comment %} <span class="input-group-text bg-transparent border-0 p-0" id="basic-addon2">
+               <a class="lighter-bg-primary-opacity rounded-circle icon text-dark" href="#" data-bs-toggle="offcanvas"
+                  data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                  <i class="bi bi-paperclip"></i>
+               </a>
+            </span> {% endcomment %}
+            {% comment %} <span class="input-group-text bg-transparent mx-1 border-0 p-0" id="basic-addon2">
+               <a class="lighter-bg-primary-opacity rounded-circle icon text-dark" href="#"><i class="bi bi-mic-fill"></i></a>
+            </span> {% endcomment %}
+            <span class="input-group-text bg-transparent border-0 p-0 mx-1" id="sendButton">
+               <a class="bg-primary rounded-circle icon text-white" href="#"><i class="bi bi-send"></i></a>
+            </span>
+         </div>
+      </div>
+   </div>
+   <!-- gallaery offcanvas -->
+   <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel"
+      style="height: 40vh;">
+      <div class="offcanvas-header d-flex justify-content-center">
+         <h6 class="offcanvas-title" id="offcanvasBottomLabel">Gallery</h6>
+         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button> 
+      </div>
+      <div class="offcanvas-body" data-bs-dismiss="offcanvas" aria-label="Close">
+         <div class="row row-cols-3 g-2">
+            <div class="col">
+               <img src="{% static 'img/gallery/gallery-1.jpg' %}" alt="" class="img-fluid rounded">
+            </div>
+            <div class="col">
+               <img src="{% static 'img/gallery/gallery-2.jpg' %}" alt="" class="img-fluid rounded">
+            </div>
+            <div class="col">
+               <img src="{% static 'img/gallery/gallery-3.jpg' %}" alt="" class="img-fluid rounded">
+            </div>
+            <div class="col">
+               <img src="{% static 'img/gallery/gallery-4.jpg' %}" alt="" class="img-fluid rounded">
+            </div>
+            <div class="col">
+               <img src="{% static 'img/gallery/gallery-5.jpg' %}" alt="" class="img-fluid rounded">
+            </div>
+            <div class="col">
+               <img src="{% static 'img/gallery/gallery-6.jpg' %}" alt="" class="img-fluid rounded">
+            </div>
+            <div class="col">
+               <img src="{% static 'img/gallery/gallery-7.jpg' %}" alt="" class="img-fluid rounded">
+            </div>
+            <div class="col">
+               <img src="{% static 'img/gallery/gallery-8.jpg' %}" alt="" class="img-fluid rounded">
+            </div>
+            <div class="col">
+               <img src="{% static 'img/gallery/gallery-9.jpg' %}" alt="" class="img-fluid rounded">
+            </div>
+         </div>
+      </div>
+   </div>
+   </div>
+
+{% endblock %}
+

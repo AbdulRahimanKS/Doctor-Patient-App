@@ -44,12 +44,14 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'patients.apps.PatientsConfig',
     'doctors.apps.DoctorsConfig',
+    'chatbot.apps.ChatbotConfig',
     'rest_framework',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -108,10 +110,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://128.140.45.169:8221",
+    "https://doctorapp.zapto.org",
 ]
 
-CORS_ALLOW_ALL_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = [
+    "https://doctorapp.zapto.org",
+]
 
 
 # Internationalization

@@ -14,9 +14,9 @@ app.get('/videocall/', (req, res) => {
 
     let redirectUrl;
     if (isDoctor === 'true') {
-        redirectUrl = "http://128.140.45.169:8221/doctors/doctor_home/";
+        redirectUrl = "https://doctorapp.zapto.org/doctors/doctor_home/";
     } else {
-        redirectUrl = "http://128.140.45.169:8221/patients/home/";
+        redirectUrl = "https://doctorapp.zapto.org/patients/home/";
     }
 
     const html = `
