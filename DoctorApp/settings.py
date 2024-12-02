@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'doctors.apps.DoctorsConfig',
     'chatbot.apps.ChatbotConfig',
     'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -109,6 +110,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOWED_ORIGINS = [
     "https://doctorapp.zapto.org",
 ]
@@ -117,13 +120,12 @@ CSRF_TRUSTED_ORIGINS = [
     "https://doctorapp.zapto.org",
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 

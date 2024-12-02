@@ -10,14 +10,14 @@ class ChatMessage(models.Model):
     created_at = models.DateTimeField(auto_now_add=True) 
     is_user_message = models.BooleanField(default=True)
     
-    def save(self, *args, **kwargs):
-        if not self.created_at:
-            india_timezone = ZoneInfo('Asia/Kolkata')
-            self.created_at = now().astimezone(india_timezone)
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.created_at:
+    #         india_timezone = ZoneInfo('Asia/Kolkata')
+    #         self.created_at = now().astimezone(india_timezone)
+    #     super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.user.name} - {'User' if self.is_user_message else 'Bot'}: {self.message[:30]}"
+        return f"{self.user.name} - {'User' if self.is_user_message else 'Bot'}: {self.message}"
 
     class Meta:
         ordering = ['created_at']

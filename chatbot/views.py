@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from chatbot.models import ChatMessage
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from django.utils.timezone import localtime
 
 
@@ -61,7 +61,9 @@ class ChatbotAPIView(APIView):
         ChatMessage.objects.create(user=self.request.user, message=user_message, is_user_message=True)
         ChatMessage.objects.create(user=self.request.user, message=bot_reply, is_user_message=False)
         
-        return Response({'reply': bot_reply}, status=status.HTTP_200_OK)
+        return Response({
+            'response': bot_reply
+        }, status=status.HTTP_200_OK)
     
     
     
