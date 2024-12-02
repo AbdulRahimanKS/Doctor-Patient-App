@@ -7,16 +7,17 @@ app.get('/videocall/', (req, res) => {
     const apiKey = req.query.api_key;
     const userName = req.query.user_name;
     const isDoctor = req.query.is_doctor
+    const token = req.query.token
 
-    if (!meetingId || !apiKey || !userName || typeof isDoctor === 'undefined') {
+    if (!meetingId || !apiKey || !userName || !token || typeof isDoctor === 'undefined') {
         return res.status(400).send('Missing required query parameters');
     }
 
     let redirectUrl;
     if (isDoctor === 'true') {
-        redirectUrl = "https://doctorapp.zapto.org/doctors/doctor_home/";
+        redirectUrl = "https://doctorapp.zapto.org/doctors/doctor_home/?token=${encodeURIComponent(token)}";
     } else {
-        redirectUrl = "https://doctorapp.zapto.org/patients/home/";
+        redirectUrl = "https://doctorapp.zapto.org/patients/home/?token=${encodeURIComponent(token)}";
     }
 
     const html = `

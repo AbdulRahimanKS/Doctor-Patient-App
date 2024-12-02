@@ -5,18 +5,39 @@ from django.utils.timezone import now, localtime
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView
 from patients.models import DoctorProfile, AppointmentSlot, AppointmentRequest, PatientInfo, PatientAttachments, Notification
-from accounts.models import UserProfile
+from accounts.models import UserProfile, CustomUser
 from django.utils.timezone import now
 from django.utils import timezone
 from django.db.models import Q
 from django.contrib import messages
 from zoneinfo import ZoneInfo
 from patients.utils import get_india_timezone
+from django.contrib.auth import login, logout
+from accounts.utils import validate_jwt_token
 
 
 # Home page view
 class HomeView(TemplateView):
     template_name = 'home.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+        token = request.GET.get('token')
+        if token:
+            user_data = validate_jwt_token(token)
+            if user_data:
+                user = CustomUser.objects.filter(id=user_data['user_id']).first()
+                if user:
+                    login(request, user)
+                else:
+                    logout(request)
+                    return redirect('login')
+            else:
+                logout(request)
+                return redirect('login')
+        elif not request.user.is_authenticated:
+            return redirect('login')
+        
+        return super().dispatch(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

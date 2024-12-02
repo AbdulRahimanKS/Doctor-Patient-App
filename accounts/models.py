@@ -27,7 +27,6 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(mobile, email, password, **extra_fields)
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-
     name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
     mobile = models.CharField(max_length=15, unique=True)
@@ -38,6 +37,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     user_type = models.CharField(max_length=20,choices=[('Doctor', 'Doctor'), ('Patient', 'Patient')], default='')
+    jwt_token = models.CharField(max_length=512, blank=True, null=True)
 
     groups = models.ManyToManyField(
         'auth.Group',

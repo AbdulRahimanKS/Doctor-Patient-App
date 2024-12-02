@@ -245,8 +245,9 @@
                   const apiKey = data.apiKey;
                   const userName = data.user_name;
                   const isDoctor = data.is_doctor;
+                  const token = data.token;
 
-                  const otherProjectUrl = `https://doctorapp.zapto.org/videocall/?meeting_id=${meetingId}&api_key=${apiKey}&is_doctor=${isDoctor}&user_name=${encodeURIComponent(userName)}`;
+                  const otherProjectUrl = `https://doctorapp.zapto.org/videocall/?meeting_id=${meetingId}&api_key=${apiKey}&is_doctor=${isDoctor}&user_name=${encodeURIComponent(userName)}&token=${encodeURIComponent(token)}`;
                   window.location.href = otherProjectUrl;
                } else {
                   console.error("Error starting meeting:", data.error);

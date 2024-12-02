@@ -12,16 +12,38 @@ import jwt
 import requests
 from django.http import FileResponse
 from patients.models import AppointmentSlot, DoctorProfile, PatientInfo, PatientAttachments, Notification, Category, Specialization
+from accounts.models import CustomUser
 from django.contrib import messages
 from django.db.models import Q
 from datetime import datetime, timedelta
 from DoctorApp.settings import VIDEO_SDK_API_KEY, VIDEO_SDK_API_SECRET, VIDEO_SDK_API_URL
 from patients.utils import get_india_timezone
+from accounts.utils import generate_jwt_token, validate_jwt_token
+from django.contrib.auth import login, logout 
 
 
 # Doctor home page view
 class DoctorHomeView(TemplateView):
     template_name = 'doctor_home.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+        token = request.GET.get('token')
+        if token:
+            user_data = validate_jwt_token(token)
+            if user_data:
+                user = CustomUser.objects.filter(id=user_data['user_id']).first()
+                if user:
+                    login(request, user)
+                else:
+                    logout(request)
+                    return redirect('login')
+            else:
+                logout(request)
+                return redirect('login')
+        elif not request.user.is_authenticated:
+            return redirect('login')
+        
+        return super().dispatch(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -51,7 +73,7 @@ class DoctorHomeView(TemplateView):
         
         return context
     
-    
+        
 # Slot adding view
 class SlotAddView(TemplateView):
     template_name = 'add_slots.html'
@@ -102,6 +124,7 @@ class SlotStartMeeting(View):
         doctor_id = data.get('doctor_id')
         appointment_slot_id = data.get('appointment_id')
         is_doctor = False
+        user=self.request.user
         
         slot = get_object_or_404(AppointmentSlot, id=appointment_slot_id)
         doctor = get_object_or_404(DoctorProfile, id=doctor_id)
@@ -112,9 +135,13 @@ class SlotStartMeeting(View):
         else:
             appointment_request = slot.appointmentrequest_set.first()
             user_name = appointment_request.patient_info.patient_name
+            
+        token = generate_jwt_token(user)
+        user.jwt_token = token
+        user.save()
         
         if slot.room_id:
-            return JsonResponse({'success': True, 'user_name': user_name, 'meeting_id': slot.room_id, 'apiKey': VIDEO_SDK_API_KEY, 'is_doctor': is_doctor})
+            return JsonResponse({'success': True, 'user_name': user_name, 'meeting_id': slot.room_id, 'apiKey': VIDEO_SDK_API_KEY, 'is_doctor': is_doctor, 'token': token})
             
         try:
             payload = {
@@ -138,7 +165,7 @@ class SlotStartMeeting(View):
                 slot.room_id = room_id
                 slot.save()
             
-                return JsonResponse({'success': True, 'user_name': user_name, 'meeting_id': room_id, 'apiKey': VIDEO_SDK_API_KEY, 'is_doctor': is_doctor})
+                return JsonResponse({'success': True, 'user_name': user_name, 'meeting_id': room_id, 'apiKey': VIDEO_SDK_API_KEY, 'is_doctor': is_doctor, 'token': token})
             else:
                 return JsonResponse({'success': False, 'error': "Failed to create a meeting"})
         except Exception as e:

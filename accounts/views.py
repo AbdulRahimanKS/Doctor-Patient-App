@@ -72,6 +72,7 @@ class SignInView(TemplateView):
             return render(request, self.template_name, {'errors': errors, 'mobile': mobile})
         
         login(request, user)
+        
         if user.user_type == 'Doctor':
             return redirect('doctor_home')
         else:
