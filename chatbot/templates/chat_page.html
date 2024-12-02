@@ -19,10 +19,10 @@
          <a href="{% url 'home' %}" class="text-dark bg-white shadow rounded-circle icon">
             <span class="mdi mdi-arrow-left mdi-18px"></span></a>
          <div class="d-flex align-items-center gap-2 ms-3 me-auto">
-            <a href="#"><img src="{% static 'img/home/bot.png' %}" alt=""
+            <a href="#"><img src="{% static 'img/home/chat-doctor.jpg' %}" alt=""
                   class="img-fluid rounded-circle icon"></a>
             <div>
-               <p class="mb-0 fw-bold">Bot</p>
+               <p class="mb-0 fw-bold">Dr. Thomas</p>
                {% comment %} <p class="text-orange m-0 small">Online</p> {% endcomment %}
             </div>
          </div>
@@ -60,7 +60,7 @@
                      <p class="text-muted m-0 pe-5 small me-3 text-end">{{ msg.created_at }}</p>
                   {% else %}
                      <div class="d-flex align-items-end gap-2 mb-1">
-                           <img src="{% static 'img/home/bot.png' %}" alt="" class="img-fluid rounded-circle icon-lg">
+                           <img src="{% static 'img/home/chat-doctor.jpg' %}" alt="" class="img-fluid rounded-circle icon-lg">
                            <div class="bg-white chat-rounded-left p-3 shadow-sm">
                               {{ msg.message }}
                            </div>
@@ -140,12 +140,19 @@
          const messageInput = document.getElementById('messageInput');
          const chatBody = document.querySelector('.vh-100.my-auto.overflow-auto.p-3');
          const noMessagesElement = document.querySelector('.no-messages');
+
+         function scrollToBottom() {
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+    
+        scrollToBottom();
      
          sendButton.addEventListener('click', async (event) => {
-             event.preventDefault();
+            event.preventDefault();
              
-             const message = messageInput.value.trim();
-             messageInput.value = '';
+            const message = messageInput.value.trim();
+            if (!message) return;
+            messageInput.value = '';
      
              try {
                  const response = await fetch('/chat/chat_response/', {  
@@ -162,11 +169,13 @@
                  }
      
                  const data = await response.json();
-                 appendMessage(chatBody, message, true, formatTime(new Date()));
+                 updateDateLabels();
 
-                 if (data.response) {
-                     appendMessage(chatBody, data.response, false, formatTime(new Date(data.timestamp || Date.now())));
-                 }
+                 appendMessage(chatBody, data.user_message.message, true, data.user_message.created_at, data.user_message.date_label);
+
+                  if (data.bot_reply) {
+                        appendMessage(chatBody, data.bot_reply.message, false, data.bot_reply.created_at, data.bot_reply.date_label);
+                  }
    
                  chatBody.scrollTop = chatBody.scrollHeight;
 
@@ -179,9 +188,8 @@
                   alert("Unable to send the message. Please try again.");
                }
          });
-     });
      
-     function getCSRFToken() {
+      function getCSRFToken() {
          const name = 'csrftoken';
          const cookies = document.cookie.split(';');
          for (const cookie of cookies) {
@@ -191,16 +199,71 @@
              }
          }
          return '';
-     }
-     
-     let lastDateLabel = null;
-     // Utility function to append messages to the chat
-     function appendMessage(chatBody, message, isUser, time) {
+      }
+
+      function updateDateLabels() {
+         const currentDate = new Date(); 
+         const chatDateLabels = document.querySelectorAll("p.text-center");
+         const seenDates = new Set(); 
+   
+         chatDateLabels.forEach((label) => {
+            const labelDate = label.dataset.date; 
+            if (!labelDate) return; 
+   
+            const dateObject = new Date(labelDate); 
+            if (isNaN(dateObject)) {
+               label.textContent = "Invalid Date";
+               return;
+            }
+   
+            const dateDifference = Math.floor((currentDate - dateObject) / (1000 * 60 * 60 * 24));
+   
+            let newLabel;
+            if (dateDifference === 0) {
+               newLabel = "Today";
+            } else if (dateDifference === 1) {
+               newLabel = "Yesterday";
+            } else {
+               newLabel = formatDate(dateObject); 
+            }
+   
+            if (seenDates.has(newLabel)) {
+               label.remove(); 
+            } else {
+               label.textContent = newLabel; 
+               seenDates.add(newLabel); 
+            }
+         });
+      }
+
+      // Utility function to format dates
+      function formatDate(date) {
+            const options = { day: '2-digit', month: 'long', year: 'numeric' };
+            return date.toLocaleDateString('en-GB', options);
+      }
+
+      // Utility function to append messages to the chat
+      function appendMessage(chatBody, message, isUser, time, dateLabel) {
          const messageWrapper = document.createElement('div');
          messageWrapper.classList.add('mb-3');
+
+         let dateLabelElement = '';
+         const existingDateLabels = document.querySelectorAll('p.text-center');
+         let isNewDateLabel = true;
+
+         existingDateLabels.forEach(label => {
+            if (label.textContent.trim() === dateLabel) {
+                  isNewDateLabel = false;
+            }
+         });
+
+         if (isNewDateLabel) {
+            dateLabelElement = `<p class="text-center">${dateLabel}</p>`;
+         }
      
          if (isUser) {
              messageWrapper.innerHTML = `
+                  ${dateLabelElement}
                  <div class="d-flex align-items-end gap-2 mb-1">
                      <div class="d-flex align-items-center gap-3 text-white w-100 text-right">
                          <span class="bg-info ms-auto chat-rounded-right p-3 shadow-sm">${message}</span>
@@ -211,8 +274,9 @@
              `;
          } else {
              messageWrapper.innerHTML = `
+                  ${dateLabelElement}
                  <div class="d-flex align-items-end gap-2 mb-1">
-                     <img src="/static/img/home/bot.png" alt="" class="img-fluid rounded-circle icon-lg">
+                     <img src="/static/img/home/chat-doctor.jpg" alt="" class="img-fluid rounded-circle icon-lg">
                      <div class="bg-white chat-rounded-left p-3 shadow-sm">${message}</div>
                  </div>
                  <p class="text-muted mb-0 ps-5 small ms-3">${time}</p>
@@ -221,12 +285,8 @@
      
          chatBody.appendChild(messageWrapper);
      }
-     
-     // Utility function to format time as HH:MM AM/PM
-     function formatTime(date) {
-         const options = { hour: 'numeric', minute: 'numeric', hour12: true };
-         return new Intl.DateTimeFormat('en-US', options).format(date);
-     }
+
+   });
      
    </script>
 
