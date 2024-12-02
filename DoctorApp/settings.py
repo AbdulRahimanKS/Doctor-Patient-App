@@ -161,7 +161,7 @@ VIDEO_SDK_API_URL = os.getenv('VIDEO_SDK_API_URL')
 
 
 # Share authentication via cookies
-SESSION_COOKIE_DOMAIN = '.zapto.org'
+SESSION_COOKIE_DOMAIN = 'doctorapp.zapto.org'
 SESSION_COOKIE_SECURE = True        
 SESSION_COOKIE_HTTPONLY = True      
 
