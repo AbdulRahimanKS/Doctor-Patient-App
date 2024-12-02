@@ -1,4 +1,7 @@
 from django.contrib import admin
 from chatbot.models import ChatMessage
 
-admin.site.register(ChatMessage)
+class ChatMessageAdmin(admin.ModelAdmin):
+    ordering = ('-created_at',)
+
+admin.site.register(ChatMessage, ChatMessageAdmin)

@@ -110,8 +110,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-CORS_ALLOW_CREDENTIALS = True
-
 CORS_ALLOWED_ORIGINS = [
     "https://doctorapp.zapto.org",
 ]
@@ -160,4 +158,10 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 VIDEO_SDK_API_KEY = os.getenv('VIDEO_SDK_API_KEY')
 VIDEO_SDK_API_SECRET = os.getenv('VIDEO_SDK_API_SECRET')
 VIDEO_SDK_API_URL = os.getenv('VIDEO_SDK_API_URL')
+
+
+# Share authentication via cookies
+SESSION_COOKIE_DOMAIN = '.zapto.org'
+SESSION_COOKIE_SECURE = True        
+SESSION_COOKIE_HTTPONLY = True      
 
