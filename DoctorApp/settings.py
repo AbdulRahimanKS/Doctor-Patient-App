@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from DoctorApp.ckeditorconfig import *
 
 load_dotenv()
 
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_ckeditor_5',
     'accounts.apps.AccountsConfig',
     'patients.apps.PatientsConfig',
     'doctors.apps.DoctorsConfig',
@@ -65,7 +67,7 @@ ROOT_URLCONF = 'DoctorApp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -158,4 +160,8 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 VIDEO_SDK_API_KEY = os.getenv('VIDEO_SDK_API_KEY')
 VIDEO_SDK_API_SECRET = os.getenv('VIDEO_SDK_API_SECRET')
 VIDEO_SDK_API_URL = os.getenv('VIDEO_SDK_API_URL')
+
+
+# CKEditor Storage
+CKEDITOR_5_FILE_STORAGE = 'DoctorApp.ckeditorstorage.CKEditorStorage'
 

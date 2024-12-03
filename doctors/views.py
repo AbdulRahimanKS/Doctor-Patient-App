@@ -20,31 +20,16 @@ from DoctorApp.settings import VIDEO_SDK_API_KEY, VIDEO_SDK_API_SECRET, VIDEO_SD
 from patients.utils import get_india_timezone
 from accounts.utils import generate_jwt_token, validate_jwt_token
 from django.contrib.auth import login, logout 
+from doctors.models import Prescription
+from doctors.forms import PrescriptionForm
+from django.utils.html import strip_tags    
+import re
 
 
 # Doctor home page view
 class DoctorHomeView(TemplateView):
     template_name = 'doctor_home.html'
-    
-    def dispatch(self, request, *args, **kwargs):
-        token = request.GET.get('token')
-        if token:
-            user_data = validate_jwt_token(token)
-            if user_data:
-                user = CustomUser.objects.filter(id=user_data['user_id']).first()
-                if user:
-                    login(request, user)
-                else:
-                    logout(request)
-                    return redirect('sign_in')
-            else:
-                logout(request)
-                return redirect('sign_in')
-        elif not request.user.is_authenticated:
-            return redirect('sign_in')
-        
-        return super().dispatch(request, *args, **kwargs)
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         current_date, current_time_obj = get_india_timezone()
@@ -385,3 +370,86 @@ class DoctorVideoPageView(TemplateView):
         context['today_appointments'] = upcoming_appointments
         
         return context
+    
+    
+# Prescription page view
+class PrescriptionPageView(TemplateView):
+    template_name = 'prescription.html'    
+
+
+# Prescription detail page view
+class PrescriptionDetailPageView(TemplateView):
+    template_name = 'prescription_detail.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+        token = request.GET.get('token')
+        if token:
+            user_data = validate_jwt_token(token)
+            if user_data:
+                user = CustomUser.objects.filter(id=user_data['user_id']).first()
+                if user:
+                    login(request, user)
+                else:
+                    logout(request)
+                    return redirect('sign_in')
+            else:
+                logout(request)
+                return redirect('sign_in')
+        elif not request.user.is_authenticated:
+            return redirect('sign_in')
+        
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        meeting_id = self.kwargs.get('meeting_id')
+        user = self.request.user
+        doctor = get_object_or_404(DoctorProfile, user=user)
+
+        appointment_slot = AppointmentSlot.objects.get(is_booked=True, room_id=meeting_id)
+        request_instance = appointment_slot.slots.get(status='Confirmed', doctor=doctor)
+        patient = request_instance.patient_info
+        
+        prescription = Prescription.objects.get(patient=patient, doctor=doctor)
+        if prescription:
+            form = PrescriptionForm(instance=prescription)
+        else:
+            form = PrescriptionForm()
+        
+        context['form'] = form
+        context['patient_name'] = patient.patient_name
+        context['meeting_id'] = meeting_id
+        
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        meeting_id = request.POST.get('meeting_id')
+        user = self.request.user
+        doctor = get_object_or_404(DoctorProfile, user=user)
+
+        appointment_slot = AppointmentSlot.objects.get(is_booked=True, room_id=meeting_id)
+        request_instance = appointment_slot.slots.get(status='Confirmed', doctor=doctor)
+        patient = request_instance.patient_info
+
+        prescription = Prescription.objects.get(patient=patient, doctor=doctor)
+
+        if prescription:
+            form = PrescriptionForm(request.POST, instance=prescription)
+        else:
+            form = PrescriptionForm(request.POST)
+
+        if form.is_valid():
+            prescription_text = form.cleaned_data.get('prescription_text')
+            stripped_text = strip_tags(prescription_text).strip()
+            stripped_text = re.sub(r'(&nbsp;|\s)+', '', stripped_text)
+
+            if not stripped_text:
+                messages.error(request, "Prescription cannot be empty")
+                return self.render_to_response(self.get_context_data(form=form))
+
+            form.save()
+
+            return redirect('doctor_home')
+
+        messages.error(request, "An error occurred. Please try again")
+        return self.render_to_response(self.get_context_data(form=form))

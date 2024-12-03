@@ -91,7 +91,7 @@ class AppointmentRequest(models.Model):
     
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     doctor = models.ForeignKey(DoctorProfile, on_delete=models.SET_NULL, null=True)
-    slot = models.ForeignKey(AppointmentSlot, on_delete=models.SET_NULL, null=True)
+    slot = models.ForeignKey(AppointmentSlot, on_delete=models.SET_NULL, null=True, related_name='slots')
     date_requested = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=50, choices=appointment_status, default='Pending')

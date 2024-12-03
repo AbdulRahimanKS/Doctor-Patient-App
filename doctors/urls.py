@@ -1,5 +1,5 @@
 from django.urls import path
-from doctors.views import DoctorHomeView, SlotAddView, SlotListView, SlotStartMeeting, DownloadAttachmentsView, NotificationDoctorView, NotificationsReadView, DoctorProfilePageView, DoctorProfileEditView, GetSpecializationsView, DoctorVideoPageView
+from doctors.views import DoctorHomeView, SlotAddView, SlotListView, SlotStartMeeting, DownloadAttachmentsView, NotificationDoctorView, NotificationsReadView, DoctorProfilePageView, DoctorProfileEditView, GetSpecializationsView, DoctorVideoPageView, PrescriptionPageView, PrescriptionDetailPageView
 
 
 urlpatterns = [
@@ -14,5 +14,7 @@ urlpatterns = [
     path('doctor_profile_edit/<int:id>/', DoctorProfileEditView.as_view(), name='doctor_profile_edit'),
     path('get_specializations/<int:category_id>/', GetSpecializationsView.as_view(), name='get_specializations'),
     path('doctor_video_page/', DoctorVideoPageView.as_view(), name='doctor_video_page'),
+    path('prescription_page/', PrescriptionPageView.as_view(), name='prescription_page'),
+    path('prescription_detail/<str:meeting_id>/', PrescriptionDetailPageView.as_view(), name='prescription_detail'),
 ]
 
