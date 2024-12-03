@@ -15,9 +15,9 @@ app.get('/videocall/', (req, res) => {
 
     let redirectUrl;
     if (isDoctor === 'true') {
-        redirectUrl = "https://doctorapp.zapto.org/doctors/doctor_home/?token=${encodeURIComponent(token)}";
+        redirectUrl = "https://doctorapp.zapto.org/doctors/doctor_home/?token=${token}";
     } else {
-        redirectUrl = "https://doctorapp.zapto.org/patients/home/?token=${encodeURIComponent(token)}";
+        redirectUrl = "https://doctorapp.zapto.org/patients/home/?token=${token}";
     }
 
     const html = `
