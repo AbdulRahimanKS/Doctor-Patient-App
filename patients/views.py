@@ -22,10 +22,13 @@ class HomeView(TemplateView):
     
     def dispatch(self, request, *args, **kwargs):
         token = request.GET.get('token')
+        print("Token", token)
         if token:
             user_data = validate_jwt_token(token)
+            print("user_data", user_data)
             if user_data:
                 user = CustomUser.objects.filter(pk=user_data['user_id']).first()
+                print(user)
                 if user:
                     login(request, user)
                 else:
