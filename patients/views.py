@@ -30,12 +30,12 @@ class HomeView(TemplateView):
                     login(request, user)
                 else:
                     logout(request)
-                    return redirect('login')
+                    return redirect('sign_in')
             else:
                 logout(request)
-                return redirect('login')
+                return redirect('sign_in')
         elif not request.user.is_authenticated:
-            return redirect('login')
+            return redirect('sign_in')
         
         return super().dispatch(request, *args, **kwargs)
     

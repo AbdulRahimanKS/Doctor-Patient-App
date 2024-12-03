@@ -169,13 +169,15 @@
                  }
      
                  const data = await response.json();
-                 updateDateLabels();
 
                  appendMessage(chatBody, data.user_message.message, true, data.user_message.created_at, data.user_message.date_label);
 
                   if (data.bot_reply) {
                         appendMessage(chatBody, data.bot_reply.message, false, data.bot_reply.created_at, data.bot_reply.date_label);
                   }
+
+                  const simulatedDate = new Date("2024-12-05T00:00:00");
+                  updateDateLabels(simulatedDate); 
    
                  chatBody.scrollTop = chatBody.scrollHeight;
 
@@ -201,37 +203,51 @@
          return '';
       }
 
-      function updateDateLabels() {
-         const currentDate = new Date(); 
+      function updateDateLabels(simulatedDate = null) {
          const chatDateLabels = document.querySelectorAll("p.text-center");
-         const seenDates = new Set();
-   
+         const seenDates = new Map();
+         const currentDate = simulatedDate || new Date(); 
+
          chatDateLabels.forEach((label) => {
-            const labelDate = label.dataset.date; 
-            if (!labelDate) return; 
-   
-            const dateObject = new Date(labelDate); 
-            if (isNaN(dateObject)) {
-               label.textContent = "Invalid Date";
-               return;
-            }
+            const labelText = label.textContent.trim();
+            let dateObject;
             
+            if (labelText === "Today") {
+                  dateObject = new Date(currentDate);
+            } else if (labelText === "Yesterday") {
+                  dateObject = new Date(currentDate);
+                  dateObject.setDate(dateObject.getDate() - 1);
+            } else {
+                  dateObject = new Date(labelText);
+            }
+      
+            console.log("Parsed Date Object:", dateObject);
+      
+            if (isNaN(dateObject)) {
+                  label.textContent = "Invalid Date";
+                  return;
+            }
+      
             const dateDifference = Math.floor((currentDate - dateObject) / (1000 * 60 * 60 * 24));
-   
+      
             let newLabel;
             if (dateDifference === 0) {
-               newLabel = "Today";
+                  newLabel = "Today";
             } else if (dateDifference === 1) {
-               newLabel = "Yesterday";
+                  newLabel = "Yesterday";
             } else {
-               newLabel = formatDate(dateObject); 
+                  newLabel = formatDate(dateObject);
             }
-   
+      
             if (seenDates.has(newLabel)) {
-               label.remove(); 
+                  label.remove();
             } else {
-               label.textContent = newLabel; 
-               seenDates.add(newLabel); 
+                  label.textContent = newLabel; 
+                  seenDates.set(newLabel, label);
+            }
+
+            if (label.textContent !== newLabel) {
+               label.textContent = newLabel;
             }
          });
       }
@@ -244,26 +260,23 @@
 
       // Utility function to append messages to the chat
       function appendMessage(chatBody, message, isUser, time, dateLabel) {
+         const existingDateLabel = Array.from(chatBody.querySelectorAll("p.text-center"))
+            find((label) => label.textContent.trim() === dateLabel);
+
+         // If no label exists for this date, create one
+         if (!existingDateLabel) {
+            const dateLabelElement = document.createElement('p');
+            dateLabelElement.className = 'text-center text-muted my-2';
+            dateLabelElement.textContent = dateLabel;
+            chatBody.appendChild(dateLabelElement);
+         }
+
+         // Add the message wrapper
          const messageWrapper = document.createElement('div');
          messageWrapper.classList.add('mb-3');
-
-         let dateLabelElement = '';
-         const existingDateLabels = document.querySelectorAll('p.text-center');
-         let isNewDateLabel = true;
-
-         existingDateLabels.forEach(label => {
-            if (label.textContent.trim() === dateLabel) {
-                  isNewDateLabel = false;
-            }
-         });
-
-         if (isNewDateLabel) {
-            dateLabelElement = `<p class="text-center">${dateLabel}</p>`;
-         }
      
          if (isUser) {
              messageWrapper.innerHTML = `
-                  ${dateLabelElement}
                  <div class="d-flex align-items-end gap-2 mb-1">
                      <div class="d-flex align-items-center gap-3 text-white w-100 text-right">
                          <span class="bg-info ms-auto chat-rounded-right p-3 shadow-sm">${message}</span>
@@ -274,7 +287,6 @@
              `;
          } else {
              messageWrapper.innerHTML = `
-                  ${dateLabelElement}
                  <div class="d-flex align-items-end gap-2 mb-1">
                      <img src="/static/img/home/chat-doctor.jpg" alt="" class="img-fluid rounded-circle icon-lg">
                      <div class="bg-white chat-rounded-left p-3 shadow-sm">${message}</div>
