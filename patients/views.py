@@ -25,7 +25,7 @@ class HomeView(TemplateView):
         if token:
             user_data = validate_jwt_token(token)
             if user_data:
-                user = CustomUser.objects.filter(id=user_data['user_id']).first()
+                user = CustomUser.objects.filter(pk=user_data['user_id']).first()
                 if user:
                     login(request, user)
                 else:
