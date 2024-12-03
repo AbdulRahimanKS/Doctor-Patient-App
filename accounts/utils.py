@@ -4,10 +4,9 @@ from datetime import datetime, timedelta
 from accounts.models import CustomUser
 
 
+# To generate token
 def generate_jwt_token(user):
-    expiration_time = datetime.utcnow() + timedelta(hours=1)
-    print("User", user)
-    print("Id", user.id)
+    expiration_time = datetime.utcnow() + timedelta(hours=10)
     payload = {
         'user_id': user.id,
         'username': user.name,
@@ -18,15 +17,12 @@ def generate_jwt_token(user):
     return token
 
 
+# To validate token
 def validate_jwt_token(token):
-    print("called")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-        print("Payload", payload)
         return payload
     except jwt.ExpiredSignatureError:
-        print("Token expired")
         return None
     except jwt.InvalidTokenError:
-        print("Invalid expired")
         return None

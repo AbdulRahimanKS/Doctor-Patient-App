@@ -30,7 +30,6 @@ class DoctorHomeView(TemplateView):
         token = request.GET.get('token')
         if token:
             user_data = validate_jwt_token(token)
-            print(user_data)
             if user_data:
                 user = CustomUser.objects.filter(id=user_data['user_id']).first()
                 if user:

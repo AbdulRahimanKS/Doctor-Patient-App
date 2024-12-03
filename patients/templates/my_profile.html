@@ -73,6 +73,15 @@
                         <span class="mdi mdi-chevron-right mdi-24px icon shadow rounded-pill"></span>
                      </div>
                   </a>
+                  <form action="{% url 'sign_out' %}" method="POST" id="signOutForm">
+                  {% csrf_token %}
+                     <a href="javascript:void(0);" class="link-dark" onclick="document.getElementById('signOutForm').submit();">
+                        <div class="bg-white d-flex align-items-center justify-content-between p-3 border-bottom">
+                           <h6 class="m-0">Sign Out</h6>
+                           <span class="mdi mdi-chevron-right mdi-24px icon shadow rounded-pill"></span>
+                        </div>
+                     </a> 
+                  </form>
                   {% comment %} <a href="#" class="link-dark">
                      <div class="bg-white d-flex align-items-center justify-content-between p-3 border-bottom">
                         <h6 class="m-0">History</h6>
