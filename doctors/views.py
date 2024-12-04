@@ -416,6 +416,7 @@ class PrescriptionDetailPageView(TemplateView):
     
     def get_meeting_id(self, request):
         meeting_id = self.request.GET.get('meeting_id')
+        print("from node", meeting_id)
         return meeting_id
     
     def get_context_data(self, **kwargs):
