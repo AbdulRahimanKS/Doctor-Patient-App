@@ -414,16 +414,9 @@ class PrescriptionDetailPageView(TemplateView):
         
         return super().dispatch(request, *args, **kwargs)
     
-    # def get_meeting_id(self):
-    #     meeting_id = self.request.GET.get('meeting_id')
-    #     print("from node", meeting_id)
-    #     return meeting_id
-    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         meeting_id = self.kwargs.get('meeting_id')
-        # if not meeting_id:
-        #     meeting_id = self.get_meeting_id()
         user = self.request.user
         doctor = get_object_or_404(DoctorProfile, user=user)
 
@@ -431,11 +424,8 @@ class PrescriptionDetailPageView(TemplateView):
         request_instance = appointment_slot.slots.get(status='Confirmed', doctor=doctor)
         patient = request_instance.patient_info
         
-        prescription = Prescription.objects.filter(patient=patient, doctor=doctor).first()
-        if prescription:
-            form = PrescriptionForm(instance=prescription)
-        else:
-            form = PrescriptionForm()
+        prescription, created = Prescription.objects.get_or_create(patient=patient, doctor=doctor, slot=appointment_slot)
+        form = PrescriptionForm(instance=prescription)
         
         context['form'] = form
         context['patient_name'] = patient.patient_name
@@ -452,7 +442,7 @@ class PrescriptionDetailPageView(TemplateView):
         request_instance = appointment_slot.slots.get(status='Confirmed', doctor=doctor)
         patient = request_instance.patient_info
 
-        prescription, created = Prescription.objects.get_or_create(patient=patient, doctor=doctor)
+        prescription = get_object_or_404(Prescription, patient=patient, doctor=doctor, slot=appointment_slot)
 
         form = PrescriptionForm(request.POST, instance=prescription)
 
@@ -461,7 +451,7 @@ class PrescriptionDetailPageView(TemplateView):
             stripped_text = strip_tags(prescription_text).strip()
             stripped_text = re.sub(r'(&nbsp;|\s)+', '', stripped_text)
 
-            if not stripped_text and (created or prescription_text != prescription.prescription_text):
+            if not stripped_text and (prescription_text != prescription.prescription_text):
                 messages.error(request, "Prescription cannot be empty")
                 return self.render_to_response(self.get_context_data(form=form))
             
