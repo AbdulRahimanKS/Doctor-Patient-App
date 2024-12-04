@@ -37,7 +37,8 @@ class DoctorHomeView(TemplateView):
         doctor = get_object_or_404(DoctorProfile.objects.select_related('specialization'), user=self.request.user)
 
         today_appointments = AppointmentSlot.objects.filter(
-            doctor=doctor, is_available=True, is_booked=True, date=current_date).filter(end_time__gte=current_time_obj).order_by('-start_time')
+            doctor=doctor, is_available=True, is_booked=True, date=current_date).filter(
+                end_time__gte=current_time_obj).exclude(slot__status='Approved').order_by('-start_time')
         
         for slot in today_appointments:
             confirmed_appointment = slot.slots.filter(status='Confirmed').first()
@@ -353,7 +354,7 @@ class DoctorVideoPageView(TemplateView):
 
         upcoming_appointments = AppointmentSlot.objects.filter(
             doctor=doctor, is_available=True, is_booked=True).filter(Q(date=current_date, end_time__gte=current_time_obj) | Q(date__gt=current_date)
-        ).order_by('date', 'start_time')
+        ).exclude(slot__status='Approved').order_by('date', 'start_time')
         
         for slot in upcoming_appointments:
             confirmed_appointment = slot.slots.filter(status='Confirmed').first()
