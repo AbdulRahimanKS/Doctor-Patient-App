@@ -1,20 +1,21 @@
 from django.db.models.signals import post_save
-from patients.models import Notification, AppointmentSlot
+from patients.models import Notification
+from doctors.models import Prescription
 from django.dispatch import receiver
 
 
-# @receiver(post_save, sender=AppointmentSlot)
-# def notify_slot_booking(sender, instance, created, **kwargs):
-#     if instance.is_booked:
-#         doctor_message = (
-#             f"A new appointment has been booked with you on {instance.date} "
-#             f"at {instance.start_time}."
-#         )
-#         patient_message = (
-#             f"Your appointment with Dr. {instance.doctor.full_name} has been successfully booked "
-#             f"on {instance.date} at {instance.start_time}."
-#         )
-#         Notification.objects.create(user=instance.doctor.user, message=doctor_message)
-#         Notification.objects.create(user=instance.slots.first().user, message=patient_message)
+@receiver(post_save, sender=Prescription)
+def notify_prescription_approval(sender, instance, created, **kwargs):
+    if instance.status == 'Approved':
+        doctor_message = (
+            f"Prescription for {instance.patient.patient_name} has been approved"
+            f" You can view the prescription details"
+        )
+        patient_message = (
+            f"Your prescription for {instance.doctor.full_name} has been approved"
+            f" You can now view the prescription details"
+        )
+        Notification.objects.create(user=instance.doctor.user, message=doctor_message)
+        Notification.objects.create(user=instance.patient.user, message=patient_message)
         
         

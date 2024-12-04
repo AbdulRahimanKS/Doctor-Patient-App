@@ -382,7 +382,7 @@ class PrescriptionPageView(TemplateView):
         
         thirty_days_ago = datetime.now() - timedelta(days=30)
         prescriptions = Prescription.objects.filter(doctor=doctor, date__gte=thirty_days_ago).prefetch_related('patient', 'slot').order_by('-date')
-        print("Prescriptions", prescriptions)
+        
         if query:
             prescriptions = prescriptions.filter(
                 Q(patient__patient_name__icontains=query) | Q(status__icontains=query) | Q(slot__date__icontains=query)

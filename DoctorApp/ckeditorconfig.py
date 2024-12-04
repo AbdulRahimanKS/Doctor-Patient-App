@@ -40,7 +40,7 @@ CKEDITOR_5_CONFIGS = {
             'blockQuote',
         ],
         'toolbar': ['heading', '|', 'outdent', 'indent', '|', 'bold', 'italic', 'underline', 'strikethrough',
-                    'highlight', '|', 'insertImage', 'bulletedList', 'numberedList', 'todoList', '|',
+                    'highlight', '|', 'bulletedList', 'numberedList', 'todoList', '|',
                     'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor'],
         'image': {
             'toolbar': ['imageTextAlternative', '|', 'imageStyle:alignLeft',
