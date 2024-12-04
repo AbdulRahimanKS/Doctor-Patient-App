@@ -414,7 +414,7 @@ class PrescriptionDetailPageView(TemplateView):
         
         return super().dispatch(request, *args, **kwargs)
     
-    def get_meeting_id(self, request):
+    def get_meeting_id(self):
         meeting_id = self.request.GET.get('meeting_id')
         print("from node", meeting_id)
         return meeting_id
