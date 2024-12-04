@@ -382,7 +382,7 @@ class PrescriptionPageView(TemplateView):
         
         thirty_days_ago = datetime.now() - timedelta(days=30)
         prescriptions = Prescription.objects.filter(doctor=doctor, date__gte=thirty_days_ago).prefetch_related('patient', 'slot').order_by('-date')
-
+        print("Prescriptions", prescriptions)
         if query:
             prescriptions = prescriptions.filter(
                 Q(patient__patient_name__icontains=query) | Q(status__icontains=query) | Q(slot__date__icontains=query)
@@ -414,16 +414,16 @@ class PrescriptionDetailPageView(TemplateView):
         
         return super().dispatch(request, *args, **kwargs)
     
-    def get_meeting_id(self):
-        meeting_id = self.request.GET.get('meeting_id')
-        print("from node", meeting_id)
-        return meeting_id
+    # def get_meeting_id(self):
+    #     meeting_id = self.request.GET.get('meeting_id')
+    #     print("from node", meeting_id)
+    #     return meeting_id
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         meeting_id = self.kwargs.get('meeting_id')
-        if not meeting_id:
-            meeting_id = self.get_meeting_id()
+        # if not meeting_id:
+        #     meeting_id = self.get_meeting_id()
         user = self.request.user
         doctor = get_object_or_404(DoctorProfile, user=user)
 
