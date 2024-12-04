@@ -395,7 +395,7 @@ class PrescriptionPageView(TemplateView):
                 Prescription.objects.get_or_create(patient=patient, doctor=doctor, slot=appointment_slot, status='Pending')
 
         prescriptions = Prescription.objects.filter(doctor=doctor, date__gte=thirty_days_ago).filter(
-            Q(slot__date__lte=current_date) & (Q(slot__date__lt=current_date) | Q(slot__start_time__lte=current_time_obj))
+            Q(slot__date__lt=current_date) | (Q(slot__date=current_date) & Q(slot__start_time__lte=current_time_obj))
             ).prefetch_related('patient', 'slot').order_by('-slot__date')
 
         if query:
