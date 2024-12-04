@@ -380,10 +380,24 @@ class PrescriptionPageView(TemplateView):
     def get(self, request, *args, **kwargs):
         query = request.GET.get('q', '')
         doctor = get_object_or_404(DoctorProfile, user=self.request.user)
-        
         thirty_days_ago = datetime.now() - timedelta(days=30)
-        prescriptions = Prescription.objects.filter(doctor=doctor, date__gte=thirty_days_ago).prefetch_related('patient', 'slot').order_by('-date')
+        current_date, current_time_obj = get_india_timezone()
         
+        attended_patients = AppointmentSlot.objects.filter(doctor=doctor, is_booked=True, slots__status='Confirmed', 
+                                                           room_id__isnull=False).exclude(slot__prescription_text__isnull=False)
+        
+        for appointment_slot in attended_patients:
+            appointment_requests = appointment_slot.slots.all()
+            confirmed_appointment_request = appointment_requests.filter(status='Confirmed').first()
+            
+            if confirmed_appointment_request: 
+                patient = confirmed_appointment_request.patient_info 
+                Prescription.objects.get_or_create(patient=patient, doctor=doctor, slot=appointment_slot, status='Pending')
+
+        prescriptions = Prescription.objects.filter(doctor=doctor, date__gte=thirty_days_ago).filter(
+            Q(slot__date__lte=current_date) & (Q(slot__date__lt=current_date) | Q(slot__start_time__lte=current_time_obj))
+            ).prefetch_related('patient', 'slot').order_by('-slot__date')
+
         if query:
             prescriptions = prescriptions.filter(
                 Q(patient__patient_name__icontains=query) | Q(status__icontains=query) | Q(slot__date__icontains=query)
@@ -422,6 +436,7 @@ class PrescriptionDetailPageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         meeting_id = self.kwargs.get('meeting_id')
+        
         if not meeting_id:
             meeting_id = self.get_meeting_id()
         user = self.request.user
@@ -469,3 +484,5 @@ class PrescriptionDetailPageView(TemplateView):
 
         messages.error(request, "An error occurred. Please try again")
         return self.render_to_response(self.get_context_data(form=form))
+    
+    
