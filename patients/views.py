@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView
 from patients.models import DoctorProfile, AppointmentSlot, AppointmentRequest, PatientInfo, PatientAttachments, Notification
 from accounts.models import UserProfile, CustomUser
+from doctors.models import Prescription
 from django.utils.timezone import now
 from django.utils import timezone
 from django.db.models import Q
@@ -46,8 +47,8 @@ class HomeView(TemplateView):
         doctors = DoctorProfile.objects.filter(is_active=True).select_related('specialization').order_by('?')
         appointments = AppointmentRequest.objects.filter(user=self.request.user, slot__is_available=True, slot__is_booked=True, status="Confirmed").filter(
             Q(slot__date=current_date, slot__end_time__gte=current_time_obj) | Q(slot__date__gt=current_date)
-        ).order_by('slot__date', 'slot__start_time')
-        
+        ).exclude(slot__slot__patient__user=self.request.user, slot__slot__status='Approved').order_by('slot__date', 'slot__start_time')
+                
         notification_count = Notification.objects.filter(user=self.request.user, is_read=False).count()
         
         context['doctors'] = doctors
@@ -295,10 +296,17 @@ class AppointmentsPageView(TemplateView):
         
         upcoming_appointments = AppointmentRequest.objects.filter(user=self.request.user, slot__is_available=True, slot__is_booked=True, status="Confirmed").filter(
             Q(slot__date=current_date, slot__end_time__gte=current_time_obj) | Q(slot__date__gt=current_date)
-        ).order_by('slot__date', 'slot__start_time')
+        ).exclude(slot__slot__patient__user=self.request.user, slot__slot__status='Approved').order_by('slot__date', 'slot__start_time')
         
         past_appointments = AppointmentRequest.objects.filter(user=self.request.user, slot__is_available=True, slot__is_booked=True, status="Confirmed").filter(
-            Q(slot__date__lt=current_date) | Q(slot__date=current_date, slot__end_time__lt=current_time_obj)
+            Q(slot__date__lt=current_date) | 
+            Q(slot__date=current_date, slot__end_time__lt=current_time_obj) | 
+            Q(
+                slot__date=current_date,
+                slot__start_time__lt=current_time_obj,
+                slot__end_time__gte=current_time_obj,
+                slot__slot__status='Approved'
+            )
         ).order_by('-slot__date', '-slot__end_time')
         
         context['upcoming_appointments'] = upcoming_appointments
@@ -316,10 +324,18 @@ class AppointmentDetailView(TemplateView):
         appointment_id = kwargs.get('appointment_id')
         india_timezone = ZoneInfo('Asia/Kolkata')
         current_time = now().astimezone(india_timezone)
-        
         appointment = get_object_or_404(AppointmentRequest.objects.select_related('slot', 'patient_info'), id=appointment_id)
+        
+        appointment_start_datetime = datetime.combine(appointment.slot.date, appointment.slot.start_time, tzinfo=india_timezone)
         appointment_end_datetime = datetime.combine(appointment.slot.date, appointment.slot.end_time, tzinfo=india_timezone)
-        is_past = appointment_end_datetime < current_time
+        
+        is_past = (
+            appointment_end_datetime < current_time or
+            (
+                appointment_start_datetime < current_time <= appointment_end_datetime and
+                appointment.slot.slot.status == 'Approved'  
+            )
+        )
         context['appointment'] = appointment
         context['is_past'] = is_past
         
@@ -419,4 +435,20 @@ class NotificationPatientView(TemplateView):
         return context  
     
 
+# Prescription view page
+class PrescriptionView(TemplateView):
+    template_name = 'prescription_view.html'
+    
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('q', '')
+        prescriptions = Prescription.objects.filter(patient__user=self.request.user, status='Approved').prefetch_related('doctor', 'slot').order_by('-slot__date')
+        
+        if query:
+            prescriptions = prescriptions.filter(
+                Q(patient__patient_name__icontains=query) | Q(doctor__full_name__icontains=query) | Q(slot__date__icontains=query)
+            )
+            
+        return self.render_to_response({'prescriptions': prescriptions, 'query': query})
+
+        
         

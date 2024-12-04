@@ -9,11 +9,10 @@ def notify_prescription_approval(sender, instance, created, **kwargs):
     if instance.status == 'Approved':
         doctor_message = (
             f"Prescription for {instance.patient.patient_name} has been approved."
-            f" You can view the prescription details"
         )
         patient_message = (
-            f"Your prescription for {instance.doctor.full_name} has been approved."
-            f" You can now view the prescription details"
+            f"Your prescription from {instance.doctor.full_name} has been approved."
+            f" You can now view the prescription details."
         )
         Notification.objects.create(user=instance.doctor.user, message=doctor_message)
         Notification.objects.create(user=instance.patient.user, message=patient_message)

@@ -469,11 +469,11 @@ class PrescriptionDetailPageView(TemplateView):
         form = PrescriptionForm(request.POST, instance=prescription)
 
         if form.is_valid():
-            prescription_text = form.cleaned_data.get('prescription_text')
+            prescription_text = form.cleaned_data.get('prescription_text', '')
             stripped_text = strip_tags(prescription_text).strip()
             stripped_text = re.sub(r'(&nbsp;|\s)+', '', stripped_text)
-
-            if not stripped_text and (prescription_text != prescription.prescription_text):
+            
+            if not stripped_text:
                 messages.error(request, "Prescription cannot be empty")
                 return self.render_to_response(self.get_context_data(form=form))
             
