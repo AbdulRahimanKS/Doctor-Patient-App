@@ -415,9 +415,15 @@ class PrescriptionDetailPageView(TemplateView):
         
         return super().dispatch(request, *args, **kwargs)
     
+    def get_meeting_id(self):
+        meeting_id = self.request.GET.get('meeting_id') 
+        return meeting_id
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         meeting_id = self.kwargs.get('meeting_id')
+        if not meeting_id:
+            meeting_id = self.get_meeting_id()
         user = self.request.user
         doctor = get_object_or_404(DoctorProfile, user=user)
 
