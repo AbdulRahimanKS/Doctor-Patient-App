@@ -397,10 +397,13 @@ class PrescriptionDetailPageView(TemplateView):
     
     def dispatch(self, request, *args, **kwargs):
         token = request.GET.get('token')
+        print(token)
         if token:
             user_data = validate_jwt_token(token)
+            print(user_data)
             if user_data:
                 user = CustomUser.objects.filter(id=user_data['user_id']).first()
+                print(user)
                 if user:
                     login(request, user)
                 else:
