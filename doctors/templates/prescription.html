@@ -1,47 +1,128 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Prescription Page</title>
-    <!-- Bootstrap 5 CDN for easy styling -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .patient-card {
-            margin-bottom: 15px;
-        }
-        .patient-card .btn {
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container mt-4">
-        <h1>Doctor's Prescription Page</h1>
-        <div class="row">
-            <!-- Loop through each patient -->
-            {% comment %} {% for patient in patients %} {% endcomment %}
-            <div class="col-md-4">
-                <div class="card patient-card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ patient.full_name }}</h5>
-                        <p class="card-text">
-                            <strong>Age:</strong> {{ patient.age }}<br>
-                            <strong>Gender:</strong> {{ patient.gender }}<br>
-                            <strong>Email:</strong> {{ patient.email }}
-                        </p>
-                        <a href="#" class="btn btn-primary">
-                            View Prescription
-                        </a>
-                    </div>
-                </div>
-            </div>
-            {% comment %} {% endfor %} {% endcomment %}
-        </div>
-    </div>
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
 
-    <!-- Bootstrap 5 JS and dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
-</body>
-</html>
+<style>
+    .capitalize-text {
+          text-transform: capitalize;
+    }
+</style>
+
+<body class="bg-light">
+   <div class="select-area d-flex flex-column vh-100">
+      <div class="bg-white shadow-sm">
+         <div class="d-flex align-items-center justify-content-between mb-auto p-3 osahan-header">
+            <div class="d-flex align-items-center gap-2 me-auto">
+               <a href="{% url 'doctor_home' %}" class="text-dark bg-white shadow rounded-circle icon">
+                  <span class="mdi mdi-arrow-left mdi-18px"></span>
+               </a>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+               <a class="toggle text-muted d-flex align-items-center justify-content-center fs-5 bg-white shadow rounded-circle icon" href="#"><i
+                     class="bi bi-list"></i></a>
+            </div>
+         </div>
+         <div class="px-3 pb-3">
+            <form method="get" action="{% url 'prescription_page' %}">
+               <div class="input-group rounded-4 shadow overflow-hidden border-0 py-1 ps-3 bg-light">
+                  <span class="input-group-text bg-transparent text-muted border-0 p-0" id="search"><span class="mdi mdi-magnify mdi-24px text-primary"></span></span>
+                  <input type="text" name="q" value="{{ query }}" class="form-control bg-transparent text-muted border-0 px-3 fs-14" placeholder="Search" aria-label="Search" aria-describedby="search">
+               </div>
+            </form>
+         </div>
+      </div>
+      <!-- body -->
+      <div class="vh-100 my-auto overflow-auto body-fix-osahan-footer">
+         <div class="py-3">
+            <!-- Specialist -->
+            <div>
+               <h6 class="mb-2 pb-1 px-3 fw-bold text-black">My Prescriptions</h6>
+               <!-- 1st -->
+               {% if prescriptions %}
+               {% for prescription in prescriptions %}
+               <a href="{% url 'prescription_detail' meeting_id=prescription.slot.room_id %}" class="link-dark">
+                  <div class="d-flex align-items-center gap-3 bg-white border-bottom shadow-sm p-3">
+                     <div class="small">
+                        <h6 class="mb-1 fs-14 capitalize-text">{{ prescription.patient.patient_name }}</h6>
+                        <p class="card-text text-muted mb-1">Age: {{ prescription.patient.age }}</p>
+                        <p class="card-text text-muted mb-1">Mobile: {{ prescription.patient.mobile }}</p>
+                        <p class="card-text text-muted mb-1">Appointment Date: {{ prescription.slot.date }}</p>
+                        <p class="card-text text-muted mb-1">Appointment Time: {{ prescription.slot.start_time }}</p>
+                        <p class="card-text text-muted mb-1">Prescription: 
+                            {% if prescription.status == "Approved" %}
+                                <span class="badge bg-success">Approved</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Pending</span>
+                            {% endif %}
+                        </p>
+                     </div>
+                  </div>
+               </a>
+               {% endfor %}
+               {% else %}
+                <div class="d-flex justify-content-center align-items-center" style="height:60vh !important">
+                    <p class="text-muted text-center no-prescriptions">No prescriptions found</p>
+                </div>
+               {% endif %}
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <nav id="main-nav">
+    <ul class="second-nav">
+       <li class="osahan-user-profile bg-primary">
+          <div class="d-flex align-items-center gap-2">
+            {% if request.user.doctor_profile.profile_picture %}
+             <img src="{{ request.user.doctor_profile.profile_picture.url }}" alt="" class="rounded-pill img-fluid">
+            {% elif request.user.doctor_profile.gender == 'Male' %}
+             <img src="{% static 'img/home/male-doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+            {% elif request.user.doctor_profile.gender == 'Female' %}
+             <img src="{% static 'img/home/female-doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+            {% else %}
+             <img src="{% static 'img/home/doctor.png' %}" alt="" class="img-fluid rounded-circle icon">
+            {% endif %}
+             <div class="ps-1">
+                <h6 class="fw-bold text-white mb-0">Hey, {{ request.user.name }}!</h6>
+                <p class="text-white-50 m-0 small">{{ request.user.countryCode }} {{ request.user.mobile }}</p>
+             </div>
+          </div>
+       </li>
+       <li><a href="{% url 'doctor_home' %}"><span class="mdi mdi-home-variant-outline me-3"></span>Homepage</a></li>
+       <li>
+         <a href="#"><span class="mdi mdi-account-outline me-3"></span>My Profile</a>
+         <ul>
+            <li><a href="{% url 'doctor_profile_page' %}"><span class="mdi mdi-account-outline me-3"></span>My Account</a></li>
+         </ul>
+      </li>
+       <li>
+         <form method="POST" action="{% url 'sign_out' %}" class="logout-form">
+            {% csrf_token %}
+            <button type="submit"><span class="mdi mdi-logout me-3"></span>Sign out</button>
+         </form>     
+       </li>
+    </ul>
+    <ul class="bottom-nav">
+       <li class="home">
+          <a href="{% url 'doctor_home' %}">
+             <p class="h5 m-0"><span class="mdi mdi-home-variant-outline"></span></p>
+             Home
+          </a>
+       </li>
+       <li class="find">
+         <a href="{% url 'list_slots' %}">
+            <p class="h5 m-0"><span class="mdi mdi-magnify"></span></p>
+            Search
+         </a>
+      </li>
+       <li class="more">
+          <a href="{% url 'doctor_profile_page' %}">
+             <p class="h5 m-0"><span class="mdi mdi-account-circle-outline"></span></p>
+             Profile
+          </a>
+       </li>
+    </ul>
+ </nav>
+
+{% endblock %}
+   

@@ -40,7 +40,7 @@ class DoctorHomeView(TemplateView):
             doctor=doctor, is_available=True, is_booked=True, date=current_date).filter(end_time__gte=current_time_obj).order_by('-start_time')
         
         for slot in today_appointments:
-            confirmed_appointment = slot.appointmentrequest_set.filter(status='Confirmed').first()
+            confirmed_appointment = slot.slots.filter(status='Confirmed').first()
             slot.confirmed_appointment = confirmed_appointment
 
             if confirmed_appointment:
@@ -118,7 +118,7 @@ class SlotStartMeeting(View):
             user_name = doctor.full_name
             is_doctor = True
         else:
-            appointment_request = slot.appointmentrequest_set.first()
+            appointment_request = slot.slots.first()
             user_name = appointment_request.patient_info.patient_name
             
         token = generate_jwt_token(user)
@@ -356,7 +356,7 @@ class DoctorVideoPageView(TemplateView):
         ).order_by('date', 'start_time')
         
         for slot in upcoming_appointments:
-            confirmed_appointment = slot.appointmentrequest_set.filter(status='Confirmed').first()
+            confirmed_appointment = slot.slots.filter(status='Confirmed').first()
             slot.confirmed_appointment = confirmed_appointment
 
             if confirmed_appointment:
@@ -374,7 +374,21 @@ class DoctorVideoPageView(TemplateView):
     
 # Prescription page view
 class PrescriptionPageView(TemplateView):
-    template_name = 'prescription.html'    
+    template_name = 'prescription.html' 
+    
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('q', '')
+        doctor = get_object_or_404(DoctorProfile, user=self.request.user)
+        
+        thirty_days_ago = datetime.now() - timedelta(days=30)
+        prescriptions = Prescription.objects.filter(doctor=doctor, date__gte=thirty_days_ago).prefetch_related('patient', 'slot').order_by('-date')
+
+        if query:
+            prescriptions = prescriptions.filter(
+                Q(patient__patient_name__icontains=query) | Q(status__icontains=query) | Q(slot__date__icontains=query)
+            )
+            
+        return self.render_to_response({'prescriptions': prescriptions, 'query': query})
 
 
 # Prescription detail page view
@@ -431,25 +445,23 @@ class PrescriptionDetailPageView(TemplateView):
         request_instance = appointment_slot.slots.get(status='Confirmed', doctor=doctor)
         patient = request_instance.patient_info
 
-        prescription = Prescription.objects.get(patient=patient, doctor=doctor)
+        prescription, created = Prescription.objects.get_or_create(patient=patient, doctor=doctor)
 
-        if prescription:
-            form = PrescriptionForm(request.POST, instance=prescription)
-        else:
-            form = PrescriptionForm(request.POST)
+        form = PrescriptionForm(request.POST, instance=prescription)
 
         if form.is_valid():
             prescription_text = form.cleaned_data.get('prescription_text')
             stripped_text = strip_tags(prescription_text).strip()
             stripped_text = re.sub(r'(&nbsp;|\s)+', '', stripped_text)
 
-            if not stripped_text:
+            if not stripped_text and (created or prescription_text != prescription.prescription_text):
                 messages.error(request, "Prescription cannot be empty")
                 return self.render_to_response(self.get_context_data(form=form))
-
+            
+            prescription.status = 'Approved'
             form.save()
 
-            return redirect('doctor_home')
+            return redirect('prescription_page')
 
         messages.error(request, "An error occurred. Please try again")
         return self.render_to_response(self.get_context_data(form=form))

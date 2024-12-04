@@ -15,6 +15,6 @@ def notify_slot_booking(sender, instance, created, **kwargs):
             f"on {instance.date} at {instance.start_time}."
         )
         Notification.objects.create(user=instance.doctor.user, message=doctor_message)
-        Notification.objects.create(user=instance.appointmentrequest_set.first().user, message=patient_message)
+        Notification.objects.create(user=instance.slots.first().user, message=patient_message)
         
         
