@@ -431,7 +431,7 @@ class PrescriptionDetailPageView(TemplateView):
         request_instance = appointment_slot.slots.get(status='Confirmed', doctor=doctor)
         patient = request_instance.patient_info
         
-        prescription = Prescription.objects.get(patient=patient, doctor=doctor)
+        prescription = Prescription.objects.filter(patient=patient, doctor=doctor).first()
         if prescription:
             form = PrescriptionForm(instance=prescription)
         else:
