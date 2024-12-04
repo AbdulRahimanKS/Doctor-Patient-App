@@ -397,13 +397,10 @@ class PrescriptionDetailPageView(TemplateView):
     
     def dispatch(self, request, *args, **kwargs):
         token = request.GET.get('token')
-        print(token)
         if token:
             user_data = validate_jwt_token(token)
-            print(user_data)
             if user_data:
                 user = CustomUser.objects.filter(id=user_data['user_id']).first()
-                print(user)
                 if user:
                     login(request, user)
                 else:
@@ -419,7 +416,7 @@ class PrescriptionDetailPageView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        meeting_id = self.kwargs.get('meeting_id')
+        meeting_id = self.request.GET.get('meeting_id')
         user = self.request.user
         doctor = get_object_or_404(DoctorProfile, user=user)
 
