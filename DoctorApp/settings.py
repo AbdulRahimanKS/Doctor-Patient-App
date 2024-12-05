@@ -165,3 +165,6 @@ VIDEO_SDK_API_URL = os.getenv('VIDEO_SDK_API_URL')
 # CKEditor Storage
 CKEDITOR_5_FILE_STORAGE = 'DoctorApp.ckeditorstorage.CKEditorStorage'
 
+
+# Secure settings for cookies (ensure cookies are transmitted securely)
+SESSION_COOKIE_SECURE = True 
