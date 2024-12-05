@@ -40,7 +40,7 @@
                <!-- 1st -->
                {% if prescriptions %}
                {% for prescription in prescriptions %}
-               <a href="#" class="link-dark">
+               <a href="{% url 'prescription_patient_view' prescription_id=prescription.id %}" class="link-dark">
                   <div class="d-flex align-items-center gap-3 bg-white border-bottom shadow-sm p-3">
                     {% if prescription.doctor.profile_picture %}
                        <img src="{{ prescription.doctor.profile_picture.url }}" alt="" class="img-fluid rounded-4 favorite-img">

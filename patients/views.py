@@ -15,6 +15,9 @@ from zoneinfo import ZoneInfo
 from patients.utils import get_india_timezone
 from django.contrib.auth import login, logout
 from accounts.utils import validate_jwt_token
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from weasyprint import HTML
 
 
 # Home page view
@@ -449,6 +452,36 @@ class PrescriptionView(TemplateView):
             )
             
         return self.render_to_response({'prescriptions': prescriptions, 'query': query})
+    
+    
+# Prescription patient page view
+class PrescriptionPatientView(TemplateView):
+    template_name = 'prescription_patient_view.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        prescription_id = kwargs.get('prescription_id')
+        prescription = get_object_or_404(Prescription, id=prescription_id)
+        
+        context['prescription'] = prescription
+        context['for_pdf'] = True
+        
+        return context
+        
 
+# Prescription download view
+class DownloadPrescriptionView(TemplateView):
+    template_name = 'prescription_patient_view.html'
+    
+    def get(self, request, *args, **kwargs):
+        prescription_id = kwargs.get('prescription_id')
+        prescription = get_object_or_404(Prescription, id=prescription_id)
         
+        html_content = render_to_string(self.template_name, {'prescription': prescription})
+        pdf = HTML(string=html_content).write_pdf()
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="prescription_{prescription.patient.patient_name}_{prescription.slot.date}.pdf"'
         
+        return response
+        
+
