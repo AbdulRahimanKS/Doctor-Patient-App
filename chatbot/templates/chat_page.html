@@ -170,10 +170,10 @@
      
                  const data = await response.json();
 
-                 appendMessage(chatBody, data.user_message.message, true, data.user_message.created_at, data.user_message.date_label);
+                 appendMessage(chatBody, data.user_message.message, true, data.user_message.created_at, data.user_message.added_time);
 
                   if (data.bot_reply) {
-                        appendMessage(chatBody, data.bot_reply.message, false, data.bot_reply.created_at, data.bot_reply.date_label);
+                        appendMessage(chatBody, data.bot_reply.message, false, data.bot_reply.created_at, data.bot_reply.added_time);
                   }
    
                  chatBody.scrollTop = chatBody.scrollHeight;
@@ -201,18 +201,20 @@
       }
 
       // Utility function to append messages to the chat
-      function appendMessage(chatBody, message, isUser, time, dateLabel) {
-         const existingDateLabel = Array.from(chatBody.querySelectorAll("p.text-center"))
-            find((label) => label.textContent.trim() === dateLabel);
+      function appendMessage(chatBody, message, isUser, time, added_time) {
+         const dateLabel = getDateLabel(added_time);
 
-         // If no label exists for this date, create one
+         const existingDateLabel = Array.from(chatBody.querySelectorAll('p.text-center'))
+            .find(label => label.textContent.trim() === dateLabel);
+
+         // If the date label doesn't exist, create it
          if (!existingDateLabel) {
             const dateLabelElement = document.createElement('p');
             dateLabelElement.className = 'text-center text-muted my-2';
             dateLabelElement.textContent = dateLabel;
             chatBody.appendChild(dateLabelElement);
          }
-
+         
          // Add the message wrapper
          const messageWrapper = document.createElement('div');
          messageWrapper.classList.add('mb-3');
@@ -239,6 +241,30 @@
      
          chatBody.appendChild(messageWrapper);
      }
+
+      function getDateLabel(dateString) {
+         const today = new Date();
+         const yesterday = new Date(today);
+         yesterday.setDate(today.getDate() - 1);
+   
+         const messageDate = new Date(dateString); // Convert added_time to a date object
+   
+         // Helper function to format date as dd-MMMM-yyyy
+         const formatDate = (date) => {
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return date.toLocaleDateString('en-GB', options);
+         };
+   
+         // Compare the date
+         if (messageDate.toDateString() === today.toDateString()) {
+            return 'Today';
+         } else if (messageDate.toDateString() === yesterday.toDateString()) {
+            return 'Yesterday';
+         } else {
+            return formatDate(messageDate); // Return date like 30-November-2024
+         }
+      }
+  
 
    });
      

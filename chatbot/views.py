@@ -60,8 +60,8 @@ class ChatbotAPIView(APIView):
         bot_reply = hardcoded_responses.get(user_message, "Sorry, I didn't understand that. Can you rephrase?")
         
         today = localdate()
-        yesterday = today - timedelta(days=1)
-        previous_date = yesterday - timedelta(days=1)
+        # yesterday = today - timedelta(days=1)
+        # previous_date = yesterday - timedelta(days=1)
         
         user_msg_obj = ChatMessage.objects.create(user=self.request.user, message=user_message, is_user_message=True)
         bot_msg_obj = ChatMessage.objects.create(user=self.request.user, message=bot_reply, is_user_message=False)
@@ -69,31 +69,33 @@ class ChatbotAPIView(APIView):
         user_msg_created_at = localtime(user_msg_obj.created_at)
         bot_msg_created_at = localtime(bot_msg_obj.created_at)
         
-        user_msg_date_label = self.get_date_label(user_msg_created_at.date(), today, yesterday, previous_date)
-        bot_msg_date_label = self.get_date_label(bot_msg_created_at.date(), today, yesterday, previous_date)
+        # user_msg_date_label = self.get_date_label(user_msg_created_at.date(), today, yesterday, previous_date)
+        # bot_msg_date_label = self.get_date_label(bot_msg_created_at.date(), today, yesterday, previous_date)
                 
         return Response({
             'user_message': {
                 'message': user_message,
                 'created_at': user_msg_created_at.strftime("%I:%M %p"),
-                'date_label': user_msg_date_label
+                'added_time': user_msg_obj.created_at,
+                # 'date_label': user_msg_date_label
             },
             'bot_reply': {
                 'message': bot_reply,
                 'created_at': bot_msg_created_at.strftime("%I:%M %p"),
-                'date_label': bot_msg_date_label
+                'added_time': bot_msg_obj.created_at,
+                # 'date_label': bot_msg_date_label
             }
         }, status=status.HTTP_200_OK)
         
-    def get_date_label(self, message_date, today, yesterday, previous_date):
-        if message_date == today:
-            return "Today"
-        elif message_date == yesterday:
-            return "Yesterday"
-        elif message_date == previous_date:
-            return previous_date.strftime("%d %B %Y")
-        else:
-            return message_date.strftime("%d %B %Y")
+    # def get_date_label(self, message_date, today, yesterday, previous_date):
+    #     if message_date == today:
+    #         return "Today"
+    #     elif message_date == yesterday:
+    #         return "Yesterday"
+    #     elif message_date == previous_date:
+    #         return previous_date.strftime("%d %B %Y")
+    #     else:
+    #         return message_date.strftime("%d %B %Y")
     
     
     
