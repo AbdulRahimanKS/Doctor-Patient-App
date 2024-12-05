@@ -175,9 +175,6 @@
                   if (data.bot_reply) {
                         appendMessage(chatBody, data.bot_reply.message, false, data.bot_reply.created_at, data.bot_reply.date_label);
                   }
-
-                  const simulatedDate = new Date("2024-12-05T00:00:00");
-                  updateDateLabels(simulatedDate); 
    
                  chatBody.scrollTop = chatBody.scrollHeight;
 
@@ -201,61 +198,6 @@
              }
          }
          return '';
-      }
-
-      function updateDateLabels(simulatedDate = null) {
-         const chatDateLabels = document.querySelectorAll("p.text-center");
-         const seenDates = new Map();
-         const currentDate = simulatedDate || new Date(); 
-
-         chatDateLabels.forEach((label) => {
-            const labelText = label.textContent.trim();
-            let dateObject;
-            
-            if (labelText === "Today") {
-                  dateObject = new Date(currentDate);
-            } else if (labelText === "Yesterday") {
-                  dateObject = new Date(currentDate);
-                  dateObject.setDate(dateObject.getDate() - 1);
-            } else {
-                  dateObject = new Date(labelText);
-            }
-      
-            console.log("Parsed Date Object:", dateObject);
-      
-            if (isNaN(dateObject)) {
-                  label.textContent = "Invalid Date";
-                  return;
-            }
-      
-            const dateDifference = Math.floor((currentDate - dateObject) / (1000 * 60 * 60 * 24));
-      
-            let newLabel;
-            if (dateDifference === 0) {
-                  newLabel = "Today";
-            } else if (dateDifference === 1) {
-                  newLabel = "Yesterday";
-            } else {
-                  newLabel = formatDate(dateObject);
-            }
-      
-            if (seenDates.has(newLabel)) {
-                  label.remove();
-            } else {
-                  label.textContent = newLabel; 
-                  seenDates.set(newLabel, label);
-            }
-
-            if (label.textContent !== newLabel) {
-               label.textContent = newLabel;
-            }
-         });
-      }
-
-      // Utility function to format dates
-      function formatDate(date) {
-            const options = { day: '2-digit', month: 'long', year: 'numeric' };
-            return date.toLocaleDateString('en-GB', options);
       }
 
       // Utility function to append messages to the chat
