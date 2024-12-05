@@ -8,6 +8,15 @@ from django.contrib.auth import login, logout
 # Index page view
 class IndexView(TemplateView):
     template_name = 'index.html'
+    
+    def get(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            if self.request.user.user_type == 'Doctor':
+                return redirect('doctor_home')
+            else:
+                return redirect('home')
+        else:
+            return self.render_to_response({})
 
 
 # To show landing page
@@ -55,15 +64,6 @@ class SignupView(TemplateView):
 # Login View
 class SignInView(TemplateView):
     template_name = 'signIn.html'
-    
-    def get(self, request, *args, **kwargs):
-        if self.request.user.is_authenticated:
-            if self.request.user.user_type == 'Doctor':
-                return redirect('doctor_home')
-            else:
-                return redirect('home')
-        else:
-            return self.render_to_response({})
     
     def post(self, request, *args, **kwargs):
         mobile = request.POST.get('mobile')
