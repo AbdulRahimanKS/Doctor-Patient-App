@@ -156,7 +156,7 @@
     <div class="prescription-container">
         {% if for_pdf %}
         <div class="back-btn">
-            <a href="javascript:history.back()" class="material-icons">
+            <a href="{% url 'prescription_view' %}" class="material-icons">
                 arrow_back
             </a>
         </div>
