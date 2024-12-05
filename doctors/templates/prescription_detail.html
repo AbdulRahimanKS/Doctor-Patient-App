@@ -51,7 +51,23 @@
                     <label for="patient-name" class="form-label mb-1">Patient Name</label>
                     <div class="input-group border rounded-3 py-1" style="background:#ebf0f5">
                         <input type="text" class="form-control rounded-0 border-0 px-0 ps-2 capitalize-text" id="patient-name"
-                            placeholder="Patient Name" name="patient-name" value="{{ patient_name }}" style="background:#ebf0f5" readonly>
+                            placeholder="Patient Name" name="patient-name" value="{{ patient.patient_name }}" style="background:#ebf0f5" readonly>
+                    </div>
+                <div>
+
+                <div class="mb-3">
+                    <label for="patient-age" class="form-label mb-1">Age</label>
+                    <div class="input-group border rounded-3 py-1" style="background:#ebf0f5">
+                        <input type="text" class="form-control rounded-0 border-0 px-0 ps-2 capitalize-text" id="patient-age"
+                            placeholder="Age" name="patient-age" value="{{ patient.age }}" style="background:#ebf0f5" readonly>
+                    </div>
+                <div>
+
+                <div class="mb-3">
+                    <label for="patient-gender" class="form-label mb-1">Gender</label>
+                    <div class="input-group border rounded-3 py-1" style="background:#ebf0f5">
+                        <input type="text" class="form-control rounded-0 border-0 px-0 ps-2 capitalize-text" id="patient-gender"
+                            placeholder="Gender" name="patient-gender" value="{{ patient.gender }}" style="background:#ebf0f5" readonly>
                     </div>
                 <div>
 

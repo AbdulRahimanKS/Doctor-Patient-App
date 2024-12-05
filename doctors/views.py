@@ -450,7 +450,7 @@ class PrescriptionDetailPageView(TemplateView):
         form = PrescriptionForm(instance=prescription)
         
         context['form'] = form
-        context['patient_name'] = patient.patient_name
+        context['patient'] = patient
         context['meeting_id'] = meeting_id
         
         return context

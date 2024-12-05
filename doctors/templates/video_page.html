@@ -52,6 +52,7 @@
                             {% if slot.confirmed_appointment %}
                             <h6 class="card-title fs-14 mb-1 capitalize-text">{{ slot.patient_info.patient_name }}</h6>
                             <p class="card-text text-muted mb-1">Age: {{ slot.patient_info.age }}</p>
+                            <p class="card-text text-muted mb-1">Gender: {{ slot.patient_info.gender }}</p>
                             <p class="card-text text-muted mb-1">Mobile: {{ slot.patient_info.mobile }}</p>
 
                             {% if slot.patient_attachments %}

@@ -113,6 +113,7 @@ class PatientInfo(models.Model):
     address = models.TextField(default="")
     mobile = models.CharField(max_length=15)
     age = models.PositiveIntegerField()
+    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
     weight = models.CharField(max_length=10, blank=True, null=True)
     description = models.TextField(default="")
     

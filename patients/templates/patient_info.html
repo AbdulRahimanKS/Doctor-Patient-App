@@ -69,12 +69,24 @@
                      </div>
                   </div>
                   <div class="col">
-                     <div>
-                        <label for="exampleFormControlMobile" class="form-label mb-1">Mobile</label>
-                        <div class="input-group border bg-white rounded-3 py-1" id="exampleFormControlMobile">
-                           <span class="input-group-text bg-transparent rounded-0 border-0"><i class="bi bi-phone text-muted"></i></span>
-                           <input type="text" class="form-control bg-transparent rounded-0 border-0 px-0" name="patient-mobile" placeholder="Mobile" value="{{ patient_mobile }}">
-                        </div>
+                     <label for="exampleFormControlGender" class="form-label mb-1">Gender</label>
+                     <div class="input-group border bg-white rounded-3 py-1" id="exampleFormControlGender">
+                        <span class="input-group-text bg-transparent rounded-0 border-0"><i class="bi bi-gender-ambiguous text-muted"></i></span>
+                        <select name="gender" class="form-select bg-transparent rounded-0 border-0 px-0" id="inputGroupSelect01">
+                           <option value="" {% if not patient_gender %}selected{% endif %}>Select Gender</option>
+                           <option value="Male" {% if patient_gender == 'Male' %}selected{% endif %}>Male</option>
+                           <option value="Female" {% if patient_gender == 'Female' %}selected{% endif %}>Female</option>
+                           <option value="Other" {% if patient_gender == 'Other' %}selected{% endif %}>Other</option>
+                        </select>
+                     </div>
+                  </div>
+               </div>
+               <div class="row g-2 mb-3">
+                  <div>
+                     <label for="exampleFormControlMobile" class="form-label mb-1">Mobile</label>
+                     <div class="input-group border bg-white rounded-3 py-1" id="exampleFormControlMobile">
+                        <span class="input-group-text bg-transparent rounded-0 border-0"><i class="bi bi-phone text-muted"></i></span>
+                        <input type="text" class="form-control bg-transparent rounded-0 border-0 px-0" name="patient-mobile" placeholder="Mobile" value="{{ patient_mobile }}">
                      </div>
                   </div>
                </div>

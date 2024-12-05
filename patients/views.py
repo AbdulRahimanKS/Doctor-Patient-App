@@ -223,6 +223,7 @@ class PatientInfoView(TemplateView):
         patient_name = request.POST.get('patient-name')
         patient_address = request.POST.get('patient-address')
         patient_age = request.POST.get('patient-age')
+        patient_gender = request.POST.get('gender')
         patient_mobile = request.POST.get('patient-mobile')
         patient_weight = request.POST.get('patient-weight')
         patient_description = request.POST.get('patient-description')
@@ -233,16 +234,16 @@ class PatientInfoView(TemplateView):
         appointment = get_object_or_404(AppointmentRequest, id=appointment_id)
         doctor = get_object_or_404(DoctorProfile, id=doctor_id)
         
-        if not patient_name or not patient_age or not patient_mobile:
+        if not patient_name or not patient_age or not patient_gender or not patient_mobile:
             messages.error(request, "Patient details are missing or incomplete")
-            return self.render_to_response({'doctor': doctor, 'appointment': appointment, 'patient_name': patient_name,
+            return self.render_to_response({'doctor': doctor, 'appointment': appointment, 'patient_name': patient_name, 'patient_gender': patient_gender,
                                             'patient_address': patient_address, 'patient_age': patient_age, 'patient_mobile': patient_mobile,
                                             'patient_weight': patient_weight, 'patient_description': patient_description})
         
         patient_info, created = PatientInfo.objects.update_or_create(user=self.request.user, appointment=appointment,
             defaults = {
                 'patient_name': patient_name, 'address': patient_address, 'mobile': patient_mobile, 'age': patient_age,
-                'weight': patient_weight, 'description': patient_description
+                'gender': patient_gender, 'weight': patient_weight, 'description': patient_description
             }
         )
         
