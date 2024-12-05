@@ -9,14 +9,14 @@ from django.contrib.auth import login, logout
 class IndexView(TemplateView):
     template_name = 'index.html'
     
-    # def get(self, request, *args, **kwargs):
-    #     if self.request.user.is_authenticated:
-    #         if self.request.user.user_type == 'Doctor':
-    #             return redirect('doctor_home')
-    #         else:
-    #             return redirect('home')
-    #     else:
-    #         return self.render_to_response({})
+    def get(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            if self.request.user.user_type == 'Doctor':
+                return redirect('doctor_home')
+            else:
+                return redirect('home')
+        else:
+            return self.render_to_response({})
 
 
 # To show landing page
