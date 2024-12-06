@@ -5,7 +5,7 @@ from django.dispatch import receiver
 
 @receiver(post_save, sender=AppointmentSlot)
 def notify_slot_booking(sender, instance, created, **kwargs):
-    if instance.is_booked:
+    if instance.is_booked and not instance.room_id:
         doctor_message = (
             f"A new appointment has been booked with you on {instance.date} "
             f"at {instance.start_time}."

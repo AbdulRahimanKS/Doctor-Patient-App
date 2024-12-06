@@ -36,7 +36,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     date_updated = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    user_type = models.CharField(max_length=20,choices=[('Doctor', 'Doctor'), ('Patient', 'Patient')], default='')
+    user_type = models.CharField(max_length=20,choices=[('Doctor', 'Doctor'), ('Patient', 'Patient')], default='Patient')
     jwt_token = models.CharField(max_length=512, blank=True, null=True)
 
     groups = models.ManyToManyField(
@@ -61,11 +61,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f"{self.name} ({self.mobile})"
-    
-    def save(self, *args, **kwargs):
-        if not is_password_usable(self.password):  
-            self.password = make_password(self.password)
-        super().save(*args, **kwargs)
     
     
 class UserProfile(models.Model):

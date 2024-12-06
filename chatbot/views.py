@@ -6,10 +6,11 @@ from chatbot.models import ChatMessage
 from datetime import timedelta
 from django.utils.timezone import localtime, localdate
 from django.utils import timezone
+from accounts.mixins import PatientLoginRequiredMixin
 
 
 # To view chat page
-class ChatPageView(TemplateView):
+class ChatPageView(TemplateView, PatientLoginRequiredMixin):
     template_name = 'chat_page.html'
     
     def get_context_data(self, **kwargs):
@@ -48,7 +49,7 @@ class ChatPageView(TemplateView):
     
     
 # To chat dynamically
-class ChatbotAPIView(APIView):
+class ChatbotAPIView(APIView, PatientLoginRequiredMixin):
     def post(self, request, *args, **kwargs):
         hardcoded_responses = {
             'hello': 'Hi! How can I assist you today?',

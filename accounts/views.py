@@ -3,6 +3,7 @@ from django.views import View
 from django.views.generic import TemplateView
 from accounts.models import CustomUser
 from django.contrib.auth import login, logout
+from django.contrib.auth.models import Group
 
 
 # Index page view
@@ -58,6 +59,9 @@ class SignupView(TemplateView):
         user.set_password(new_password)
         user.save()
         
+        group, created = Group.objects.get_or_create(name='Patient')
+        user.groups.add(group)
+        
         return redirect('index')
     
     
@@ -82,10 +86,14 @@ class SignInView(TemplateView):
         
         login(request, user)
         
-        if user.user_type == 'Doctor':
+        if user.is_superuser:
+            return redirect('/admin/')
+        elif user.groups.filter(name='Doctor').exists():
             return redirect('doctor_home')
-        else:
+        elif user.groups.filter(name='Patient').exists():
             return redirect('home')
+        else:
+            return redirect('sign_in')
     
     
 #Logout View

@@ -118,7 +118,12 @@ class PatientInfo(models.Model):
     description = models.TextField(default="")
     
     def __str__(self):
-        return f"{self.patient_name} - Appointment on {self.appointment.slot.date} {self.appointment.slot.start_time}"
+        if self.appointment:
+            slot_date = self.appointment.slot.date.strftime('%A, %b %d, %Y') if self.appointment.slot and self.appointment.slot.date else "Unknown Date"
+            slot_time = self.appointment.slot.start_time.strftime('%I:%M %p') if self.appointment.slot and self.appointment.slot.start_time else "Unknown Time"
+            return f"{self.patient_name} - Appointment on {slot_date} at {slot_time}"
+        else:
+            return f"{self.patient_name} - Appointment details not available"
     
     
 class PatientAttachments(models.Model):
