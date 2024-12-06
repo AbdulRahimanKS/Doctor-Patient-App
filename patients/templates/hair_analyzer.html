@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+    <style>
+        header {
+            background: linear-gradient(to right, #4a90e2, #50d3a7);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #4a90e2;
+        }
+        .section p {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .images img {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 15px;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button-container button {
+            text-decoration: none;
+            background-color: #4a90e2;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            font-size: 1.2rem;
+            transition: background-color 0.3s;
+        }
+        .button-container button:hover {
+            background-color: #50d3a7;
+        }
+        #preview {
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+        #preview h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #4a90e2;
+        }
+        #preview img {
+            max-width: 400px;
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 35px;
+            margin-top: 20px;
+        }
+    </style>
+
+    <div class="bg-white shadow-sm">
+        <div class="d-flex align-items-center justify-content-between mb-auto p-3 osahan-header">
+           <div class="d-flex align-items-center gap-2 me-auto">
+              <a href="{% url 'home' %}" class="text-dark bg-white shadow rounded-circle icon">
+                 <span class="mdi mdi-arrow-left mdi-18px"></span>
+              </a>
+           </div>
+           <div class="d-flex align-items-center gap-3">
+              <a class="toggle text-muted d-flex align-items-center justify-content-center fs-5 bg-white shadow rounded-circle icon" href="#"><i
+                    class="bi bi-list"></i></a>
+           </div>
+        </div>
+     </div>
+
+    <header>
+        <h1>Welcome to AI Hair Analyzer</h1>
+        <p>Revolutionizing Hair Care with Artificial Intelligence</p>
+    </header>
+
+    <div class="container">
+        <div class="section">
+            <h2>About AI Hair Analyzer</h2>
+            <p>The AI Hair Analyzer is a state-of-the-art technology designed to assess your hair's health and provide personalized care recommendations. With advanced algorithms, it examines hair type, texture, and condition in just a few seconds.</p>
+        </div>
+
+        <div class="section">
+            <h2>How It Works</h2>
+            <p>Simply upload a picture of your hair, and our AI engine will analyze it using machine learning techniques. The results include detailed insights about your hair health and a tailored hair care routine.</p>
+        </div>
+
+        <div class="section">
+            <h2>Key Features</h2>
+            <ul>
+                <li>Analyze hair texture, density, and health</li>
+                <li>Personalized product recommendations</li>
+                <li>Track progress over time</li>
+                <li>Easy-to-use interface</li>
+            </ul>
+        </div>
+
+        <div class="section images">
+            <h2>Correct Head Angle</h2>
+            <img src="{% static 'img/home/head-angle.jpeg' %}" alt="Correct Head Angle for Hair Analysis">
+        </div>
+
+        <div class="button-container">
+            <button onclick="document.getElementById('imageInput').click()">Select Image</button>
+            <input type="file" id="imageInput" style="display: none;" accept="image/*">
+        </div>
+
+        <div id="preview">
+            <h3>Uploaded Image:</h3>
+            <img id="previewImage" src="#" alt="Uploaded Image">
+        </div>
+    </div>
+
+    <footer>
+    </footer>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const previewDiv = document.getElementById('preview');
+        const previewImage = document.getElementById('previewImage');
+
+        imageInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewDiv.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewDiv.style.display = 'none';
+            }
+        });
+    </script>
+
+{% endblock %}
