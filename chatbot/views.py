@@ -10,7 +10,7 @@ from accounts.mixins import PatientLoginRequiredMixin
 
 
 # To view chat page
-class ChatPageView(TemplateView, PatientLoginRequiredMixin):
+class ChatPageView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'chat_page.html'
     
     def get_context_data(self, **kwargs):
@@ -49,7 +49,7 @@ class ChatPageView(TemplateView, PatientLoginRequiredMixin):
     
     
 # To chat dynamically
-class ChatbotAPIView(APIView, PatientLoginRequiredMixin):
+class ChatbotAPIView(PatientLoginRequiredMixin, APIView):
     def post(self, request, *args, **kwargs):
         hardcoded_responses = {
             'hello': 'Hi! How can I assist you today?',

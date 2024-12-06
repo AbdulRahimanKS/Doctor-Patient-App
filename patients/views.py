@@ -22,7 +22,7 @@ from accounts.mixins import PatientLoginRequiredMixin
 
 
 # Home page view
-class HomeView(TemplateView, PatientLoginRequiredMixin):
+class HomeView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'home.html'
     
     def dispatch(self, request, *args, **kwargs):
@@ -63,7 +63,7 @@ class HomeView(TemplateView, PatientLoginRequiredMixin):
 
 
 # Doctors list page view
-class DoctorsListView(TemplateView, PatientLoginRequiredMixin):
+class DoctorsListView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'doctors_list.html'
     
     def get(self, request, *args, **kwargs):
@@ -79,7 +79,7 @@ class DoctorsListView(TemplateView, PatientLoginRequiredMixin):
 
 
 # Doctor profile page view
-class DoctorProfileView(TemplateView, PatientLoginRequiredMixin):
+class DoctorProfileView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'doctor_profile.html'
     
     def get_object(self, doctor_id):
@@ -93,7 +93,7 @@ class DoctorProfileView(TemplateView, PatientLoginRequiredMixin):
         
         
 # To request an appointment
-class RequestAppointmentView(TemplateView, PatientLoginRequiredMixin):
+class RequestAppointmentView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'request_appointment.html'
     
     def get_object(self, doctor_id):
@@ -186,7 +186,7 @@ class RequestAppointmentView(TemplateView, PatientLoginRequiredMixin):
             
 
 # To book an appointment
-class BookAppointmentView(TemplateView, PatientLoginRequiredMixin):
+class BookAppointmentView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'book_appointment.html'
     
     def get(self, request, *args, **kwargs):
@@ -209,7 +209,7 @@ class BookAppointmentView(TemplateView, PatientLoginRequiredMixin):
     
 
 # To add patient information
-class PatientInfoView(TemplateView, PatientLoginRequiredMixin):
+class PatientInfoView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'patient_info.html'
     
     def get(self, request, *args, **kwargs):
@@ -269,7 +269,7 @@ class PatientInfoView(TemplateView, PatientLoginRequiredMixin):
         
     
 # Appointment page view
-class AppointmentPageView(TemplateView, PatientLoginRequiredMixin):
+class AppointmentPageView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'appointment_page.html'
     
     def get(self, request, *args, **kwargs):
@@ -279,7 +279,7 @@ class AppointmentPageView(TemplateView, PatientLoginRequiredMixin):
 
 
 # Profile page view
-class ProfilePageView(TemplateView, PatientLoginRequiredMixin):
+class ProfilePageView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'my_profile.html'
     
     def get_context_data(self, **kwargs):
@@ -292,7 +292,7 @@ class ProfilePageView(TemplateView, PatientLoginRequiredMixin):
     
     
 # Appointments page view
-class AppointmentsPageView(TemplateView, PatientLoginRequiredMixin):
+class AppointmentsPageView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'my_appointment.html'
         
     def get_context_data(self, **kwargs):
@@ -321,7 +321,7 @@ class AppointmentsPageView(TemplateView, PatientLoginRequiredMixin):
     
     
 # Appointment detail page view
-class AppointmentDetailView(TemplateView, PatientLoginRequiredMixin):
+class AppointmentDetailView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'appointment_detail.html'
     
     def get_context_data(self, **kwargs):
@@ -348,7 +348,7 @@ class AppointmentDetailView(TemplateView, PatientLoginRequiredMixin):
     
 
 # Video page view
-class VideoPageView(TemplateView, PatientLoginRequiredMixin):
+class VideoPageView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'video.html'
     
     def get_context_data(self, **kwargs):
@@ -359,7 +359,7 @@ class VideoPageView(TemplateView, PatientLoginRequiredMixin):
         
         
 # Profile update page view
-class ProfileUpdateView(TemplateView, PatientLoginRequiredMixin):
+class ProfileUpdateView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'edit_profile.html'
     
     def get_context_data(self, **kwargs):
@@ -410,7 +410,7 @@ class ProfileUpdateView(TemplateView, PatientLoginRequiredMixin):
       
                  
 # To show notifications
-class NotificationPatientView(TemplateView, PatientLoginRequiredMixin):
+class NotificationPatientView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'notification_patient.html'
     
     def get_context_data(self, **kwargs) :
@@ -441,7 +441,7 @@ class NotificationPatientView(TemplateView, PatientLoginRequiredMixin):
     
 
 # Prescription view page
-class PrescriptionView(TemplateView, PatientLoginRequiredMixin):
+class PrescriptionView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'prescription_view.html'
     
     def get(self, request, *args, **kwargs):
@@ -457,7 +457,7 @@ class PrescriptionView(TemplateView, PatientLoginRequiredMixin):
     
     
 # Prescription patient page view
-class PrescriptionPatientView(TemplateView, PatientLoginRequiredMixin):
+class PrescriptionPatientView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'prescription_patient_view.html'
     
     def get_context_data(self, **kwargs):
@@ -472,7 +472,7 @@ class PrescriptionPatientView(TemplateView, PatientLoginRequiredMixin):
         
 
 # Prescription download view
-class DownloadPrescriptionView(TemplateView, PatientLoginRequiredMixin):
+class DownloadPrescriptionView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'prescription_patient_view.html'
     
     def get(self, request, *args, **kwargs):
@@ -487,3 +487,6 @@ class DownloadPrescriptionView(TemplateView, PatientLoginRequiredMixin):
         return response
         
 
+# Hair Analyzer Page view
+class HairAnalyzerPageView(PatientLoginRequiredMixin, TemplateView):
+    template_name = 'hair_analyzer.html'

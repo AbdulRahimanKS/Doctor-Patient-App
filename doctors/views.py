@@ -28,7 +28,7 @@ from accounts.mixins import DoctorLoginRequiredMixin
 
 
 # Doctor home page view
-class DoctorHomeView(TemplateView, DoctorLoginRequiredMixin):
+class DoctorHomeView(DoctorLoginRequiredMixin, TemplateView):
     template_name = 'doctor_home.html'
 
     def get_context_data(self, **kwargs):
@@ -62,7 +62,7 @@ class DoctorHomeView(TemplateView, DoctorLoginRequiredMixin):
     
         
 # Slot adding view
-class SlotAddView(TemplateView, DoctorLoginRequiredMixin):
+class SlotAddView(DoctorLoginRequiredMixin, TemplateView):
     template_name = 'add_slots.html'
     
     def post(self, request, *args, **kwargs):
@@ -83,7 +83,7 @@ class SlotAddView(TemplateView, DoctorLoginRequiredMixin):
     
 
 # Slot list view
-class SlotListView(TemplateView, DoctorLoginRequiredMixin):
+class SlotListView(DoctorLoginRequiredMixin, TemplateView):
     template_name ='list_slots.html'
     
     def get(self, request, *args, **kwargs):
@@ -160,7 +160,7 @@ class SlotStartMeeting(View):
             
             
 # Patient attachments download view
-class DownloadAttachmentsView(View, DoctorLoginRequiredMixin):
+class DownloadAttachmentsView(DoctorLoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         patient_id = kwargs.get('patient_id')
         
@@ -188,7 +188,7 @@ class DownloadAttachmentsView(View, DoctorLoginRequiredMixin):
                     
                     
 # To show notifications
-class NotificationDoctorView(TemplateView, DoctorLoginRequiredMixin):
+class NotificationDoctorView(DoctorLoginRequiredMixin, TemplateView):
     template_name = 'notification_doctor.html'
     
     def get_context_data(self, **kwargs) :
@@ -235,7 +235,7 @@ class NotificationsReadView(View):
     
     
 # Doctor profile page view
-class DoctorProfilePageView(TemplateView, DoctorLoginRequiredMixin):
+class DoctorProfilePageView(DoctorLoginRequiredMixin, TemplateView):
     template_name = 'doctor_profile_page.html'
     
     def get_context_data(self, **kwargs):
@@ -247,7 +247,7 @@ class DoctorProfilePageView(TemplateView, DoctorLoginRequiredMixin):
     
     
 # API request to get specialization names
-class GetSpecializationsView(View, DoctorLoginRequiredMixin):
+class GetSpecializationsView(DoctorLoginRequiredMixin, View):
     def get(self, request, category_id, *args, **kwargs):
         specializations = Specialization.objects.filter(category__id=category_id)
         data = {
@@ -258,7 +258,7 @@ class GetSpecializationsView(View, DoctorLoginRequiredMixin):
     
     
 # Doctor profile edit view
-class DoctorProfileEditView(TemplateView, DoctorLoginRequiredMixin):
+class DoctorProfileEditView(DoctorLoginRequiredMixin, TemplateView):
     template_name = 'edit_doctor_profile.html'
               
     def get_context_data(self, **kwargs):
@@ -344,7 +344,7 @@ class DoctorProfileEditView(TemplateView, DoctorLoginRequiredMixin):
         
     
 # Doctor video page
-class DoctorVideoPageView(TemplateView, DoctorLoginRequiredMixin):
+class DoctorVideoPageView(DoctorLoginRequiredMixin, TemplateView):
     template_name = 'video_page.html'
     
     def get_context_data(self, **kwargs):
@@ -375,7 +375,7 @@ class DoctorVideoPageView(TemplateView, DoctorLoginRequiredMixin):
     
     
 # Prescription page view
-class PrescriptionPageView(TemplateView, DoctorLoginRequiredMixin):
+class PrescriptionPageView(DoctorLoginRequiredMixin, TemplateView):
     template_name = 'prescription.html' 
     
     def get(self, request, *args, **kwargs):
@@ -408,7 +408,7 @@ class PrescriptionPageView(TemplateView, DoctorLoginRequiredMixin):
 
 
 # Prescription detail page view
-class PrescriptionDetailPageView(TemplateView, DoctorLoginRequiredMixin):
+class PrescriptionDetailPageView(DoctorLoginRequiredMixin, TemplateView):
     template_name = 'prescription_detail.html'
     
     def dispatch(self, request, *args, **kwargs):
