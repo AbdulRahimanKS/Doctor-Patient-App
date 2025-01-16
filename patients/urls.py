@@ -1,5 +1,5 @@
 from django.urls import path
-from patients.views import HomeView, DoctorsListView, DoctorProfileView, RequestAppointmentView, BookAppointmentView, PatientInfoView, AppointmentPageView, ProfilePageView, ProfileUpdateView, AppointmentsPageView, AppointmentDetailView, VideoPageView, NotificationPatientView, PrescriptionView, PrescriptionPatientView, DownloadPrescriptionView, HairAnalyzerPageView
+from patients.views import HomeView, DoctorsListView, DoctorProfileView, RequestAppointmentView, BookAppointmentView, PatientInfoView, AppointmentPageView, ProfilePageView, ProfileUpdateView, AppointmentsPageView, AppointmentDetailView, VideoPageView, NotificationPatientView, PrescriptionView, PrescriptionPatientView, DownloadPrescriptionView, HairAnalyzerPageView, AnalyzeHairImageView
 
 
 urlpatterns = [
@@ -20,5 +20,6 @@ urlpatterns = [
     path('prescription_patient_view/<int:prescription_id>/', PrescriptionPatientView.as_view(), name='prescription_patient_view'),
     path('download_prescription/<int:prescription_id>/', DownloadPrescriptionView.as_view(), name='download_prescription'),
     path('hair_analyzer_page/', HairAnalyzerPageView.as_view(), name='hair_analyzer_page'),
+    path('analyze_image/', AnalyzeHairImageView.as_view(), name='analyze_image')
 ]
 

@@ -1,9 +1,12 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
 import json
+import requests
+import base64
 from django.utils.timezone import now, localtime
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView
+from django.views import View
 from patients.models import DoctorProfile, AppointmentSlot, AppointmentRequest, PatientInfo, PatientAttachments, Notification
 from accounts.models import UserProfile, CustomUser
 from doctors.models import Prescription
@@ -16,9 +19,10 @@ from patients.utils import get_india_timezone
 from django.contrib.auth import login, logout
 from accounts.utils import validate_jwt_token
 from django.template.loader import render_to_string
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from weasyprint import HTML
 from accounts.mixins import PatientLoginRequiredMixin
+from DoctorApp.settings import HAIR_ANALYZER_API_URL
 
 
 # Home page view
@@ -490,3 +494,30 @@ class DownloadPrescriptionView(PatientLoginRequiredMixin, TemplateView):
 # Hair Analyzer Page view
 class HairAnalyzerPageView(PatientLoginRequiredMixin, TemplateView):
     template_name = 'hair_analyzer.html'
+    
+    
+# Analyze Hair View
+class AnalyzeHairImageView(PatientLoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        image = request.FILES.get('image')
+        api_url = HAIR_ANALYZER_API_URL
+        
+        if not image:
+            return JsonResponse({'success': False, 'message': 'No image file received.'})
+        
+        try:
+            response = requests.post(
+                api_url,
+                files={'image': image},
+            )
+            
+            response_data = response.json()
+            
+            if response.status_code == 200:
+                return JsonResponse({'success': True, 'message': response_data})
+            else:
+                return JsonResponse({'success': False, 'message': response_data.get('error', 'Unknown error')})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+        
+        

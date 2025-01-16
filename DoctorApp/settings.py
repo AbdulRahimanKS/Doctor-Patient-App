@@ -160,6 +160,7 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 VIDEO_SDK_API_KEY = os.getenv('VIDEO_SDK_API_KEY')
 VIDEO_SDK_API_SECRET = os.getenv('VIDEO_SDK_API_SECRET')
 VIDEO_SDK_API_URL = os.getenv('VIDEO_SDK_API_URL')
+HAIR_ANALYZER_API_URL = os.getenv('HAIR_ANALYZER_API_URL')
 
 
 # CKEditor Storage

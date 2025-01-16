@@ -79,6 +79,72 @@
             padding: 35px;
             margin-top: 20px;
         }
+        .submit-button-container {
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+        .submit-button-container button {
+            text-decoration: none;
+            background-color: #50d3a7;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            font-size: 1.2rem;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+        .submit-button-container button:hover {
+            background-color: #4a90e2;
+        }
+        .response-container {
+            background-color: #f9f9f9; 
+            border: 2px solid #007bff; 
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            padding: 20px;
+            max-width: 500px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .response-header {
+            color: #007bff;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .response-details {
+            color: #333; 
+            font-size: 1rem;
+            margin-bottom: 15px;
+            line-height: 1.6; 
+        }
+
+        .book-appointment-btn {
+            background-color: #007bff; 
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .book-appointment-btn:hover {
+            background-color: #0056b3; 
+            transform: scale(1.05); 
+        }
+
+        .book-appointment-btn:focus {
+            outline: none;
+            box-shadow: 0 0 4px #0056b3;
+        }
+
     </style>
 
     <div class="bg-white shadow-sm">
@@ -117,8 +183,19 @@
         </div>
 
         <div id="preview">
-            <h3>Uploaded Image:</h3>
+            {% comment %} <h3>Uploaded Image:</h3> {% endcomment %}
             <img id="previewImage" src="#" alt="Uploaded Image">
+        </div>
+
+        <form enctype="multipart/form-data" id="analyzeForm" class="submit-button-container">
+            {% csrf_token %}
+            <button type="submit">Analyze</button>
+        </form>
+
+        <div id="responseContainer" style="display: none;" class="mt-4">
+            <h3 id="responseHeader" class="response-header"></h3>
+            <p id="responseDetails" class="response-details"></p>
+            <button id="bookAppointmentButton" class="book-appointment-btn" style="display: none;">Book an Appointment</button>
         </div>
     </div>
 
@@ -126,6 +203,9 @@
         const imageInput = document.getElementById('imageInput');
         const previewDiv = document.getElementById('preview');
         const previewImage = document.getElementById('previewImage');
+        const analyzeForm = document.getElementById('analyzeForm');
+        const responseContainer = document.getElementById('responseContainer');
+        const responseText = document.getElementById('responseText');
 
         imageInput.addEventListener('change', function(event) {
             const file = event.target.files[0];
@@ -134,11 +214,58 @@
                 reader.onload = function(e) {
                     previewImage.src = e.target.result;
                     previewDiv.style.display = 'block';
+                    analyzeForm.style.display = 'block';
                 };
                 reader.readAsDataURL(file);
             } else {
                 previewDiv.style.display = 'none';
+                analyzeForm.style.display = 'none';
             }
+        });
+
+        analyzeForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            const file = imageInput.files[0]; 
+            if (!file) {
+                alert('Please select an image.');
+                return;
+            }
+
+            formData.append('image', file);
+    
+            fetch("{% url 'analyze_image' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}', 
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const response = data.message;
+                    const [header, details] = Object.entries(response)[0];
+
+                    // Update the UI
+                    const responseHeader = document.getElementById('responseHeader');
+                    const responseDetails = document.getElementById('responseDetails');
+                    const bookAppointmentButton = document.getElementById('bookAppointmentButton');
+                    
+                    responseHeader.textContent = `Diagnosis: ${header}`;
+                    responseDetails.textContent = details;
+                    bookAppointmentButton.style.display = 'inline-block';
+
+                    responseContainer.style.display = 'block'; 
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
         });
     </script>
 
